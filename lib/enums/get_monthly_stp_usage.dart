@@ -1,0 +1,1 @@
+enum GetMonthlyStpUsage { sum, stpItemList }

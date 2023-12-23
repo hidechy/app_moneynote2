@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../extensions/extensions.dart';
+import 'package:isar/isar.dart';
 
+import '../extensions/extensions.dart';
 import '../state/calendars/calendars_notifier.dart';
 import '../state/holidays/holidays_notifier.dart';
 import '../utilities/utilities.dart';
-import 'components/_money_dialog.dart';
 import 'components/deposit_tab_alert.dart';
 import 'components/parts/back_ground_image.dart';
 import 'components/parts/custom_shape_clipper.dart';
 import 'components/parts/menu_head_icon.dart';
+import 'components/parts/money_dialog.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends ConsumerWidget {
-  HomeScreen({super.key, this.baseYm});
+  HomeScreen({super.key, this.baseYm, required this.isar});
 
   String? baseYm;
+  final Isar isar;
 
   DateTime _calendarMonthFirst = DateTime.now();
   final List<String> _youbiList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -128,7 +130,7 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 60),
               GestureDetector(
-                onTap: () async => MoneyDialog(context: _context, widget: DepositTabAlert()),
+                onTap: () async => MoneyDialog(context: _context, widget: DepositTabAlert(isar:isar)),
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -368,7 +370,7 @@ class HomeScreen extends ConsumerWidget {
 
     Navigator.pushReplacement(
       _context,
-      MaterialPageRoute(builder: (context) => HomeScreen(baseYm: calendarState.prevYearMonth)),
+      MaterialPageRoute(builder: (context) => HomeScreen(isar: isar, baseYm: calendarState.prevYearMonth)),
     );
   }
 
@@ -378,7 +380,7 @@ class HomeScreen extends ConsumerWidget {
 
     Navigator.pushReplacement(
       _context,
-      MaterialPageRoute(builder: (context) => HomeScreen(baseYm: calendarState.nextYearMonth)),
+      MaterialPageRoute(builder: (context) => HomeScreen(isar: isar, baseYm: calendarState.nextYearMonth)),
     );
   }
 }

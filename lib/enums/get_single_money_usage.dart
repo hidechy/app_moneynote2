@@ -1,0 +1,1 @@
+enum GetSingleMoneyUsage { todayRecord, yesterdayRecord }

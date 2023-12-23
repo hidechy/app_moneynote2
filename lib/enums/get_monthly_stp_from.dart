@@ -1,0 +1,1 @@
+enum GetMonthlyStpFrom { homeScreen, spendTimePlaceListAlert }

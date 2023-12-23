@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/state/main/main_notifier.dart';
+
 import 'package:path_provider/path_provider.dart';
 
 import 'collections/bank_name.dart';
@@ -36,15 +36,11 @@ class MyApp extends ConsumerWidget {
 
   final Isar isar;
 
-  ///
-  Future<void> init({required WidgetRef ref}) async {
-    ref.read(mainProvider.notifier).setIsar(isar: isar);
-  }
+
 
   ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future(() => init(ref: ref));
 
     return MaterialApp(
       theme: ThemeData(
@@ -61,7 +57,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       home: GestureDetector(
         onTap: () => primaryFocus?.unfocus(),
-        child: HomeScreen(),
+        child: HomeScreen(isar:isar),
       ),
     );
   }
