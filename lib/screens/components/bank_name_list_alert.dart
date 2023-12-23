@@ -79,9 +79,11 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
 
     final getBankNames = await bankNamesCollection.where().findAll();
 
-    setState(() {
-      bankNameList = getBankNames;
-    });
+    if (mounted) {
+      setState(() {
+        bankNameList = getBankNames;
+      });
+    }
   }
 
   ///

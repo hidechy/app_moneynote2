@@ -314,7 +314,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
       ..accountNumber = _accountNumberEditingController.text
       ..depositType = widget.depositType.japanName;
 
-    await widget.isar.writeTxn(() async => await widget.isar.bankNames.put(bankName));
+    await widget.isar.writeTxn(() async =>  widget.isar.bankNames.put(bankName));
 
     _bankNumberEditingController.clear();
     _bankNameEditingController.clear();
@@ -377,7 +377,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
   Future<void> _deleteBankName() async {
     final bankNameCollection = widget.isar.bankNames;
 
-    await widget.isar.writeTxn(() async => await bankNameCollection.delete(widget.bankName!.id));
+    await widget.isar.writeTxn(() async =>  bankNameCollection.delete(widget.bankName!.id));
 
     if (mounted) {
       Navigator.pop(_context);

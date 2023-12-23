@@ -36,12 +36,9 @@ class MyApp extends ConsumerWidget {
 
   final Isar isar;
 
-
-
   ///
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return MaterialApp(
       theme: ThemeData(
         appBarTheme: AppBarTheme(
@@ -57,7 +54,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       home: GestureDetector(
         onTap: () => primaryFocus?.unfocus(),
-        child: HomeScreen(isar:isar),
+        child: HomeScreen(isar: isar),
       ),
     );
   }

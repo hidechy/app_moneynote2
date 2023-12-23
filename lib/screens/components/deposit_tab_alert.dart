@@ -27,7 +27,7 @@ class DepositTabAlert extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tabs = <TabInfo>[
       TabInfo('金融機関管理', BankNameListAlert(isar: isar)),
-      TabInfo('電子マネー管理', const EmoneyNameListAlert()),
+      TabInfo('電子マネー管理', EmoneyNameListAlert(isar: isar)),
     ];
 
     // 最初に開くタブを指定する
