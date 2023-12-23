@@ -19,11 +19,13 @@ class BankNameListAlert extends ConsumerStatefulWidget {
 }
 
 class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
-  List<BankName>? bankNames = [];
+  List<BankName>? bankNameList = [];
 
   ///
   @override
   Widget build(BuildContext context) {
+    _makeBankNameList();
+
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -72,23 +74,21 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
   }
 
   ///
-  Future<void> _readBankNames() async {
+  Future<void> _makeBankNameList() async {
     final bankNamesCollection = widget.isar.bankNames;
 
     final getBankNames = await bankNamesCollection.where().findAll();
 
     setState(() {
-      bankNames = getBankNames;
+      bankNameList = getBankNames;
     });
   }
 
   ///
   Future<List<Widget>> _displayBankNames() async {
-    await _readBankNames();
-
     final list = <Widget>[];
 
-    for (var i = 0; i < bankNames!.length; i++) {
+    for (var i = 0; i < bankNameList!.length; i++) {
       list.add(
         Container(
           // ignore: use_build_context_synchronously
@@ -104,10 +104,10 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${bankNames![i].depositType}-${bankNames![i].id}: ${bankNames![i].bankName} (${bankNames![i].bankNumber}) ',
+                      '${bankNameList![i].depositType}-${bankNameList![i].id}: ${bankNameList![i].bankName} (${bankNameList![i].bankNumber}) ',
                     ),
-                    Text('${bankNames![i].branchName} (${bankNames![i].branchNumber})'),
-                    Text('${bankNames![i].accountType} ${bankNames![i].accountNumber}'),
+                    Text('${bankNameList![i].branchName} (${bankNameList![i].branchNumber})'),
+                    Text('${bankNameList![i].accountType} ${bankNameList![i].accountNumber}'),
                   ],
                 ),
               ),
@@ -120,7 +120,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
                         widget: BankNameInputAlert(
                           depositType: DepositType.bank,
                           isar: widget.isar,
-                          bankName: bankNames![i],
+                          bankName: bankNameList![i],
                         ),
                       );
                     },
