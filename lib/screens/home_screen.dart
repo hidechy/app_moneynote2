@@ -6,6 +6,7 @@ import '../extensions/extensions.dart';
 import '../state/calendars/calendars_notifier.dart';
 import '../state/holidays/holidays_notifier.dart';
 import '../utilities/utilities.dart';
+import 'components/daily_money_display_alert.dart';
 import 'components/deposit_tab_alert.dart';
 import 'components/parts/back_ground_image.dart';
 import 'components/parts/custom_shape_clipper.dart';
@@ -130,7 +131,7 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 60),
               GestureDetector(
-                onTap: () async => MoneyDialog(context: _context, widget: DepositTabAlert(isar:isar)),
+                onTap: () async => MoneyDialog(context: _context, widget: DepositTabAlert(isar: isar)),
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -235,11 +236,12 @@ class HomeScreen extends ConsumerWidget {
           ? ''
           : DateTime(_calendarMonthFirst.year, _calendarMonthFirst.month, _calendarDays[i].toInt()).youbiStr;
 
-      // var diff = 0;
-      // if (generateYmd != '') {
-      //   final genDate = DateTime(_calendarMonthFirst.year, _calendarMonthFirst.month, _calendarDays[i].toInt());
-      //   diff = genDate.difference(DateTime.now()).inSeconds;
-      // }
+      var diff = 0;
+      if (generateYmd != '') {
+        final genDate = DateTime(_calendarMonthFirst.year, _calendarMonthFirst.month, _calendarDays[i].toInt());
+        diff = genDate.difference(DateTime.now()).inSeconds;
+      }
+
       //
       // var bankPrice = 0;
       // if (bankPriceTotalPadMap.value != null) {
@@ -284,6 +286,18 @@ class HomeScreen extends ConsumerWidget {
       list.add(
         Expanded(
           child: GestureDetector(
+            onTap: (_calendarDays[i] == '' || diff > 0)
+                ? null
+                : () async {
+                    await MoneyDialog(
+                      context: _context,
+                      widget: DailyMoneyDisplayAlert(
+                        date: DateTime.parse('$generateYmd 00:00:00'),
+                        isar: isar,
+                      ),
+                    );
+                  },
+
             // onTap: (_calendarDays[i] == '' || diff > 0)
             //     ? null
             //     : () async {
@@ -321,7 +335,9 @@ class HomeScreen extends ConsumerWidget {
 
                 color: (_calendarDays[i] == '')
                     ? Colors.transparent
-                    : _utility.getYoubiColor(date: generateYmd, youbiStr: youbiStr, holidayMap: _holidayMap),
+                    : (diff > 0)
+                        ? Colors.white.withOpacity(0.1)
+                        : _utility.getYoubiColor(date: generateYmd, youbiStr: youbiStr, holidayMap: _holidayMap),
 
                 // color: (_calendarDays[i] == '')
                 //     ? Colors.transparent
