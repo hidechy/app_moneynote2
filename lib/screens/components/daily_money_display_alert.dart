@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/enums/deposit_type.dart';
+import 'package:money_note/screens/components/bank_price_input_alert.dart';
+import 'package:money_note/screens/components/parts/money_dialog.dart';
 
 import '../../collections/bank_name.dart';
 import '../../collections/emoney_name.dart';
@@ -24,9 +27,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   ///
   @override
   Widget build(BuildContext context) {
-    _makeBankNameList();
-    _makeEmoneyNameList();
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -43,8 +43,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-
                 Container(width: context.screenSize.width),
+                Text(widget.date.yyyymmdd),
+                Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
 
                 /////==================================///// BankNames
 
@@ -52,10 +53,25 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   future: _displayBankNames(),
                   builder: (context, snapshot) {
                     return SizedBox(
-                      height: context.screenSize.height * 0.2,
+                      height: context.screenSize.height * 0.3,
                       child: (snapshot.hasData)
                           ? SingleChildScrollView(
-                              child: Column(children: snapshot.data!),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: context.screenSize.width,
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+                                        stops: const [0.7, 1],
+                                      ),
+                                    ),
+                                    child: const Text('金融機関名', overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Column(children: snapshot.data!),
+                                ],
+                              ),
                             )
                           : null,
                     );
@@ -70,10 +86,25 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   future: _displayEmoneyNames(),
                   builder: (context, snapshot) {
                     return SizedBox(
-                      height: context.screenSize.height * 0.2,
+                      height: context.screenSize.height * 0.3,
                       child: (snapshot.hasData)
                           ? SingleChildScrollView(
-                              child: Column(children: snapshot.data!),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: context.screenSize.width,
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+                                        stops: const [0.7, 1],
+                                      ),
+                                    ),
+                                    child: const Text('電子マネー名', overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Column(children: snapshot.data!),
+                                ],
+                              ),
                             )
                           : null,
                     );
@@ -82,7 +113,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
                 /////==================================///// EmoneyNames
 
-                SizedBox(height: 500),
+                const SizedBox(height: 500),
               ],
             ),
           ),
@@ -100,14 +131,14 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     final getBankNames = await bankNamesCollection.where().findAll();
 
     if (mounted) {
-      setState(() {
-        bankNameList = getBankNames;
-      });
+      setState(() => bankNameList = getBankNames);
     }
   }
 
   ///
   Future<List<Widget>> _displayBankNames() async {
+    await _makeBankNameList();
+
     final list = <Widget>[];
 
     for (var i = 0; i < bankNameList!.length; i++) {
@@ -122,8 +153,21 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               Row(
                 children: [
                   const Text('xxx'),
-                  SizedBox(width: 20),
-                  Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      MoneyDialog(
+                        context: context,
+                        widget: BankPriceInputAlert(
+                          date: widget.date,
+                          isar: widget.isar,
+                          depositType: DepositType.bank,
+                          bankName: bankNameList![i],
+                        ),
+                      );
+                    },
+                    child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                  ),
                 ],
               ),
             ],
@@ -146,14 +190,14 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     final getEmoneyNames = await emoneyNamesCollection.where().findAll();
 
     if (mounted) {
-      setState(() {
-        emoneyNameList = getEmoneyNames;
-      });
+      setState(() => emoneyNameList = getEmoneyNames);
     }
   }
 
   ///
   Future<List<Widget>> _displayEmoneyNames() async {
+    await _makeEmoneyNameList();
+
     final list = <Widget>[];
 
     for (var i = 0; i < emoneyNameList!.length; i++) {
@@ -168,8 +212,21 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               Row(
                 children: [
                   const Text('xxx'),
-                  SizedBox(width: 20),
-                  Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      MoneyDialog(
+                        context: context,
+                        widget: BankPriceInputAlert(
+                          date: widget.date,
+                          isar: widget.isar,
+                          depositType: DepositType.emoney,
+                          emoneyName: emoneyNameList![i],
+                        ),
+                      );
+                    },
+                    child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                  ),
                 ],
               ),
             ],
