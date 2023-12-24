@@ -216,70 +216,6 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
                         ),
                 ],
               ),
-
-              ///////////////////////////////////////////
-
-              ElevatedButton(
-                onPressed: () {
-                  _bankNumberEditingController.text = '0001';
-                  _bankNameEditingController.text = 'みずほ銀行';
-                  _branchNumberEditingController.text = '046';
-                  _branchNameEditingController.text = '虎ノ門支店';
-                  _accountNumberEditingController.text = '2961375';
-                  ref.read(bankNamesProvider.notifier).setAccountType(accountType: AccountType.normal);
-                },
-                child: const Text('みずほ銀行'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _bankNumberEditingController.text = '0009';
-                  _bankNameEditingController.text = '三井住友銀行';
-                  _branchNumberEditingController.text = '547';
-                  _branchNameEditingController.text = '横浜駅前支店';
-                  _accountNumberEditingController.text = '8981660';
-                  ref.read(bankNamesProvider.notifier).setAccountType(accountType: AccountType.normal);
-                },
-                child: const Text('三井住友銀行547'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _bankNumberEditingController.text = '0009';
-                  _bankNameEditingController.text = '三井住友銀行';
-                  _branchNumberEditingController.text = '259';
-                  _branchNameEditingController.text = '新宿西口支店';
-                  _accountNumberEditingController.text = '2967733';
-                  ref.read(bankNamesProvider.notifier).setAccountType(accountType: AccountType.normal);
-                },
-                child: const Text('三井住友銀行259'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _bankNumberEditingController.text = '0005';
-                  _bankNameEditingController.text = '三菱UFJ銀行';
-                  _branchNumberEditingController.text = '271';
-                  _branchNameEditingController.text = '船橋支店';
-                  _accountNumberEditingController.text = '0782619';
-                  ref.read(bankNamesProvider.notifier).setAccountType(accountType: AccountType.normal);
-                },
-                child: const Text('三菱UFJ銀行'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _bankNumberEditingController.text = '0036';
-                  _bankNameEditingController.text = '楽天銀行';
-                  _branchNumberEditingController.text = '226';
-                  _branchNameEditingController.text = 'ギター支店';
-                  _accountNumberEditingController.text = '2994905';
-                  ref.read(bankNamesProvider.notifier).setAccountType(accountType: AccountType.normal);
-                },
-                child: const Text('楽天銀行'),
-              ),
-
-              ///////////////////////////////////////////
             ],
           ),
         ),
@@ -314,7 +250,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
       ..accountNumber = _accountNumberEditingController.text
       ..depositType = widget.depositType.japanName;
 
-    await widget.isar.writeTxn(() async =>  widget.isar.bankNames.put(bankName));
+    await widget.isar.writeTxn(() async => widget.isar.bankNames.put(bankName));
 
     _bankNumberEditingController.clear();
     _bankNameEditingController.clear();
@@ -377,7 +313,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
   Future<void> _deleteBankName() async {
     final bankNameCollection = widget.isar.bankNames;
 
-    await widget.isar.writeTxn(() async =>  bankNameCollection.delete(widget.bankName!.id));
+    await widget.isar.writeTxn(() async => bankNameCollection.delete(widget.bankName!.id));
 
     if (mounted) {
       Navigator.pop(_context);

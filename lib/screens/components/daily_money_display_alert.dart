@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/enums/deposit_type.dart';
-import 'package:money_note/screens/components/bank_price_input_alert.dart';
-import 'package:money_note/screens/components/parts/money_dialog.dart';
 
 import '../../collections/bank_name.dart';
 import '../../collections/emoney_name.dart';
+import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
+import 'bank_price_input_alert.dart';
+import 'parts/money_dialog.dart';
 
 class DailyMoneyDisplayAlert extends ConsumerStatefulWidget {
   const DailyMoneyDisplayAlert({super.key, required this.date, required this.isar});
@@ -27,6 +27,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   ///
   @override
   Widget build(BuildContext context) {
+    _makeBankNameList();
+    _makeEmoneyNameList();
+
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -49,67 +52,67 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
                 /////==================================///// BankNames
 
-                FutureBuilder<List<Widget>>(
-                  future: _displayBankNames(),
-                  builder: (context, snapshot) {
-                    return SizedBox(
-                      height: context.screenSize.height * 0.3,
-                      child: (snapshot.hasData)
-                          ? SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: context.screenSize.width,
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-                                        stops: const [0.7, 1],
-                                      ),
-                                    ),
-                                    child: const Text('金融機関名', overflow: TextOverflow.ellipsis),
-                                  ),
-                                  Column(children: snapshot.data!),
-                                ],
-                              ),
-                            )
-                          : null,
-                    );
-                  },
+                Container(
+                  width: context.screenSize.width,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+                      stops: const [0.7, 1],
+                    ),
+                  ),
+                  child: const Text('金融機関名', overflow: TextOverflow.ellipsis),
                 ),
+
+                if (bankNameList!.isEmpty) const Text('aaa'),
+
+                if (bankNameList!.isNotEmpty)
+                  FutureBuilder<List<Widget>>(
+                    future: _displayBankNames(),
+                    builder: (context, snapshot) {
+                      return SizedBox(
+                        height: context.screenSize.height * 0.3,
+                        child: (snapshot.hasData)
+                            ? SingleChildScrollView(
+                                child: Column(children: snapshot.data!),
+                              )
+                            : null,
+                      );
+                    },
+                  ),
 
                 /////==================================///// BankNames
 
                 /////==================================///// EmoneyNames
 
-                FutureBuilder<List<Widget>>(
-                  future: _displayEmoneyNames(),
-                  builder: (context, snapshot) {
-                    return SizedBox(
-                      height: context.screenSize.height * 0.3,
-                      child: (snapshot.hasData)
-                          ? SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: context.screenSize.width,
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-                                        stops: const [0.7, 1],
-                                      ),
-                                    ),
-                                    child: const Text('電子マネー名', overflow: TextOverflow.ellipsis),
-                                  ),
-                                  Column(children: snapshot.data!),
-                                ],
-                              ),
-                            )
-                          : null,
-                    );
-                  },
+                Container(
+                  width: context.screenSize.width,
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+                      stops: const [0.7, 1],
+                    ),
+                  ),
+                  child: const Text('電子マネー名', overflow: TextOverflow.ellipsis),
                 ),
+
+                if (emoneyNameList!.isEmpty) const Text('aaa'),
+
+                if (emoneyNameList!.isNotEmpty)
+                  FutureBuilder<List<Widget>>(
+                    future: _displayEmoneyNames(),
+                    builder: (context, snapshot) {
+                      return SizedBox(
+                        height: context.screenSize.height * 0.3,
+                        child: (snapshot.hasData)
+                            ? SingleChildScrollView(
+                                child: Column(children: snapshot.data!),
+                              )
+                            : null,
+                      );
+                    },
+                  ),
 
                 /////==================================///// EmoneyNames
 
@@ -137,8 +140,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
   ///
   Future<List<Widget>> _displayBankNames() async {
-    await _makeBankNameList();
-
     final list = <Widget>[];
 
     for (var i = 0; i < bankNameList!.length; i++) {
@@ -196,8 +197,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
   ///
   Future<List<Widget>> _displayEmoneyNames() async {
-    await _makeEmoneyNameList();
-
     final list = <Widget>[];
 
     for (var i = 0; i < emoneyNameList!.length; i++) {

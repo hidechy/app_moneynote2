@@ -137,7 +137,7 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
                         child: Column(
                           children: [
                             Column(children: snapshot.data!),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),

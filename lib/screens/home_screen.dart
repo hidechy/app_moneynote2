@@ -6,6 +6,7 @@ import '../extensions/extensions.dart';
 import '../state/calendars/calendars_notifier.dart';
 import '../state/holidays/holidays_notifier.dart';
 import '../utilities/utilities.dart';
+import 'components/___dummy_data_input_alert.dart';
 import 'components/daily_money_display_alert.dart';
 import 'components/deposit_tab_alert.dart';
 import 'components/parts/back_ground_image.dart';
@@ -149,17 +150,17 @@ class HomeScreen extends ConsumerWidget {
 
               ///
 
-//               const SizedBox(height: 100),
-//               GestureDetector(
-// //                onTap: () async => MoneyDialog(context: _context, widget: DummyDataInputAlert()),
-//                 child: Container(
-//                   width: double.infinity,
-//                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-//                   margin: const EdgeInsets.all(5),
-//                   decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
-//                   child: const Text('dummy data'),
-//                 ),
-//               ),
+              const SizedBox(height: 100),
+              GestureDetector(
+                onTap: () async => MoneyDialog(context: _context, widget: DummyDataInputAlert(isar: isar)),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
+                  child: const Text('dummy data'),
+                ),
+              ),
 
               ///
             ],
