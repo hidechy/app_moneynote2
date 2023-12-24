@@ -8,6 +8,7 @@ import '../../collections/emoney_name.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
 import 'bank_price_input_alert.dart';
+import 'parts/bank_emoney_blank_message.dart';
 import 'parts/money_dialog.dart';
 
 class DailyMoneyDisplayAlert extends ConsumerStatefulWidget {
@@ -64,7 +65,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   child: const Text('金融機関名', overflow: TextOverflow.ellipsis),
                 ),
 
-                if (bankNameList!.isEmpty) const Text('aaa'),
+                if (bankNameList!.isEmpty) ...[
+                  const SizedBox(height: 10),
+                  BankEmoneyBlankMessage(deposit: '金融機関', isar: widget.isar),
+                  const SizedBox(height: 30),
+                ],
 
                 if (bankNameList!.isNotEmpty)
                   FutureBuilder<List<Widget>>(
@@ -97,7 +102,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   child: const Text('電子マネー名', overflow: TextOverflow.ellipsis),
                 ),
 
-                if (emoneyNameList!.isEmpty) const Text('aaa'),
+                if (emoneyNameList!.isEmpty) ...[
+                  const SizedBox(height: 10),
+                  BankEmoneyBlankMessage(deposit: '電子マネー', index: 1, isar: widget.isar),
+                  const SizedBox(height: 30),
+                ],
 
                 if (emoneyNameList!.isNotEmpty)
                   FutureBuilder<List<Widget>>(
