@@ -43,21 +43,7 @@ const BankPriceSchema = CollectionSchema(
   deserialize: _bankPriceDeserialize,
   deserializeProp: _bankPriceDeserializeProp,
   idName: r'id',
-  indexes: {
-    r'date': IndexSchema(
-      id: -7552997827385218417,
-      name: r'date',
-      unique: true,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'date',
-          type: IndexType.hash,
-          caseSensitive: true,
-        )
-      ],
-    )
-  },
+  indexes: {},
   links: {},
   embeddedSchemas: {},
   getId: _bankPriceGetId,
@@ -136,60 +122,6 @@ void _bankPriceAttach(IsarCollection<dynamic> col, Id id, BankPrice object) {
   object.id = id;
 }
 
-extension BankPriceByIndex on IsarCollection<BankPrice> {
-  Future<BankPrice?> getByDate(String date) {
-    return getByIndex(r'date', [date]);
-  }
-
-  BankPrice? getByDateSync(String date) {
-    return getByIndexSync(r'date', [date]);
-  }
-
-  Future<bool> deleteByDate(String date) {
-    return deleteByIndex(r'date', [date]);
-  }
-
-  bool deleteByDateSync(String date) {
-    return deleteByIndexSync(r'date', [date]);
-  }
-
-  Future<List<BankPrice?>> getAllByDate(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return getAllByIndex(r'date', values);
-  }
-
-  List<BankPrice?> getAllByDateSync(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'date', values);
-  }
-
-  Future<int> deleteAllByDate(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'date', values);
-  }
-
-  int deleteAllByDateSync(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'date', values);
-  }
-
-  Future<Id> putByDate(BankPrice object) {
-    return putByIndex(r'date', object);
-  }
-
-  Id putByDateSync(BankPrice object, {bool saveLinks = true}) {
-    return putByIndexSync(r'date', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByDate(List<BankPrice> objects) {
-    return putAllByIndex(r'date', objects);
-  }
-
-  List<Id> putAllByDateSync(List<BankPrice> objects, {bool saveLinks = true}) {
-    return putAllByIndexSync(r'date', objects, saveLinks: saveLinks);
-  }
-}
-
 extension BankPriceQueryWhereSort
     on QueryBuilder<BankPrice, BankPrice, QWhere> {
   QueryBuilder<BankPrice, BankPrice, QAfterWhere> anyId() {
@@ -263,51 +195,6 @@ extension BankPriceQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
-    });
-  }
-
-  QueryBuilder<BankPrice, BankPrice, QAfterWhereClause> dateEqualTo(
-      String date) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'date',
-        value: [date],
-      ));
-    });
-  }
-
-  QueryBuilder<BankPrice, BankPrice, QAfterWhereClause> dateNotEqualTo(
-      String date) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [],
-              upper: [date],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [date],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [date],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'date',
-              lower: [],
-              upper: [date],
-              includeUpper: false,
-            ));
-      }
     });
   }
 }
