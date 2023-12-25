@@ -10,8 +10,10 @@ import '../../collections/emoney_name.dart';
 import '../../collections/money.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
+import '../../state/app_params/app_params_notifier.dart';
 import '../../utilities/functions.dart';
 import 'bank_price_input_alert.dart';
+import 'money_input_alert.dart';
 import 'parts/bank_emoney_blank_message.dart';
 import 'parts/money_dialog.dart';
 
@@ -76,6 +78,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
                 const SizedBox(height: 20),
                 getTopInfoPlate(),
+
+                _dispMenuButtons(),
+
                 const SizedBox(height: 20),
                 _displaySingleMoney(),
                 const SizedBox(height: 20),
@@ -150,7 +155,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
                 /////==================================///// EmoneyNames
 
-                const SizedBox(height: 500),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -274,6 +279,137 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
         beforeDateTotal = _utility.makeCurrencySum(money: beforeMoneyList![0]);
       }
     });
+  }
+
+  ///
+  Widget _dispMenuButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Icon(Icons.close, color: Colors.yellowAccent.withOpacity(0.6), size: 16),
+              ),
+            ),
+
+            const SizedBox(width: 5),
+            GestureDetector(
+              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 1),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6), size: 16),
+              ),
+            ),
+            // if (_currencySum > 0) ...[
+            //   const SizedBox(width: 5),
+            //   GestureDetector(
+            //     onTap: () => _ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
+            //     child: Container(
+            //       padding: const EdgeInsets.all(5),
+            //       child: Icon(Icons.info_outline_rounded,
+            //           color: Colors.greenAccent.withOpacity(0.6), size: 16),
+            //     ),
+            //   ),
+            // ],
+
+            const SizedBox(width: 5),
+            GestureDetector(
+              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Icon(Icons.info_outline_rounded, color: Colors.greenAccent.withOpacity(0.6), size: 16),
+              ),
+            ),
+
+            const SizedBox(width: 5),
+            GestureDetector(
+              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 3),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Icon(Icons.monetization_on, color: Colors.greenAccent.withOpacity(0.6), size: 16),
+              ),
+            ),
+          ],
+        ),
+        _getMenuOpenStr(),
+      ],
+    );
+  }
+
+  ///
+  Widget _getMenuOpenStr() {
+    final menuNumber = ref.watch(appParamProvider.select((value) => value.menuNumber));
+
+    // final singleMoney = _ref.watch(moneyProvider.select((value) => value.singleMoney));
+    //
+    // final spendTimePlaceList = _ref.watch(spendTimePlaceProvider.select((value) => value.spendTimePlaceList));
+
+    switch (menuNumber) {
+      case 1:
+        return Row(
+          children: [
+            const Text('金種枚数登録'),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () {
+                MoneyDialog(
+                  context: context,
+                  widget: MoneyInputAlert(
+                    date: widget.date,
+                    isar: widget.isar,
+                    onedayMoneyList: moneyList,
+                    beforedayMoneyList: beforeMoneyList,
+                  ),
+                );
+              },
+              child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+            ),
+          ],
+        );
+
+      case 2:
+        return Row(
+          children: [
+            const Text('使用詳細登録'),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () async {
+                // await MoneyDialog(
+                //   context: _context,
+                //   widget: SpendTimePlaceInputAlert(
+                //     date: date,
+                //     spend: _totalMoneyBeforeDate - _totalMoney,
+                //     spendTimePlaceList: spendTimePlaceList.value,
+                //   ),
+                // );
+              },
+              child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+            ),
+          ],
+        );
+
+      case 3:
+        return Row(
+          children: [
+            const Text('収入履歴登録'),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () {
+                // _ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
+                //
+                // MoneyDialog(context: _context, widget: IncomeListAlert(date: date));
+              },
+              child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+            ),
+          ],
+        );
+    }
+
+    return Container();
   }
 
   //=======================================================// BankNames // s

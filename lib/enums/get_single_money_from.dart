@@ -1,1 +1,0 @@
-enum GetSingleMoneyFrom { dailyMoneyDisplayAlert, moneyInputAlert }
