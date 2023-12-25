@@ -352,15 +352,15 @@ class DummyDataInputAlert extends StatelessWidget {
 
   ///
   Future<void> _inputBankName({required BankName bankName}) async =>
-      await isar.writeTxn(() async => isar.bankNames.put(bankName));
+      isar.writeTxn(() async => isar.bankNames.put(bankName));
 
   ///
   Future<void> _inputEmoneyName({required EmoneyName emoneyName}) async =>
-      await isar.writeTxn(() async => isar.emoneyNames.put(emoneyName));
+      isar.writeTxn(() async => isar.emoneyNames.put(emoneyName));
 
   ///
   Future<void> _inputBankPrice({required BankPrice bankPrice}) async =>
-      await isar.writeTxn(() async => isar.bankPrices.put(bankPrice));
+      isar.writeTxn(() async => isar.bankPrices.put(bankPrice));
 
   ///
   Future<void> _inputMoney({required Money money}) async {
