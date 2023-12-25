@@ -18,10 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AppParamsResponseState {
   DateTime? get calendarSelectedDate => throw _privateConstructorUsedError;
   int get menuNumber => throw _privateConstructorUsedError;
-  bool get openCurrencyArea => throw _privateConstructorUsedError;
-  bool get openBankArea => throw _privateConstructorUsedError;
-  bool get openEmoneyArea => throw _privateConstructorUsedError;
-  bool get openSpendTimePlaceArea => throw _privateConstructorUsedError;
   String get selectedIncomeYear => throw _privateConstructorUsedError;
   bool get sameMonthIncomeDeleteFlag => throw _privateConstructorUsedError;
 
@@ -39,10 +35,6 @@ abstract class $AppParamsResponseStateCopyWith<$Res> {
   $Res call(
       {DateTime? calendarSelectedDate,
       int menuNumber,
-      bool openCurrencyArea,
-      bool openBankArea,
-      bool openEmoneyArea,
-      bool openSpendTimePlaceArea,
       String selectedIncomeYear,
       bool sameMonthIncomeDeleteFlag});
 }
@@ -63,10 +55,6 @@ class _$AppParamsResponseStateCopyWithImpl<$Res,
   $Res call({
     Object? calendarSelectedDate = freezed,
     Object? menuNumber = null,
-    Object? openCurrencyArea = null,
-    Object? openBankArea = null,
-    Object? openEmoneyArea = null,
-    Object? openSpendTimePlaceArea = null,
     Object? selectedIncomeYear = null,
     Object? sameMonthIncomeDeleteFlag = null,
   }) {
@@ -79,22 +67,6 @@ class _$AppParamsResponseStateCopyWithImpl<$Res,
           ? _value.menuNumber
           : menuNumber // ignore: cast_nullable_to_non_nullable
               as int,
-      openCurrencyArea: null == openCurrencyArea
-          ? _value.openCurrencyArea
-          : openCurrencyArea // ignore: cast_nullable_to_non_nullable
-              as bool,
-      openBankArea: null == openBankArea
-          ? _value.openBankArea
-          : openBankArea // ignore: cast_nullable_to_non_nullable
-              as bool,
-      openEmoneyArea: null == openEmoneyArea
-          ? _value.openEmoneyArea
-          : openEmoneyArea // ignore: cast_nullable_to_non_nullable
-              as bool,
-      openSpendTimePlaceArea: null == openSpendTimePlaceArea
-          ? _value.openSpendTimePlaceArea
-          : openSpendTimePlaceArea // ignore: cast_nullable_to_non_nullable
-              as bool,
       selectedIncomeYear: null == selectedIncomeYear
           ? _value.selectedIncomeYear
           : selectedIncomeYear // ignore: cast_nullable_to_non_nullable
@@ -119,10 +91,6 @@ abstract class _$$AppParamsResponseStateImplCopyWith<$Res>
   $Res call(
       {DateTime? calendarSelectedDate,
       int menuNumber,
-      bool openCurrencyArea,
-      bool openBankArea,
-      bool openEmoneyArea,
-      bool openSpendTimePlaceArea,
       String selectedIncomeYear,
       bool sameMonthIncomeDeleteFlag});
 }
@@ -142,10 +110,6 @@ class __$$AppParamsResponseStateImplCopyWithImpl<$Res>
   $Res call({
     Object? calendarSelectedDate = freezed,
     Object? menuNumber = null,
-    Object? openCurrencyArea = null,
-    Object? openBankArea = null,
-    Object? openEmoneyArea = null,
-    Object? openSpendTimePlaceArea = null,
     Object? selectedIncomeYear = null,
     Object? sameMonthIncomeDeleteFlag = null,
   }) {
@@ -158,22 +122,6 @@ class __$$AppParamsResponseStateImplCopyWithImpl<$Res>
           ? _value.menuNumber
           : menuNumber // ignore: cast_nullable_to_non_nullable
               as int,
-      openCurrencyArea: null == openCurrencyArea
-          ? _value.openCurrencyArea
-          : openCurrencyArea // ignore: cast_nullable_to_non_nullable
-              as bool,
-      openBankArea: null == openBankArea
-          ? _value.openBankArea
-          : openBankArea // ignore: cast_nullable_to_non_nullable
-              as bool,
-      openEmoneyArea: null == openEmoneyArea
-          ? _value.openEmoneyArea
-          : openEmoneyArea // ignore: cast_nullable_to_non_nullable
-              as bool,
-      openSpendTimePlaceArea: null == openSpendTimePlaceArea
-          ? _value.openSpendTimePlaceArea
-          : openSpendTimePlaceArea // ignore: cast_nullable_to_non_nullable
-              as bool,
       selectedIncomeYear: null == selectedIncomeYear
           ? _value.selectedIncomeYear
           : selectedIncomeYear // ignore: cast_nullable_to_non_nullable
@@ -192,10 +140,6 @@ class _$AppParamsResponseStateImpl implements _AppParamsResponseState {
   const _$AppParamsResponseStateImpl(
       {this.calendarSelectedDate,
       this.menuNumber = 0,
-      this.openCurrencyArea = true,
-      this.openBankArea = true,
-      this.openEmoneyArea = true,
-      this.openSpendTimePlaceArea = true,
       this.selectedIncomeYear = '',
       this.sameMonthIncomeDeleteFlag = false});
 
@@ -206,18 +150,6 @@ class _$AppParamsResponseStateImpl implements _AppParamsResponseState {
   final int menuNumber;
   @override
   @JsonKey()
-  final bool openCurrencyArea;
-  @override
-  @JsonKey()
-  final bool openBankArea;
-  @override
-  @JsonKey()
-  final bool openEmoneyArea;
-  @override
-  @JsonKey()
-  final bool openSpendTimePlaceArea;
-  @override
-  @JsonKey()
   final String selectedIncomeYear;
   @override
   @JsonKey()
@@ -225,7 +157,7 @@ class _$AppParamsResponseStateImpl implements _AppParamsResponseState {
 
   @override
   String toString() {
-    return 'AppParamsResponseState(calendarSelectedDate: $calendarSelectedDate, menuNumber: $menuNumber, openCurrencyArea: $openCurrencyArea, openBankArea: $openBankArea, openEmoneyArea: $openEmoneyArea, openSpendTimePlaceArea: $openSpendTimePlaceArea, selectedIncomeYear: $selectedIncomeYear, sameMonthIncomeDeleteFlag: $sameMonthIncomeDeleteFlag)';
+    return 'AppParamsResponseState(calendarSelectedDate: $calendarSelectedDate, menuNumber: $menuNumber, selectedIncomeYear: $selectedIncomeYear, sameMonthIncomeDeleteFlag: $sameMonthIncomeDeleteFlag)';
   }
 
   @override
@@ -237,14 +169,6 @@ class _$AppParamsResponseStateImpl implements _AppParamsResponseState {
                 other.calendarSelectedDate == calendarSelectedDate) &&
             (identical(other.menuNumber, menuNumber) ||
                 other.menuNumber == menuNumber) &&
-            (identical(other.openCurrencyArea, openCurrencyArea) ||
-                other.openCurrencyArea == openCurrencyArea) &&
-            (identical(other.openBankArea, openBankArea) ||
-                other.openBankArea == openBankArea) &&
-            (identical(other.openEmoneyArea, openEmoneyArea) ||
-                other.openEmoneyArea == openEmoneyArea) &&
-            (identical(other.openSpendTimePlaceArea, openSpendTimePlaceArea) ||
-                other.openSpendTimePlaceArea == openSpendTimePlaceArea) &&
             (identical(other.selectedIncomeYear, selectedIncomeYear) ||
                 other.selectedIncomeYear == selectedIncomeYear) &&
             (identical(other.sameMonthIncomeDeleteFlag,
@@ -253,16 +177,8 @@ class _$AppParamsResponseStateImpl implements _AppParamsResponseState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      calendarSelectedDate,
-      menuNumber,
-      openCurrencyArea,
-      openBankArea,
-      openEmoneyArea,
-      openSpendTimePlaceArea,
-      selectedIncomeYear,
-      sameMonthIncomeDeleteFlag);
+  int get hashCode => Object.hash(runtimeType, calendarSelectedDate, menuNumber,
+      selectedIncomeYear, sameMonthIncomeDeleteFlag);
 
   @JsonKey(ignore: true)
   @override
@@ -276,10 +192,6 @@ abstract class _AppParamsResponseState implements AppParamsResponseState {
   const factory _AppParamsResponseState(
       {final DateTime? calendarSelectedDate,
       final int menuNumber,
-      final bool openCurrencyArea,
-      final bool openBankArea,
-      final bool openEmoneyArea,
-      final bool openSpendTimePlaceArea,
       final String selectedIncomeYear,
       final bool sameMonthIncomeDeleteFlag}) = _$AppParamsResponseStateImpl;
 
@@ -287,14 +199,6 @@ abstract class _AppParamsResponseState implements AppParamsResponseState {
   DateTime? get calendarSelectedDate;
   @override
   int get menuNumber;
-  @override
-  bool get openCurrencyArea;
-  @override
-  bool get openBankArea;
-  @override
-  bool get openEmoneyArea;
-  @override
-  bool get openSpendTimePlaceArea;
   @override
   String get selectedIncomeYear;
   @override

@@ -295,7 +295,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 child: Icon(Icons.close, color: Colors.yellowAccent.withOpacity(0.6), size: 16),
               ),
             ),
-
             const SizedBox(width: 5),
             GestureDetector(
               onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 1),
@@ -304,27 +303,16 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6), size: 16),
               ),
             ),
-            // if (_currencySum > 0) ...[
-            //   const SizedBox(width: 5),
-            //   GestureDetector(
-            //     onTap: () => _ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
-            //     child: Container(
-            //       padding: const EdgeInsets.all(5),
-            //       child: Icon(Icons.info_outline_rounded,
-            //           color: Colors.greenAccent.withOpacity(0.6), size: 16),
-            //     ),
-            //   ),
-            // ],
-
-            const SizedBox(width: 5),
-            GestureDetector(
-              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Icon(Icons.info_outline_rounded, color: Colors.greenAccent.withOpacity(0.6), size: 16),
+            if (dateTotal > 0) ...[
+              const SizedBox(width: 5),
+              GestureDetector(
+                onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Icon(Icons.info_outline_rounded, color: Colors.greenAccent.withOpacity(0.6), size: 16),
+                ),
               ),
-            ),
-
+            ],
             const SizedBox(width: 5),
             GestureDetector(
               onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 3),
