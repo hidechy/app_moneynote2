@@ -6,6 +6,7 @@ import 'package:isar/isar.dart';
 import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
 import '../../collections/emoney_name.dart';
+import '../../collections/money.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
 import '../../utilities/functions.dart';
@@ -27,9 +28,16 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   List<BankName>? bankNameList = [];
   List<EmoneyName>? emoneyNameList = [];
   List<BankPrice>? bankPriceList = [];
+  List<Money>? moneyList = [];
 
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
+
+  ///
+  void init() {
+    _makeBankPriceList();
+    _makeMoneyList();
+  }
 
   ///
   @override
@@ -37,7 +45,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     _makeBankNameList();
     _makeEmoneyNameList();
 
-    Future(_makeBankPriceList);
+    Future(init);
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -145,16 +153,16 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   Widget _displaySingleMoney() {
     return Column(
       children: [
-        _displayMoneyParts(key: '10000', value: 0),
-        _displayMoneyParts(key: '5000', value: 0),
-        _displayMoneyParts(key: '2000', value: 0),
-        _displayMoneyParts(key: '1000', value: 0),
-        _displayMoneyParts(key: '500', value: 0),
-        _displayMoneyParts(key: '100', value: 0),
-        _displayMoneyParts(key: '50', value: 0),
-        _displayMoneyParts(key: '10', value: 0),
-        _displayMoneyParts(key: '5', value: 0),
-        _displayMoneyParts(key: '1', value: 0),
+        _displayMoneyParts(key: '10000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_10000 : 0),
+        _displayMoneyParts(key: '5000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_5000 : 0),
+        _displayMoneyParts(key: '2000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_2000 : 0),
+        _displayMoneyParts(key: '1000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_1000 : 0),
+        _displayMoneyParts(key: '500', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_500 : 0),
+        _displayMoneyParts(key: '100', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_100 : 0),
+        _displayMoneyParts(key: '50', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_50 : 0),
+        _displayMoneyParts(key: '10', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_10 : 0),
+        _displayMoneyParts(key: '5', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_5 : 0),
+        _displayMoneyParts(key: '1', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_1 : 0),
         const SizedBox(height: 20),
       ],
     );
@@ -170,6 +178,17 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
         children: [Text(key), Text(value.toString().toCurrency())],
       ),
     );
+  }
+
+  ///
+  Future<void> _makeMoneyList() async {
+    final moneyCollection = widget.isar.moneys;
+
+    final getMoneys = await moneyCollection.filter().dateEqualTo(widget.date.yyyymmdd).findAll();
+
+    setState(() {
+      moneyList = getMoneys;
+    });
   }
 
   //=======================================================// BankNames // s
