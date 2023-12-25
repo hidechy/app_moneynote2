@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/collections/bank_price.dart';
 import 'package:money_note/collections/emoney_name.dart';
 
 import '../../collections/bank_name.dart';
@@ -157,6 +158,126 @@ class DummyDataInputAlert extends StatelessWidget {
                   child: const Text('メルカリ'),
                 ),
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'bank'
+                        ..bankId = 1
+                        ..price = 10000,
+                    );
+                  },
+                  child: const Text('price bank-1'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'bank'
+                        ..bankId = 2
+                        ..price = 20000,
+                    );
+                  },
+                  child: const Text('price bank-2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'bank'
+                        ..bankId = 3
+                        ..price = 30000,
+                    );
+                  },
+                  child: const Text('price bank-3'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'bank'
+                        ..bankId = 4
+                        ..price = 40000,
+                    );
+                  },
+                  child: const Text('price bank-4'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'bank'
+                        ..bankId = 5
+                        ..price = 50000,
+                    );
+                  },
+                  child: const Text('price bank-5'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'emoney'
+                        ..bankId = 1
+                        ..price = 10000,
+                    );
+                  },
+                  child: const Text('emoney-1'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'emoney'
+                        ..bankId = 2
+                        ..price = 20000,
+                    );
+                  },
+                  child: const Text('emoney-2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'emoney'
+                        ..bankId = 3
+                        ..price = 30000,
+                    );
+                  },
+                  child: const Text('emoney-3'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'emoney'
+                        ..bankId = 4
+                        ..price = 40000,
+                    );
+                  },
+                  child: const Text('emoney-4'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputBankPrice(
+                      bankPrice: BankPrice()
+                        ..date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 3).yyyymmdd
+                        ..depositType = 'emoney'
+                        ..bankId = 5
+                        ..price = 50000,
+                    );
+                  },
+                  child: const Text('emoney-5'),
+                ),
               ],
             ),
           ),
@@ -173,5 +294,10 @@ class DummyDataInputAlert extends StatelessWidget {
   ///
   Future<void> _inputEmoneyName({required EmoneyName emoneyName}) async {
     await isar.writeTxn(() async => isar.emoneyNames.put(emoneyName));
+  }
+
+  ///
+  Future<void> _inputBankPrice({required BankPrice bankPrice}) async {
+    await isar.writeTxn(() async => isar.bankPrices.put(bankPrice));
   }
 }

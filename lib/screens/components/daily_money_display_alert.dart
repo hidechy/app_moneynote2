@@ -4,9 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 
 import '../../collections/bank_name.dart';
+import '../../collections/bank_price.dart';
 import '../../collections/emoney_name.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
+import '../../utilities/functions.dart';
 import 'bank_price_input_alert.dart';
 import 'parts/bank_emoney_blank_message.dart';
 import 'parts/money_dialog.dart';
@@ -24,12 +26,18 @@ class DailyMoneyDisplayAlert extends ConsumerStatefulWidget {
 class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert> {
   List<BankName>? bankNameList = [];
   List<EmoneyName>? emoneyNameList = [];
+  List<BankPrice>? bankPriceList = [];
+
+  Map<String, Map<String, int>> bankPricePadMap = {};
+  Map<String, int> bankPriceTotalPadMap = {};
 
   ///
   @override
   Widget build(BuildContext context) {
     _makeBankNameList();
     _makeEmoneyNameList();
+
+    Future(_makeBankPriceList);
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -162,7 +170,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               Text(bankNameList![i].bankName),
               Row(
                 children: [
-                  const Text('xxx'),
+                  Text(
+                    getListPrice(depositType: bankNameList![i].depositType, id: bankNameList![i].id)
+                        .toString()
+                        .toCurrency(),
+                  ),
                   const SizedBox(width: 20),
                   GestureDetector(
                     onTap: () {
@@ -219,7 +231,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               Text(emoneyNameList![i].emoneyName),
               Row(
                 children: [
-                  const Text('xxx'),
+                  Text(
+                    getListPrice(depositType: emoneyNameList![i].depositType, id: emoneyNameList![i].id)
+                        .toString()
+                        .toCurrency(),
+                  ),
                   const SizedBox(width: 20),
                   GestureDetector(
                     onTap: () {
@@ -247,4 +263,40 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   }
 
 //=======================================================// EmoneyNames // e
+
+//=======================================================// BankPrices // s
+
+  ///
+  Future<void> _makeBankPriceList() async {
+    final bankPricesCollection = widget.isar.bankPrices;
+
+    final getBankPrices = await bankPricesCollection.where().findAll();
+
+    if (mounted) {
+      setState(() {
+        bankPriceList = getBankPrices;
+
+        if (bankPriceList != null) {
+          final bankPriceMap = makeBankPriceMap(bankPriceList: bankPriceList!);
+          bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
+          bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
+        }
+      });
+    }
+  }
+
+  ///
+  int getListPrice({required String depositType, required int id}) {
+    var listPrice = 0;
+    if (bankPricePadMap['$depositType-$id'] != null) {
+      final bankPriceMap = bankPricePadMap['$depositType-$id'];
+      if (bankPriceMap![widget.date.yyyymmdd] != null) {
+        listPrice = bankPriceMap[widget.date.yyyymmdd]!;
+      }
+    }
+
+    return listPrice;
+  }
+
+//=======================================================// BankPrices // s
 }

@@ -182,9 +182,11 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
   Future<void> _makeBankPriceList() async {
     final bankPricesCollection = widget.isar.bankPrices;
 
+    final depositType = (widget.bankName != null) ? widget.bankName!.depositType : widget.emoneyName!.depositType;
     final bankId = (widget.bankName != null) ? widget.bankName!.id : widget.emoneyName!.id;
 
-    final getBankPrices = await bankPricesCollection.filter().bankIdEqualTo(bankId).findAll();
+    final getBankPrices =
+        await bankPricesCollection.filter().depositTypeEqualTo(depositType).bankIdEqualTo(bankId).findAll();
 
     if (mounted) {
       setState(() => bankPriceList = getBankPrices);
