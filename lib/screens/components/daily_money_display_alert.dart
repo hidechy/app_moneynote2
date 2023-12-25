@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/screens/components/spend_time_place_input_alert.dart';
 import 'package:money_note/utilities/utilities.dart';
 
 import '../../collections/bank_name.dart';
@@ -39,7 +40,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
 
-  int dateTotal = 0;
+  int onedayDateTotal = 0;
   int beforeDateTotal = 0;
 
   ///
@@ -166,6 +167,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
   ///
   Widget getTopInfoPlate() {
+    final oneday = widget.date.yyyymmdd;
+
+    final beforeDate =
+        DateTime(oneday.split('-')[0].toInt(), oneday.split('-')[1].toInt(), oneday.split('-')[2].toInt() - 1);
+
+    final onedayBankTotal = (bankPriceTotalPadMap[oneday] != null) ? bankPriceTotalPadMap[oneday] : 0;
+    final beforeBankTotal =
+        (bankPriceTotalPadMap[beforeDate.yyyymmdd] != null) ? bankPriceTotalPadMap[beforeDate.yyyymmdd] : 0;
+
     return Container(
       width: context.screenSize.width,
       margin: const EdgeInsets.all(3),
@@ -183,7 +193,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Start'),
-                Text(beforeDateTotal.toString().toCurrency()),
+                Text((beforeDateTotal + beforeBankTotal!).toString().toCurrency()),
               ],
             ),
           ),
@@ -194,7 +204,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('End'),
-                Text(dateTotal.toString().toCurrency()),
+                Text((onedayDateTotal + onedayBankTotal!).toString().toCurrency()),
               ],
             ),
           ),
@@ -205,7 +215,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Spend'),
-                Text((beforeDateTotal - dateTotal).toString().toCurrency()),
+                Text(((beforeDateTotal + beforeBankTotal) - (onedayDateTotal + onedayBankTotal))
+                    .toString()
+                    .toCurrency()),
               ],
             ),
           ),
@@ -256,7 +268,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
       moneyList = getMoneys;
 
       if (moneyList!.isNotEmpty) {
-        dateTotal = _utility.makeCurrencySum(money: moneyList![0]);
+        onedayDateTotal = _utility.makeCurrencySum(money: moneyList![0]);
       }
     });
   }
@@ -303,7 +315,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6), size: 16),
               ),
             ),
-            if (dateTotal > 0) ...[
+            if (onedayDateTotal > 0) ...[
               const SizedBox(width: 5),
               GestureDetector(
                 onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
@@ -332,10 +344,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   Widget _getMenuOpenStr() {
     final menuNumber = ref.watch(appParamProvider.select((value) => value.menuNumber));
 
-    // final singleMoney = _ref.watch(moneyProvider.select((value) => value.singleMoney));
-    //
-    // final spendTimePlaceList = _ref.watch(spendTimePlaceProvider.select((value) => value.spendTimePlaceList));
-
     switch (menuNumber) {
       case 1:
         return Row(
@@ -360,20 +368,29 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
         );
 
       case 2:
+        final oneday = widget.date.yyyymmdd;
+
+        final beforeDate =
+            DateTime(oneday.split('-')[0].toInt(), oneday.split('-')[1].toInt(), oneday.split('-')[2].toInt() - 1);
+
+        final onedayBankTotal = (bankPriceTotalPadMap[oneday] != null) ? bankPriceTotalPadMap[oneday] : 0;
+        final beforeBankTotal =
+            (bankPriceTotalPadMap[beforeDate.yyyymmdd] != null) ? bankPriceTotalPadMap[beforeDate.yyyymmdd] : 0;
+
         return Row(
           children: [
             const Text('使用詳細登録'),
             const SizedBox(width: 10),
             GestureDetector(
               onTap: () async {
-                // await MoneyDialog(
-                //   context: _context,
-                //   widget: SpendTimePlaceInputAlert(
-                //     date: date,
-                //     spend: _totalMoneyBeforeDate - _totalMoney,
-                //     spendTimePlaceList: spendTimePlaceList.value,
-                //   ),
-                // );
+                await MoneyDialog(
+                  context: context,
+                  widget: SpendTimePlaceInputAlert(
+                    date: widget.date,
+                    spend: (beforeDateTotal + beforeBankTotal!) - (onedayDateTotal + onedayBankTotal!),
+                    isar: widget.isar,
+                  ),
+                );
               },
               child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
             ),
