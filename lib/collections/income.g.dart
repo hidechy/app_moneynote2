@@ -42,7 +42,7 @@ const IncomeSchema = CollectionSchema(
     r'date': IndexSchema(
       id: -7552997827385218417,
       name: r'date',
-      unique: true,
+      unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
@@ -125,60 +125,6 @@ List<IsarLinkBase<dynamic>> _incomeGetLinks(Income object) {
 
 void _incomeAttach(IsarCollection<dynamic> col, Id id, Income object) {
   object.id = id;
-}
-
-extension IncomeByIndex on IsarCollection<Income> {
-  Future<Income?> getByDate(String date) {
-    return getByIndex(r'date', [date]);
-  }
-
-  Income? getByDateSync(String date) {
-    return getByIndexSync(r'date', [date]);
-  }
-
-  Future<bool> deleteByDate(String date) {
-    return deleteByIndex(r'date', [date]);
-  }
-
-  bool deleteByDateSync(String date) {
-    return deleteByIndexSync(r'date', [date]);
-  }
-
-  Future<List<Income?>> getAllByDate(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return getAllByIndex(r'date', values);
-  }
-
-  List<Income?> getAllByDateSync(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'date', values);
-  }
-
-  Future<int> deleteAllByDate(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'date', values);
-  }
-
-  int deleteAllByDateSync(List<String> dateValues) {
-    final values = dateValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'date', values);
-  }
-
-  Future<Id> putByDate(Income object) {
-    return putByIndex(r'date', object);
-  }
-
-  Id putByDateSync(Income object, {bool saveLinks = true}) {
-    return putByIndexSync(r'date', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByDate(List<Income> objects) {
-    return putAllByIndex(r'date', objects);
-  }
-
-  List<Id> putAllByDateSync(List<Income> objects, {bool saveLinks = true}) {
-    return putAllByIndexSync(r'date', objects, saveLinks: saveLinks);
-  }
 }
 
 extension IncomeQueryWhereSort on QueryBuilder<Income, Income, QWhere> {

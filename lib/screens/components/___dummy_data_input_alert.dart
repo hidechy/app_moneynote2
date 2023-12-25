@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/collections/bank_price.dart';
-import 'package:money_note/collections/emoney_name.dart';
 
 import '../../collections/bank_name.dart';
-
+import '../../collections/bank_price.dart';
+import '../../collections/emoney_name.dart';
+import '../../collections/money.dart';
 import '../../extensions/extensions.dart';
 
 class DummyDataInputAlert extends StatelessWidget {
@@ -278,6 +278,70 @@ class DummyDataInputAlert extends StatelessWidget {
                   },
                   child: const Text('emoney-5'),
                 ),
+                Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    final date1 = DateTime.now();
+
+                    _inputMoney(
+                      money: Money()
+                        ..date = date1.yyyymmdd
+                        ..yen_10000 = 7
+                        ..yen_5000 = 7
+                        ..yen_2000 = 7
+                        ..yen_1000 = 7
+                        ..yen_500 = 7
+                        ..yen_100 = 7
+                        ..yen_50 = 7
+                        ..yen_10 = 7
+                        ..yen_5 = 7
+                        ..yen_1 = 7,
+                    );
+                  },
+                  child: const Text('money-1'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date2 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+
+                    _inputMoney(
+                      money: Money()
+                        ..date = date2.yyyymmdd
+                        ..yen_10000 = 8
+                        ..yen_5000 = 8
+                        ..yen_2000 = 8
+                        ..yen_1000 = 8
+                        ..yen_500 = 8
+                        ..yen_100 = 8
+                        ..yen_50 = 8
+                        ..yen_10 = 8
+                        ..yen_5 = 8
+                        ..yen_1 = 8,
+                    );
+                  },
+                  child: const Text('money-2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date3 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 2);
+
+                    _inputMoney(
+                      money: Money()
+                        ..date = date3.yyyymmdd
+                        ..yen_10000 = 9
+                        ..yen_5000 = 9
+                        ..yen_2000 = 9
+                        ..yen_1000 = 9
+                        ..yen_500 = 9
+                        ..yen_100 = 9
+                        ..yen_50 = 9
+                        ..yen_10 = 9
+                        ..yen_5 = 9
+                        ..yen_1 = 9,
+                    );
+                  },
+                  child: const Text('money-3'),
+                ),
               ],
             ),
           ),
@@ -287,17 +351,19 @@ class DummyDataInputAlert extends StatelessWidget {
   }
 
   ///
-  Future<void> _inputBankName({required BankName bankName}) async {
-    await isar.writeTxn(() async => isar.bankNames.put(bankName));
-  }
+  Future<void> _inputBankName({required BankName bankName}) async =>
+      await isar.writeTxn(() async => isar.bankNames.put(bankName));
 
   ///
-  Future<void> _inputEmoneyName({required EmoneyName emoneyName}) async {
-    await isar.writeTxn(() async => isar.emoneyNames.put(emoneyName));
-  }
+  Future<void> _inputEmoneyName({required EmoneyName emoneyName}) async =>
+      await isar.writeTxn(() async => isar.emoneyNames.put(emoneyName));
 
   ///
-  Future<void> _inputBankPrice({required BankPrice bankPrice}) async {
-    await isar.writeTxn(() async => isar.bankPrices.put(bankPrice));
+  Future<void> _inputBankPrice({required BankPrice bankPrice}) async =>
+      await isar.writeTxn(() async => isar.bankPrices.put(bankPrice));
+
+  ///
+  Future<void> _inputMoney({required Money money}) async {
+    await isar.writeTxn(() async => isar.moneys.put(money));
   }
 }

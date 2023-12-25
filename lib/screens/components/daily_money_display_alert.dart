@@ -59,6 +59,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 Text(widget.date.yyyymmdd),
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
 
+                _displaySingleMoney(),
+                const SizedBox(height: 20),
+
                 /////==================================///// BankNames
 
                 Container(
@@ -138,6 +141,37 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     );
   }
 
+  ///
+  Widget _displaySingleMoney() {
+    return Column(
+      children: [
+        _displayMoneyParts(key: '10000', value: 0),
+        _displayMoneyParts(key: '5000', value: 0),
+        _displayMoneyParts(key: '2000', value: 0),
+        _displayMoneyParts(key: '1000', value: 0),
+        _displayMoneyParts(key: '500', value: 0),
+        _displayMoneyParts(key: '100', value: 0),
+        _displayMoneyParts(key: '50', value: 0),
+        _displayMoneyParts(key: '10', value: 0),
+        _displayMoneyParts(key: '5', value: 0),
+        _displayMoneyParts(key: '1', value: 0),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  ///
+  Widget _displayMoneyParts({required String key, required int value}) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [Text(key), Text(value.toString().toCurrency())],
+      ),
+    );
+  }
+
   //=======================================================// BankNames // s
 
   ///
@@ -167,7 +201,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               Row(
                 children: [
                   Text(
-                    getListPrice(depositType: bankNameList![i].depositType, id: bankNameList![i].id)
+                    _getListPrice(depositType: bankNameList![i].depositType, id: bankNameList![i].id)
                         .toString()
                         .toCurrency(),
                   ),
@@ -228,7 +262,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               Row(
                 children: [
                   Text(
-                    getListPrice(depositType: emoneyNameList![i].depositType, id: emoneyNameList![i].id)
+                    _getListPrice(depositType: emoneyNameList![i].depositType, id: emoneyNameList![i].id)
                         .toString()
                         .toCurrency(),
                   ),
@@ -282,7 +316,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   }
 
   ///
-  int getListPrice({required String depositType, required int id}) {
+  int _getListPrice({required String depositType, required int id}) {
     var listPrice = 0;
     if (bankPricePadMap['$depositType-$id'] != null) {
       final bankPriceMap = bankPricePadMap['$depositType-$id'];

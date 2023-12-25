@@ -6,7 +6,7 @@ part 'income.g.dart';
 class Income {
   Id id = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index()
   late String date;
 
   late String sourceName;

@@ -6,6 +6,7 @@ part 'bank_price.g.dart';
 class BankPrice {
   Id id = Isar.autoIncrement;
 
+  @Index()
   late String date;
 
   late String depositType;
