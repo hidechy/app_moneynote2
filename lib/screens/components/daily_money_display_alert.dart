@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/screens/components/spend_time_place_input_alert.dart';
-import 'package:money_note/utilities/utilities.dart';
 
 import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
 import '../../collections/emoney_name.dart';
 import '../../collections/money.dart';
+import '../../collections/spend_time_place.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
 import '../../state/app_params/app_params_notifier.dart';
 import '../../utilities/functions.dart';
+import '../../utilities/utilities.dart';
 import 'bank_price_input_alert.dart';
 import 'money_input_alert.dart';
 import 'parts/bank_emoney_blank_message.dart';
 import 'parts/money_dialog.dart';
+import 'spend_time_place_input_alert.dart';
 
 class DailyMoneyDisplayAlert extends ConsumerStatefulWidget {
   const DailyMoneyDisplayAlert({super.key, required this.date, required this.isar});
@@ -36,6 +37,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   List<BankPrice>? bankPriceList = [];
   List<Money>? moneyList = [];
   List<Money>? beforeMoneyList = [];
+  List<SpendTimePlace>? spendTimePlaceList = [];
 
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
@@ -44,19 +46,21 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   int beforeDateTotal = 0;
 
   ///
-  void init() {
+  void _init() {
+    _makeBankNameList();
+    _makeEmoneyNameList();
+
     _makeBankPriceList();
     _makeMoneyList();
     _makeBeforeMoneyList();
+
+    _makeSpendTimePlaceList();
   }
 
   ///
   @override
   Widget build(BuildContext context) {
-    _makeBankNameList();
-    _makeEmoneyNameList();
-
-    Future(init);
+    Future(_init);
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -78,7 +82,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 Text(widget.date.yyyymmdd),
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
                 const SizedBox(height: 20),
-                getTopInfoPlate(),
+                _getTopInfoPlate(),
 
                 _dispMenuButtons(),
 
@@ -97,7 +101,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                       stops: const [0.7, 1],
                     ),
                   ),
-                  child: const Text('金融機関名', overflow: TextOverflow.ellipsis),
+                  child: const Text('BANK', overflow: TextOverflow.ellipsis),
                 ),
 
                 if (bankNameList!.isEmpty) ...[
@@ -132,7 +136,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                       stops: const [0.7, 1],
                     ),
                   ),
-                  child: const Text('電子マネー名', overflow: TextOverflow.ellipsis),
+                  child: const Text('E-MONEY', overflow: TextOverflow.ellipsis),
                 ),
 
                 if (emoneyNameList!.isEmpty) ...[
@@ -156,6 +160,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
                 /////==================================///// EmoneyNames
 
+                _displaySpendTimePlaceList(),
+
                 const SizedBox(height: 20),
               ],
             ),
@@ -166,7 +172,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   }
 
   ///
-  Widget getTopInfoPlate() {
+  Widget _getTopInfoPlate() {
     final oneday = widget.date.yyyymmdd;
 
     final beforeDate =
@@ -547,17 +553,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
     final getBankPrices = await bankPricesCollection.where().findAll();
 
-    if (mounted) {
-      setState(() {
-        bankPriceList = getBankPrices;
+    setState(() {
+      bankPriceList = getBankPrices;
 
-        if (bankPriceList != null) {
-          final bankPriceMap = makeBankPriceMap(bankPriceList: bankPriceList!);
-          bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
-          bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
-        }
-      });
-    }
+      if (bankPriceList != null) {
+        final bankPriceMap = makeBankPriceMap(bankPriceList: bankPriceList!);
+        bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
+        bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
+      }
+    });
   }
 
   ///
@@ -571,6 +575,54 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     }
 
     return listPrice;
+  }
+
+  ///
+  Future<void> _makeSpendTimePlaceList() async {
+    final spendTimePlacesCollection = widget.isar.spendTimePlaces;
+
+    final getSpendTimePlaces = await spendTimePlacesCollection.filter().dateEqualTo(widget.date.yyyymmdd).findAll();
+
+    if (mounted) {
+      setState(() => spendTimePlaceList = getSpendTimePlaces);
+    }
+  }
+
+  ///
+  Widget _displaySpendTimePlaceList() {
+    final list = <Widget>[];
+
+    if (spendTimePlaceList!.isNotEmpty) {
+      list.add(
+        Container(
+          width: context.screenSize.width,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+              stops: const [0.7, 1],
+            ),
+          ),
+          child: const Text('SPEND', overflow: TextOverflow.ellipsis),
+        ),
+      );
+
+      for (var i = 0; i < spendTimePlaceList!.length; i++) {
+        list.add(Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(spendTimePlaceList![i].spendType),
+              Text(spendTimePlaceList![i].price.toString().toCurrency()),
+            ],
+          ),
+        ));
+      }
+    }
+
+    return Column(mainAxisSize: MainAxisSize.min, children: list);
   }
 
 //=======================================================// BankPrices // s
