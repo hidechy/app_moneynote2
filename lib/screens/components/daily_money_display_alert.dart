@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/utilities/utilities.dart';
 
 import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
@@ -25,18 +26,25 @@ class DailyMoneyDisplayAlert extends ConsumerStatefulWidget {
 }
 
 class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert> {
+  final Utility _utility = Utility();
+
   List<BankName>? bankNameList = [];
   List<EmoneyName>? emoneyNameList = [];
   List<BankPrice>? bankPriceList = [];
   List<Money>? moneyList = [];
+  List<Money>? beforeMoneyList = [];
 
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
+
+  int dateTotal = 0;
+  int beforeDateTotal = 0;
 
   ///
   void init() {
     _makeBankPriceList();
     _makeMoneyList();
+    _makeBeforeMoneyList();
   }
 
   ///
@@ -66,7 +74,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 Container(width: context.screenSize.width),
                 Text(widget.date.yyyymmdd),
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
-
+                const SizedBox(height: 20),
+                getTopInfoPlate(),
+                const SizedBox(height: 20),
                 _displaySingleMoney(),
                 const SizedBox(height: 20),
 
@@ -150,8 +160,59 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   }
 
   ///
+  Widget getTopInfoPlate() {
+    return Container(
+      width: context.screenSize.width,
+      margin: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white.withOpacity(0.4)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Start'),
+                Text(beforeDateTotal.toString().toCurrency()),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('End'),
+                Text(dateTotal.toString().toCurrency()),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Spend'),
+                Text((beforeDateTotal - dateTotal).toString().toCurrency()),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///
   Widget _displaySingleMoney() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _displayMoneyParts(key: '10000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_10000 : 0),
         _displayMoneyParts(key: '5000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_5000 : 0),
@@ -188,6 +249,30 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
     setState(() {
       moneyList = getMoneys;
+
+      if (moneyList!.isNotEmpty) {
+        dateTotal = _utility.makeCurrencySum(money: moneyList![0]);
+      }
+    });
+  }
+
+  ///
+  Future<void> _makeBeforeMoneyList() async {
+    final moneyCollection = widget.isar.moneys;
+
+    final oneday = widget.date.yyyymmdd;
+
+    final beforeDate =
+        DateTime(oneday.split('-')[0].toInt(), oneday.split('-')[1].toInt(), oneday.split('-')[2].toInt() - 1);
+
+    final getBeforeDateMoneys = await moneyCollection.filter().dateEqualTo(beforeDate.yyyymmdd).findAll();
+
+    setState(() {
+      beforeMoneyList = getBeforeDateMoneys;
+
+      if (beforeMoneyList!.isNotEmpty) {
+        beforeDateTotal = _utility.makeCurrencySum(money: beforeMoneyList![0]);
+      }
     });
   }
 
