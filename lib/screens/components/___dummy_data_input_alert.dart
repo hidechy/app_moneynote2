@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/collections/spend_time_place.dart';
 
 import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
@@ -342,6 +343,142 @@ class DummyDataInputAlert extends StatelessWidget {
                   },
                   child: const Text('money-3'),
                 ),
+                Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    final date1 = DateTime.now();
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date1.yyyymmdd
+                        ..spendType = '食費'
+                        ..time = '08:00'
+                        ..place = 'aaa'
+                        ..price = 100,
+                    );
+                  },
+                  child: const Text('stp-1_1'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date1 = DateTime.now();
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date1.yyyymmdd
+                        ..spendType = '交通費'
+                        ..time = '09:00'
+                        ..place = 'bbb'
+                        ..price = 200,
+                    );
+                  },
+                  child: const Text('stp-1_2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date1 = DateTime.now();
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date1.yyyymmdd
+                        ..spendType = '支払い'
+                        ..time = '10:00'
+                        ..place = 'ccc'
+                        ..price = 300,
+                    );
+                  },
+                  child: const Text('stp-1_3'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date2 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date2.yyyymmdd
+                        ..spendType = '食費'
+                        ..time = '08:00'
+                        ..place = 'aaa'
+                        ..price = 100,
+                    );
+                  },
+                  child: const Text('stp-2_1'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date2 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date2.yyyymmdd
+                        ..spendType = '交通費'
+                        ..time = '09:00'
+                        ..place = 'bbb'
+                        ..price = 200,
+                    );
+                  },
+                  child: const Text('stp-2_2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date2 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 1);
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date2.yyyymmdd
+                        ..spendType = '支払い'
+                        ..time = '10:00'
+                        ..place = 'ccc'
+                        ..price = 300,
+                    );
+                  },
+                  child: const Text('stp-2_3'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date3 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 2);
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date3.yyyymmdd
+                        ..spendType = '食費'
+                        ..time = '08:00'
+                        ..place = 'aaa'
+                        ..price = 100,
+                    );
+                  },
+                  child: const Text('stp-3_1'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date3 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 2);
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date3.yyyymmdd
+                        ..spendType = '交通費'
+                        ..time = '09:00'
+                        ..place = 'bbb'
+                        ..price = 200,
+                    );
+                  },
+                  child: const Text('stp-3_2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final date3 = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day - 2);
+
+                    _inputSpendTimePlace(
+                      spendTimePlace: SpendTimePlace()
+                        ..date = date3.yyyymmdd
+                        ..spendType = '支払い'
+                        ..time = '10:00'
+                        ..place = 'ccc'
+                        ..price = 300,
+                    );
+                  },
+                  child: const Text('stp-3_3'),
+                ),
               ],
             ),
           ),
@@ -363,7 +500,9 @@ class DummyDataInputAlert extends StatelessWidget {
       isar.writeTxn(() async => isar.bankPrices.put(bankPrice));
 
   ///
-  Future<void> _inputMoney({required Money money}) async {
-    await isar.writeTxn(() async => isar.moneys.put(money));
-  }
+  Future<void> _inputMoney({required Money money}) async => isar.writeTxn(() async => isar.moneys.put(money));
+
+  ///
+  Future<void> _inputSpendTimePlace({required SpendTimePlace spendTimePlace}) async =>
+      isar.writeTxn(() async => isar.spendTimePlaces.put(spendTimePlace));
 }
