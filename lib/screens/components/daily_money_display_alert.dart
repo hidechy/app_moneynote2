@@ -83,14 +83,12 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   FutureBuilder<List<Widget>>(
                     future: _displayBankNames(),
                     builder: (context, snapshot) {
-                      return SizedBox(
-                        height: context.screenSize.height * 0.3,
-                        child: (snapshot.hasData)
-                            ? SingleChildScrollView(
-                                child: Column(children: snapshot.data!),
-                              )
-                            : null,
-                      );
+                      return (snapshot.hasData)
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [Column(children: snapshot.data!), const SizedBox(height: 20)],
+                            )
+                          : Container();
                     },
                   ),
 
@@ -120,14 +118,12 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   FutureBuilder<List<Widget>>(
                     future: _displayEmoneyNames(),
                     builder: (context, snapshot) {
-                      return SizedBox(
-                        height: context.screenSize.height * 0.3,
-                        child: (snapshot.hasData)
-                            ? SingleChildScrollView(
-                                child: Column(children: snapshot.data!),
-                              )
-                            : null,
-                      );
+                      return (snapshot.hasData)
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [Column(children: snapshot.data!), const SizedBox(height: 20)],
+                            )
+                          : Container();
                     },
                   ),
 
