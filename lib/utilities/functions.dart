@@ -1,4 +1,6 @@
 import '../collections/bank_price.dart';
+import '../collections/spend_time_place.dart';
+import '../enums/spend_type.dart';
 import '../extensions/extensions.dart';
 
 ///
@@ -127,4 +129,31 @@ flutter: {2023-12-17: 300000, 2023-12-18: 300000, 2023-12-19: 300000, 2023-12-20
   /////////////////////////////////
 
   return {'bankPriceDatePadMap': map3, 'bankPriceTotalPadMap': map4};
+}
+
+///
+Map<String, int> makeMonthlySpendItemSumMap({required List<SpendTimePlace> spendTimePlaceList}) {
+  final monthlySpendItemSumMap = <String, int>{};
+
+  final list = <String>[];
+  SpendType.values.forEach((element) => list.add(element.japanName!));
+
+  final map = <String, List<int>>{};
+
+  list.forEach((element) {
+    final filtered = spendTimePlaceList.where((element2) => element2.spendType == element).toList();
+    if (filtered.isNotEmpty) {
+      filtered
+        ..forEach((element3) => map[element3.spendType] = [])
+        ..forEach((element3) => map[element3.spendType]?.add(element3.price));
+    }
+  });
+
+  map.forEach((key, value) {
+    var sum = 0;
+    value.forEach((element) => sum += element);
+    monthlySpendItemSumMap[key] = sum;
+  });
+
+  return monthlySpendItemSumMap;
 }

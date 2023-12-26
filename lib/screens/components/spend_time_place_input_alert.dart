@@ -381,10 +381,12 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
     var errFlg = false;
 
+    ////////////////////////// 同数チェック
     var spendItemCount = 0;
     var spendTimeCount = 0;
     var spendPlaceCount = 0;
     var spendPriceCount = 0;
+    ////////////////////////// 同数チェック
 
     for (var i = 0; i < 10; i++) {
       //===============================================
@@ -406,11 +408,42 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
         );
       }
       //===============================================
+
+      ////////////////////////// 同数チェック
+      if (spendTimePlaceState.spendItem[i] != '項目名') {
+        spendItemCount++;
+      }
+
+      if (spendTimePlaceState.spendTime[i] != '時間') {
+        spendTimeCount++;
+      }
+
+      if (spendTimePlaceState.spendPlace[i] != '') {
+        spendPlaceCount++;
+      }
+
+      if (spendTimePlaceState.spendPrice[i] != 0) {
+        spendPriceCount++;
+      }
+      ////////////////////////// 同数チェック
     }
 
     if (list.isEmpty) {
       errFlg = true;
     }
+
+    ////////////////////////// 同数チェック
+    final countCheck = <int, String>{};
+    countCheck[spendItemCount] = '';
+    countCheck[spendTimeCount] = '';
+    countCheck[spendPlaceCount] = '';
+    countCheck[spendPriceCount] = '';
+
+    // 同数の場合、要素数は1になる
+    if (countCheck.length > 1) {
+      errFlg = true;
+    }
+    ////////////////////////// 同数チェック
 
     final diff = spendTimePlaceState.diff;
 

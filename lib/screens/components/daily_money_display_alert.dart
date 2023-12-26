@@ -574,36 +574,38 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
   ///
   Widget _displaySpendTimePlaceList() {
-    final list = <Widget>[];
+    final list = <Widget>[
+      Column(
+        children: [
+          Container(
+            width: context.screenSize.width,
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+                stops: const [0.7, 1],
+              ),
+            ),
+            child: const Text('SPEND', overflow: TextOverflow.ellipsis),
+          ),
+        ],
+      ),
+    ];
 
     if (spendTimePlaceList!.isNotEmpty) {
-      list.add(
-        Container(
-          width: context.screenSize.width,
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-              stops: const [0.7, 1],
-            ),
-          ),
-          child: const Text('SPEND', overflow: TextOverflow.ellipsis),
-        ),
-      );
-
-      for (var i = 0; i < spendTimePlaceList!.length; i++) {
+      makeMonthlySpendItemSumMap(spendTimePlaceList: spendTimePlaceList!).forEach((key, value) {
         list.add(Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(spendTimePlaceList![i].spendType),
-              Text(spendTimePlaceList![i].price.toString().toCurrency()),
+              Text(key),
+              Text(value.toString().toCurrency()),
             ],
           ),
         ));
-      }
+      });
     }
 
     return Column(mainAxisSize: MainAxisSize.min, children: list);
