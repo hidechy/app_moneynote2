@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 
+import '../collections/bank_price.dart';
+import '../collections/money.dart';
 import '../extensions/extensions.dart';
 import '../state/calendars/calendars_notifier.dart';
 import '../state/holidays/holidays_notifier.dart';
+import '../utilities/functions.dart';
 import '../utilities/utilities.dart';
 import 'components/___dummy_data_input_alert.dart';
 import 'components/daily_money_display_alert.dart';
@@ -15,12 +18,17 @@ import 'components/parts/menu_head_icon.dart';
 import 'components/parts/money_dialog.dart';
 
 // ignore: must_be_immutable
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   HomeScreen({super.key, this.baseYm, required this.isar});
 
   String? baseYm;
   final Isar isar;
 
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   DateTime _calendarMonthFirst = DateTime.now();
   final List<String> _youbiList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   List<String> _calendarDays = [];
@@ -31,19 +39,27 @@ class HomeScreen extends ConsumerWidget {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String moneyMinDate = '';
+  List<Money>? moneyList = [];
+  Map<String, int> monthDateSumMap = {};
 
-  late BuildContext _context;
-  late WidgetRef _ref;
+  List<BankPrice>? bankPriceList = [];
+
+  Map<String, Map<String, int>> bankPricePadMap = {};
+  Map<String, int> bankPriceTotalPadMap = {};
+
+  ///
+  void _init() {
+    _makeMoneyList();
+    _makeBankPriceList();
+  }
 
   ///
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    _context = context;
-    _ref = ref;
+  Widget build(BuildContext context) {
+    Future(_init);
 
-    if (baseYm != null) {
-      Future(() => ref.read(calendarProvider.notifier).setCalendarYearMonth(baseYm: baseYm));
+    if (widget.baseYm != null) {
+      Future(() => ref.read(calendarProvider.notifier).setCalendarYearMonth(baseYm: widget.baseYm));
     }
 
     final calendarState = ref.watch(calendarProvider);
@@ -108,7 +124,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: _context.screenSize.height * 0.3),
+                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.3),
                   child: _getCalendar(),
                 ),
               ],
@@ -132,7 +148,7 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 60),
               GestureDetector(
-                onTap: () async => MoneyDialog(context: _context, widget: DepositTabAlert(isar: isar)),
+                onTap: () async => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -152,7 +168,7 @@ class HomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 100),
               GestureDetector(
-                onTap: () async => MoneyDialog(context: _context, widget: DummyDataInputAlert(isar: isar)),
+                onTap: () async => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
@@ -172,13 +188,13 @@ class HomeScreen extends ConsumerWidget {
 
   ///
   Widget _getCalendar() {
-    final holidayState = _ref.watch(holidayProvider);
+    final holidayState = ref.watch(holidayProvider);
 
     if (holidayState.holidayMap.value != null) {
       _holidayMap = holidayState.holidayMap.value!;
     }
 
-    final calendarState = _ref.watch(calendarProvider);
+    final calendarState = ref.watch(calendarProvider);
 
     _calendarMonthFirst = DateTime.parse('${calendarState.baseYearMonth}-01 00:00:00');
 
@@ -214,18 +230,6 @@ class HomeScreen extends ConsumerWidget {
 
   ///
   Widget _getCalendarRow({required int week}) {
-    // final bankPriceTotalPadMap = _ref.watch(bankPriceProvider.select((value) => value.bankPriceTotalPadMap));
-    //
-    // final moneyMap = _ref.watch(moneyProvider.select((value) => value.moneyMap));
-    //
-    // final appParamState = _ref.watch(appParamProvider);
-    //
-    // final moneyList = _ref.watch(moneyProvider.select((value) => value.moneyList));
-    //
-    // _utility.getMoneyMinDate(ref: _ref).then((value) => moneyMinDate = value);
-    //
-    //
-
     final list = <Widget>[];
 
     for (var i = week * 7; i < ((week + 1) * 7); i++) {
@@ -237,83 +241,39 @@ class HomeScreen extends ConsumerWidget {
           ? ''
           : DateTime(_calendarMonthFirst.year, _calendarMonthFirst.month, _calendarDays[i].toInt()).youbiStr;
 
-      var diff = 0;
+      var dateDiff = 0;
+      var dateSum = '';
+      var inputFlag = '未入力';
       if (generateYmd != '') {
-        final genDate = DateTime(_calendarMonthFirst.year, _calendarMonthFirst.month, _calendarDays[i].toInt());
-        diff = genDate.difference(DateTime.now()).inSeconds;
-      }
+        final genDate = DateTime.parse('$generateYmd 00:00:00');
+        dateDiff = genDate.difference(DateTime.now()).inSeconds;
 
-      //
-      // var bankPrice = 0;
-      // if (bankPriceTotalPadMap.value != null) {
-      //   if (bankPriceTotalPadMap.value![generateYmd] != null) {
-      //     bankPrice = bankPriceTotalPadMap.value![generateYmd]!;
-      //   }
-      // }
-      //
-      // //-------------------------------------------
-      // var dateSum = 0;
-      // var inputFlag = const Text('');
-      // if (moneyMap.value != null) {
-      //   if (moneyMap.value![generateYmd] != null) {
-      //     dateSum = _utility.makeCurrencySum(money: moneyMap.value![generateYmd]);
-      //     inputFlag = const Text('入力済', style: TextStyle(color: Colors.grey));
-      //   } else {
-      //     inputFlag = const Text('未入力', style: TextStyle(color: Colors.yellowAccent));
-      //   }
-      // }
-      //
-      // if (diff > 0) {
-      //   inputFlag = const Text('未入力', style: TextStyle(color: Colors.transparent));
-      // }
-      //
-      // if (generateYmd != '' && moneyMinDate != '') {
-      //   if (DateTime.parse('$generateYmd 00:00:00').isBefore(DateTime.parse('$moneyMinDate 00:00:00'))) {
-      //     inputFlag = const Text('未入力', style: TextStyle(color: Colors.transparent));
-      //   }
-      // }
-      //
-      // if (moneyList.value != null) {
-      //   if (moneyList.value!.isEmpty) {
-      //     inputFlag = const Text('未入力', style: TextStyle(color: Colors.transparent));
-      //   }
-      // }
-      // //-------------------------------------------
-      //
-      //
-      //
-      //
+        if (monthDateSumMap[generateYmd] != null && bankPriceTotalPadMap[generateYmd] != null) {
+          dateSum = (monthDateSumMap[generateYmd]! + bankPriceTotalPadMap[generateYmd]!).toString().toCurrency();
+        }
+
+        if (monthDateSumMap[generateYmd] != null) {
+          inputFlag = '入力済';
+        }
+        if (dateDiff > 0){
+          inputFlag = '';
+        }
+      }
 
       list.add(
         Expanded(
           child: GestureDetector(
-            onTap: (_calendarDays[i] == '' || diff > 0)
+            onTap: (_calendarDays[i] == '' || dateDiff > 0)
                 ? null
                 : () async {
                     await MoneyDialog(
-                      context: _context,
+                      context: context,
                       widget: DailyMoneyDisplayAlert(
                         date: DateTime.parse('$generateYmd 00:00:00'),
-                        isar: isar,
+                        isar: widget.isar,
                       ),
                     );
                   },
-
-            // onTap: (_calendarDays[i] == '' || diff > 0)
-            //     ? null
-            //     : () async {
-            //   await _ref
-            //       .read(appParamProvider.notifier)
-            //       .setCalendarSelectedDate(date: DateTime.parse('$generateYmd 00:00:00'));
-            //
-            //   await _ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 0);
-            //
-            //   // ignore: use_build_context_synchronously
-            //   await MoneyDialog(
-            //     context: _context,
-            //     widget: DailyMoneyDisplayAlert(date: DateTime.parse('$generateYmd 00:00:00')),
-            //   );
-            // },
             child: Container(
               margin: const EdgeInsets.all(1),
               padding: const EdgeInsets.all(2),
@@ -321,34 +281,16 @@ class HomeScreen extends ConsumerWidget {
                 border: Border.all(
                   color: (_calendarDays[i] == '')
                       ? Colors.transparent
-                      : _utility.getYoubiColor(date: generateYmd, youbiStr: youbiStr, holidayMap: _holidayMap),
+                      : (generateYmd == DateTime.now().yyyymmdd)
+                          ? Colors.orangeAccent.withOpacity(0.4)
+                          : Colors.white.withOpacity(0.1),
                   width: 3,
                 ),
-
-                // border: Border.all(
-                //   color: (_calendarDays[i] == '')
-                //       ? Colors.transparent
-                //       : (generateYmd == DateTime.now().yyyymmdd)
-                //       ? Colors.orangeAccent.withOpacity(0.4)
-                //       : Colors.white.withOpacity(0.1),
-                //   width: 3,
-                // ),
-
                 color: (_calendarDays[i] == '')
                     ? Colors.transparent
-                    : (diff > 0)
+                    : (dateDiff > 0)
                         ? Colors.white.withOpacity(0.1)
                         : _utility.getYoubiColor(date: generateYmd, youbiStr: youbiStr, holidayMap: _holidayMap),
-
-                // color: (_calendarDays[i] == '')
-                //     ? Colors.transparent
-                //     : (diff > 0)
-                //     ? Colors.white.withOpacity(0.1)
-                //     : (appParamState.calendarSelectedDate != null &&
-                //     generateYmd == appParamState.calendarSelectedDate!.yyyymmdd)
-                //     ? Colors.yellowAccent.withOpacity(0.2)
-                //     : _utility.getYoubiColor(date: generateYmd, youbiStr: youbiStr, holidayMap: _holidayMap),
-                //
               ),
               child: (_calendarDays[i] == '')
                   ? const Text('')
@@ -356,20 +298,17 @@ class HomeScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: _context.screenSize.height / 30),
+                          constraints: BoxConstraints(minHeight: context.screenSize.height / 30),
                           child: Text(_calendarDays[i].padLeft(2, '0')),
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Container(),
-                        //     Text(((bankPrice + dateSum) == 0) ? '' : (bankPrice + dateSum).toString().toCurrency()),
-                        //   ],
-                        // ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [Container(), inputFlag],
-                        // )
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [Container(), Text(dateSum)],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [Container(), Text(inputFlag)],
+                        ),
                       ],
                     ),
             ),
@@ -382,22 +321,56 @@ class HomeScreen extends ConsumerWidget {
   }
 
   ///
+  Future<void> _makeMoneyList() async {
+    final moneyCollection = widget.isar.moneys;
+
+    final getMoneys = await moneyCollection.where().findAll();
+
+    setState(() {
+      moneyList = getMoneys;
+
+      if (moneyList!.isNotEmpty) {
+        moneyList!.forEach((element) {
+          monthDateSumMap[element.date] = _utility.makeCurrencySum(money: element);
+        });
+      }
+    });
+  }
+
+  ///
+  Future<void> _makeBankPriceList() async {
+    final bankPricesCollection = widget.isar.bankPrices;
+
+    final getBankPrices = await bankPricesCollection.where().findAll();
+
+    setState(() {
+      bankPriceList = getBankPrices;
+
+      if (bankPriceList != null) {
+        final bankPriceMap = makeBankPriceMap(bankPriceList: bankPriceList!);
+        bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
+        bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
+      }
+    });
+  }
+
+  ///
   void _goPrevMonth() {
-    final calendarState = _ref.watch(calendarProvider);
+    final calendarState = ref.watch(calendarProvider);
 
     Navigator.pushReplacement(
-      _context,
-      MaterialPageRoute(builder: (context) => HomeScreen(isar: isar, baseYm: calendarState.prevYearMonth)),
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen(isar: widget.isar, baseYm: calendarState.prevYearMonth)),
     );
   }
 
   ///
   void _goNextMonth() {
-    final calendarState = _ref.watch(calendarProvider);
+    final calendarState = ref.watch(calendarProvider);
 
     Navigator.pushReplacement(
-      _context,
-      MaterialPageRoute(builder: (context) => HomeScreen(isar: isar, baseYm: calendarState.nextYearMonth)),
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen(isar: widget.isar, baseYm: calendarState.nextYearMonth)),
     );
   }
 }
