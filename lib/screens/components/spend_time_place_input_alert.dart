@@ -381,7 +381,13 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
     var errFlg = false;
 
+    var spendItemCount = 0;
+    var spendTimeCount = 0;
+    var spendPlaceCount = 0;
+    var spendPriceCount = 0;
+
     for (var i = 0; i < 10; i++) {
+      //===============================================
       if (spendTimePlaceState.spendItem[i] != '項目名' &&
           spendTimePlaceState.spendTime[i] != '時間' &&
           spendTimePlaceState.spendPlace[i] != '' &&
@@ -399,6 +405,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
             ..place = spendTimePlaceState.spendPlace[i],
         );
       }
+      //===============================================
     }
 
     if (list.isEmpty) {
