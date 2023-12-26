@@ -83,85 +83,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
                 const SizedBox(height: 20),
                 _getTopInfoPlate(),
-
                 _dispMenuButtons(),
-
                 const SizedBox(height: 20),
                 _displaySingleMoney(),
                 const SizedBox(height: 20),
-
-                /////==================================///// BankNames
-
-                Container(
-                  width: context.screenSize.width,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-                      stops: const [0.7, 1],
-                    ),
-                  ),
-                  child: const Text('BANK', overflow: TextOverflow.ellipsis),
-                ),
-
-                if (bankNameList!.isEmpty) ...[
-                  const SizedBox(height: 10),
-                  BankEmoneyBlankMessage(deposit: '金融機関', isar: widget.isar),
-                  const SizedBox(height: 30),
-                ],
-
-                if (bankNameList!.isNotEmpty)
-                  FutureBuilder<List<Widget>>(
-                    future: _displayBankNames(),
-                    builder: (context, snapshot) {
-                      return (snapshot.hasData)
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [Column(children: snapshot.data!), const SizedBox(height: 20)],
-                            )
-                          : Container();
-                    },
-                  ),
-
-                /////==================================///// BankNames
-
-                /////==================================///// EmoneyNames
-
-                Container(
-                  width: context.screenSize.width,
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-                      stops: const [0.7, 1],
-                    ),
-                  ),
-                  child: const Text('E-MONEY', overflow: TextOverflow.ellipsis),
-                ),
-
-                if (emoneyNameList!.isEmpty) ...[
-                  const SizedBox(height: 10),
-                  BankEmoneyBlankMessage(deposit: '電子マネー', index: 1, isar: widget.isar),
-                  const SizedBox(height: 30),
-                ],
-
-                if (emoneyNameList!.isNotEmpty)
-                  FutureBuilder<List<Widget>>(
-                    future: _displayEmoneyNames(),
-                    builder: (context, snapshot) {
-                      return (snapshot.hasData)
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [Column(children: snapshot.data!), const SizedBox(height: 20)],
-                            )
-                          : Container();
-                    },
-                  ),
-
-                /////==================================///// EmoneyNames
-
+                _displayBankNames(),
+                const SizedBox(height: 20),
+                _displayEmoneyNames(),
+                const SizedBox(height: 20),
                 _displaySpendTimePlaceList(),
-
                 const SizedBox(height: 20),
               ],
             ),
@@ -437,49 +367,75 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   }
 
   ///
-  Future<List<Widget>> _displayBankNames() async {
-    final list = <Widget>[];
-
-    for (var i = 0; i < bankNameList!.length; i++) {
-      list.add(
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(bankNameList![i].bankName),
-              Row(
-                children: [
-                  Text(
-                    _getListPrice(depositType: bankNameList![i].depositType, id: bankNameList![i].id)
-                        .toString()
-                        .toCurrency(),
-                  ),
-                  const SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: () {
-                      MoneyDialog(
-                        context: context,
-                        widget: BankPriceInputAlert(
-                          date: widget.date,
-                          isar: widget.isar,
-                          depositType: DepositType.bank,
-                          bankName: bankNameList![i],
-                        ),
-                      );
-                    },
-                    child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
-                  ),
-                ],
-              ),
-            ],
+  Widget _displayBankNames() {
+    final list = <Widget>[
+      Container(
+        width: context.screenSize.width,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+            stops: const [0.7, 1],
           ),
         ),
-      );
+        child: const Text('BANK', overflow: TextOverflow.ellipsis),
+      )
+    ];
+
+    if (bankNameList!.isEmpty) {
+      list.add(Column(
+        children: [
+          const SizedBox(height: 10),
+          BankEmoneyBlankMessage(deposit: '金融機関', isar: widget.isar),
+          const SizedBox(height: 30),
+        ],
+      ));
+    } else {
+      final list2 = <Widget>[];
+
+      for (var i = 0; i < bankNameList!.length; i++) {
+        list2.add(
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(bankNameList![i].bankName),
+                Row(
+                  children: [
+                    Text(
+                      _getListPrice(depositType: bankNameList![i].depositType, id: bankNameList![i].id)
+                          .toString()
+                          .toCurrency(),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        MoneyDialog(
+                          context: context,
+                          widget: BankPriceInputAlert(
+                            date: widget.date,
+                            isar: widget.isar,
+                            depositType: DepositType.bank,
+                            bankName: bankNameList![i],
+                          ),
+                        );
+                      },
+                      child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      list.add(Column(children: list2));
     }
 
-    return list;
+    return Column(children: list);
   }
 
 //=======================================================// BankNames // e
@@ -498,49 +454,75 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   }
 
   ///
-  Future<List<Widget>> _displayEmoneyNames() async {
-    final list = <Widget>[];
-
-    for (var i = 0; i < emoneyNameList!.length; i++) {
-      list.add(
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(emoneyNameList![i].emoneyName),
-              Row(
-                children: [
-                  Text(
-                    _getListPrice(depositType: emoneyNameList![i].depositType, id: emoneyNameList![i].id)
-                        .toString()
-                        .toCurrency(),
-                  ),
-                  const SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: () {
-                      MoneyDialog(
-                        context: context,
-                        widget: BankPriceInputAlert(
-                          date: widget.date,
-                          isar: widget.isar,
-                          depositType: DepositType.emoney,
-                          emoneyName: emoneyNameList![i],
-                        ),
-                      );
-                    },
-                    child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
-                  ),
-                ],
-              ),
-            ],
+  Widget _displayEmoneyNames() {
+    final list = <Widget>[
+      Container(
+        width: context.screenSize.width,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
+            stops: const [0.7, 1],
           ),
         ),
-      );
+        child: const Text('E-MONEY', overflow: TextOverflow.ellipsis),
+      )
+    ];
+
+    if (emoneyNameList!.isEmpty) {
+      list.add(Column(
+        children: [
+          const SizedBox(height: 10),
+          BankEmoneyBlankMessage(deposit: '電子マネー', index: 1, isar: widget.isar),
+          const SizedBox(height: 30),
+        ],
+      ));
+    } else {
+      final list2 = <Widget>[];
+
+      for (var i = 0; i < emoneyNameList!.length; i++) {
+        list2.add(
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(emoneyNameList![i].emoneyName),
+                Row(
+                  children: [
+                    Text(
+                      _getListPrice(depositType: emoneyNameList![i].depositType, id: emoneyNameList![i].id)
+                          .toString()
+                          .toCurrency(),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        MoneyDialog(
+                          context: context,
+                          widget: BankPriceInputAlert(
+                            date: widget.date,
+                            isar: widget.isar,
+                            depositType: DepositType.emoney,
+                            emoneyName: emoneyNameList![i],
+                          ),
+                        );
+                      },
+                      child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      list.add(Column(children: list2));
     }
 
-    return list;
+    return Column(children: list);
   }
 
 //=======================================================// EmoneyNames // e
