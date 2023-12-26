@@ -105,7 +105,6 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
                         Expanded(
                           flex: 2,
                           child: TextField(
-                            keyboardType: TextInputType.number,
                             controller: _bankNameEditingController,
                             decoration: const InputDecoration(labelText: '金融機関名'),
                             style: const TextStyle(fontSize: 13, color: Colors.white),
@@ -129,7 +128,6 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
                         Expanded(
                           flex: 2,
                           child: TextField(
-                            keyboardType: TextInputType.number,
                             controller: _branchNameEditingController,
                             decoration: const InputDecoration(labelText: '支店名'),
                             style: const TextStyle(fontSize: 13, color: Colors.white),

@@ -225,7 +225,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 5),
                   Expanded(
                     child: GestureDetector(
                       onTap: () => _showTP(pos: i),
@@ -238,7 +238,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
                               : const Color(0xFF90ee90).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(time),
+                        child: Text(time, style: TextStyle(fontSize: 10)),
                       ),
                     ),
                   ),

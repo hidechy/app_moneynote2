@@ -102,7 +102,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
                       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                     ),
                     TextField(
-                      keyboardType: TextInputType.number,
                       controller: _incomeSourceEditingController,
                       decoration: const InputDecoration(labelText: '支払い元'),
                       style: const TextStyle(fontSize: 13, color: Colors.white),
