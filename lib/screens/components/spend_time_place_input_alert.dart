@@ -238,7 +238,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
                               : const Color(0xFF90ee90).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(time, style: TextStyle(fontSize: 10)),
+                        child: Text(time, style: const TextStyle(fontSize: 10)),
                       ),
                     ),
                   ),
