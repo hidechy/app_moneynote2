@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../collections/spend_time_place.dart';
 import '../../extensions/extensions.dart';
-
 import 'spend_time_places_response_state.dart';
 
 final spendTimePlaceProvider =
@@ -175,34 +175,43 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
     );
   }
 
-// ///
-// Future<void> setUpdateSpendTimePlace({required List<SpendTimePlace> updateSpendTimePlace}) async {
-//   final spendItem = <String>[...state.spendItem];
-//   final spendTime = <String>[...state.spendTime];
-//   final spendPrice = <int>[...state.spendPrice];
-//   final spendPlace = <String>[...state.spendPlace];
-//   final minusChecks = <bool>[...state.minusCheck];
-//
-//   for (var i = 0; i < updateSpendTimePlace.length; i++) {
-//     spendItem[i] = updateSpendTimePlace[i].spendType;
-//     spendTime[i] = updateSpendTimePlace[i].time;
-//     spendPlace[i] = updateSpendTimePlace[i].place;
-//
-//     if (updateSpendTimePlace[i].price < 0) {
-//       spendPrice[i] = updateSpendTimePlace[i].price * -1;
-//       minusChecks[i] = true;
-//     } else {
-//       spendPrice[i] = updateSpendTimePlace[i].price;
-//       minusChecks[i] = false;
-//     }
-//   }
-//
-//   state = state.copyWith(
-//     spendTime: spendTime,
-//     spendPlace: spendPlace,
-//     spendItem: spendItem,
-//     spendPrice: spendPrice,
-//     minusCheck: minusChecks,
-//   );
-// }
+  ///
+  Future<void> setUpdateSpendTimePlace(
+      {required List<SpendTimePlace> updateSpendTimePlace, required int baseDiff}) async {
+    try {
+      final spendItem = <String>[...state.spendItem];
+      final spendTime = <String>[...state.spendTime];
+      final spendPrice = <int>[...state.spendPrice];
+      final spendPlace = <String>[...state.spendPlace];
+      final minusChecks = <bool>[...state.minusCheck];
+
+      var diff = 0;
+      for (var i = 0; i < updateSpendTimePlace.length; i++) {
+        spendItem[i] = updateSpendTimePlace[i].spendType;
+        spendTime[i] = updateSpendTimePlace[i].time;
+        spendPlace[i] = updateSpendTimePlace[i].place;
+
+        if (updateSpendTimePlace[i].price < 0) {
+          spendPrice[i] = updateSpendTimePlace[i].price * -1;
+          diff += updateSpendTimePlace[i].price * -1;
+          minusChecks[i] = true;
+        } else {
+          spendPrice[i] = updateSpendTimePlace[i].price;
+          diff += updateSpendTimePlace[i].price;
+          minusChecks[i] = false;
+        }
+      }
+
+      state = state.copyWith(
+        spendTime: spendTime,
+        spendPlace: spendPlace,
+        spendItem: spendItem,
+        spendPrice: spendPrice,
+        minusCheck: minusChecks,
+        baseDiff: baseDiff.toString(),
+        diff: baseDiff - diff,
+      );
+      // ignore: avoid_catches_without_on_clauses, empty_catches
+    } catch (e) {}
+  }
 }
