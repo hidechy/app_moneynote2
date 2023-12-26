@@ -108,45 +108,6 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
                         ),
                 ],
               ),
-
-              ///////////////////////////////////////////
-
-              ElevatedButton(
-                onPressed: () {
-                  _emoneyNameEditingController.text = 'Suica1';
-                },
-                child: const Text('Suica1'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _emoneyNameEditingController.text = 'PayPay';
-                },
-                child: const Text('PayPay'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _emoneyNameEditingController.text = 'PASMO';
-                },
-                child: const Text('PASMO'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _emoneyNameEditingController.text = 'Suica2';
-                },
-                child: const Text('Suica2'),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _emoneyNameEditingController.text = 'メルカリ';
-                },
-                child: const Text('メルカリ'),
-              ),
-
-              ///////////////////////////////////////////
             ],
           ),
         ),
@@ -169,7 +130,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
       ..emoneyName = _emoneyNameEditingController.text
       ..depositType = widget.depositType.japanName;
 
-    await widget.isar.writeTxn(() async =>  widget.isar.emoneyNames.put(emoneyName));
+    await widget.isar.writeTxn(() async => widget.isar.emoneyNames.put(emoneyName));
 
     _emoneyNameEditingController.clear();
 
@@ -212,7 +173,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
   Future<void> _deleteEmoneyName() async {
     final emoneyNameCollection = widget.isar.emoneyNames;
 
-    await widget.isar.writeTxn(() async =>  emoneyNameCollection.delete(widget.emoneyName!.id));
+    await widget.isar.writeTxn(() async => emoneyNameCollection.delete(widget.emoneyName!.id));
 
     if (mounted) {
       Navigator.pop(_context);

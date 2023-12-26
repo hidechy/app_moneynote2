@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/collections/spend_time_place.dart';
 
 import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
 import '../../collections/emoney_name.dart';
+import '../../collections/income.dart';
 import '../../collections/money.dart';
+import '../../collections/spend_time_place.dart';
 import '../../extensions/extensions.dart';
 
 class DummyDataInputAlert extends StatelessWidget {
@@ -230,6 +231,49 @@ class DummyDataInputAlert extends StatelessWidget {
         ..price = 300,
     ];
 
+    final incomeList = <Income>[
+      Income()
+        ..date = '2021-09-25'
+        ..sourceName = 'aaaaa'
+        ..price = 100000,
+      Income()
+        ..date = '2021-10-25'
+        ..sourceName = 'bbbbb'
+        ..price = 200000,
+      Income()
+        ..date = '2021-11-25'
+        ..sourceName = 'ccccc'
+        ..price = 300000,
+      Income()
+        ..date = '2022-09-25'
+        ..sourceName = 'aaaaa'
+        ..price = 100000,
+      Income()
+        ..date = '2022-10-25'
+        ..sourceName = 'bbbbb'
+        ..price = 200000,
+      Income()
+        ..date = '2022-11-25'
+        ..sourceName = 'ccccc'
+        ..price = 300000,
+      Income()
+        ..date = '2023-09-25'
+        ..sourceName = 'aaaaa'
+        ..price = 100000,
+      Income()
+        ..date = '2023-10-25'
+        ..sourceName = 'bbbbb'
+        ..price = 200000,
+      Income()
+        ..date = '2023-11-25'
+        ..sourceName = 'ccccc'
+        ..price = 300000,
+      Income()
+        ..date = '2023-12-25'
+        ..sourceName = 'ddddd'
+        ..price = 400000,
+    ];
+
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -280,6 +324,13 @@ class DummyDataInputAlert extends StatelessWidget {
                   },
                   child: const Text('SpendTimePlace Multi'),
                 ),
+                Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    _inputIncomeMulti(incomeList: incomeList);
+                  },
+                  child: const Text('Income Multi'),
+                ),
               ],
             ),
           ),
@@ -329,6 +380,15 @@ class DummyDataInputAlert extends StatelessWidget {
     await isar.writeTxn(() async {
       for (final spendTimePlace in spendTimePlaceList) {
         await isar.spendTimePlaces.put(spendTimePlace);
+      }
+    });
+  }
+
+  ///
+  Future<void> _inputIncomeMulti({required List<Income> incomeList}) async {
+    await isar.writeTxn(() async {
+      for (final income in incomeList) {
+        await isar.incomes.put(income);
       }
     });
   }

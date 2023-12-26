@@ -54,7 +54,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
       )..repeat(reverse: true);
 
       _makeTecs();
-    // ignore: avoid_catches_without_on_clauses, empty_catches
+      // ignore: avoid_catches_without_on_clauses, empty_catches
     } catch (e) {}
   }
 
@@ -431,7 +431,8 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
     await ref.read(spendTimePlaceProvider.notifier).clearInputValue();
 
-    // ignore: use_build_context_synchronously
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 }

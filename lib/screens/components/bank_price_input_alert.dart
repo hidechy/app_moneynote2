@@ -3,17 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 
-// import 'package:money_note/models/emoney_name.dart';
-
 import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
 import '../../collections/emoney_name.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
-
-// import '../../models/bank_name.dart';
-// import '../../models/bank_price.dart';
-// import '../../repository/bank_price_repository.dart';
 import 'parts/error_dialog.dart';
 
 // ignore: must_be_immutable
@@ -25,8 +19,6 @@ class BankPriceInputAlert extends ConsumerStatefulWidget {
     required this.depositType,
     this.bankName,
     this.emoneyName,
-    // this.bankPriceList,
-//    required this.bankPrice,
   });
 
   final DateTime date;
@@ -35,11 +27,6 @@ class BankPriceInputAlert extends ConsumerStatefulWidget {
 
   BankName? bankName;
   EmoneyName? emoneyName;
-
-  //
-  // List<BankPrice>? bankPriceList;
-
-//  int bankPrice;
 
   @override
   ConsumerState<BankPriceInputAlert> createState() => _BankPriceInputAlertState();
@@ -51,16 +38,6 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
   final TextEditingController _bankPriceEditingController = TextEditingController();
 
   late BuildContext _context;
-
-  ///
-  @override
-  void initState() {
-    super.initState();
-
-    // if (widget.bankPrice != 0) {
-    //   _bankPriceEditingController.text = widget.bankPrice.toString();
-    // }
-  }
 
   ///
   @override

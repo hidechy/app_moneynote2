@@ -14,6 +14,7 @@ import '../../state/app_params/app_params_notifier.dart';
 import '../../utilities/functions.dart';
 import '../../utilities/utilities.dart';
 import 'bank_price_input_alert.dart';
+import 'income_input_alert.dart';
 import 'money_input_alert.dart';
 import 'parts/bank_emoney_blank_message.dart';
 import 'parts/money_dialog.dart';
@@ -343,7 +344,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               onTap: () {
                 // _ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
                 //
-                // MoneyDialog(context: _context, widget: IncomeListAlert(date: date));
+                MoneyDialog(context: context, widget: IncomeInputAlert(date: widget.date, isar: widget.isar));
               },
               child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
             ),
