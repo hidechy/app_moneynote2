@@ -255,7 +255,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (monthDateSumMap[generateYmd] != null) {
           inputFlag = '入力済';
         }
-        if (dateDiff > 0){
+        if (dateDiff > 0 || bankPriceTotalPadMap[generateYmd] == null) {
           inputFlag = '';
         }
       }

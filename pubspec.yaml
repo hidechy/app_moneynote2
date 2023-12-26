@@ -24,6 +24,8 @@ dependencies:
   hooks_riverpod: ^2.4.9
   json_annotation: ^4.8.1
   google_fonts: ^6.1.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.8
 
 dev_dependencies:
   flutter_test:
