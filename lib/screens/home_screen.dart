@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/collections/spend_time_place.dart';
 
 import '../collections/bank_price.dart';
 import '../collections/money.dart';
@@ -46,6 +47,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   List<BankPrice>? bankPriceList = [];
 
+  List<SpendTimePlace>? monthlySpendTimePlaceList = [];
+
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
 
@@ -53,6 +56,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _init() {
     _makeMoneyList();
     _makeBankPriceList();
+
+    _makeMonthlySpendTimePlaceList();
   }
 
   ///
@@ -104,9 +109,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 _displayPrevNextButton(),
                 ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.3),
+                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.45),
                   child: _getCalendar(),
                 ),
+                Expanded(child: _displayMonthlySpendTimePlaceList()),
               ],
             ),
           ),
@@ -406,6 +412,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
       }
     });
+  }
+
+  ///
+  Future<void> _makeMonthlySpendTimePlaceList() async {
+    final spendTimePlacesCollection = widget.isar.spendTimePlaces;
+
+    final yearmonth = (widget.baseYm != null) ? widget.baseYm : DateTime.now().yyyymm;
+
+    final getSpendTimePlaces = await spendTimePlacesCollection.filter().dateStartsWith(yearmonth!).findAll();
+
+    if (mounted) {
+      setState(() => monthlySpendTimePlaceList = getSpendTimePlaces);
+    }
+  }
+
+  ///
+  Widget _displayMonthlySpendTimePlaceList() {
+    final list = <Widget>[];
+
+    if (monthlySpendTimePlaceList!.isNotEmpty) {
+      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
+        list.add(Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text(key), Text(value.toString().toCurrency())],
+          ),
+        ));
+      });
+    }
+
+    return SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: list));
   }
 
   ///
