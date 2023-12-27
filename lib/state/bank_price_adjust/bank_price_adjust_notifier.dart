@@ -36,4 +36,13 @@ class BankPriceAdjustNotifier extends StateNotifier<BankPriceAdjustResponseState
     adjustPrice[pos] = value;
     state = state.copyWith(adjustPrice: adjustPrice);
   }
+
+  ///
+  Future<void> clearInputValue() async {
+    final adjustDate = List.generate(10, (index) => '日付');
+    final adjustDeposit = List.generate(10, (index) => '');
+    final adjustPrice = List.generate(10, (index) => 0);
+
+    state = state.copyWith(adjustDate: adjustDate, adjustDeposit: adjustDeposit, adjustPrice: adjustPrice);
+  }
 }

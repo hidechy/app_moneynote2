@@ -87,20 +87,6 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
     state = state.copyWith(spendPrice: spendPrice, diff: diff);
   }
 
-  // ///
-  // Future<void> deleteSpendTimePlaceList({required String date}) async {
-  //   final spendTimePlaceList = state.spendTimePlaceList.value!;
-  //
-  //   spendTimePlaceList.where((element) => element.date == date).toList().forEach((element) {
-  //     try {
-  //       spendTimePlaceList.removeAt(element.id!);
-  //       // ignore: avoid_catches_without_on_clauses, empty_catches
-  //     } catch (e) {}
-  //   });
-  //
-  //   state = state.copyWith(spendTimePlaceList: AsyncValue.data(spendTimePlaceList));
-  // }
-
   ///
   Future<void> clearInputValue() async {
     final spendTime = List.generate(10, (index) => '時間');
@@ -120,37 +106,6 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
       diff: 0,
     );
   }
-
-  // ///
-  // Future<void> setSpendTimePlaceList({required List<SpendTimePlace> spendTimePlaceList}) async =>
-  //     state = state.copyWith(spendTimePlaceList: AsyncValue.data(spendTimePlaceList));
-  //
-  // ///
-  // Future<void> setMonthlySpendItemSumMap({required List<SpendTimePlace> spendTimePlaceList}) async {
-  //   final monthlySpendItemSumMap = <String, int>{};
-  //
-  //   final list = <String>[];
-  //   SpendType.values.forEach((element) => list.add(element.japanName!));
-  //
-  //   final map = <String, List<int>>{};
-  //
-  //   list.forEach((element) {
-  //     final filtered = spendTimePlaceList.where((element2) => element2.spendType == element).toList();
-  //     if (filtered.isNotEmpty) {
-  //       filtered
-  //         ..forEach((element3) => map[element3.spendType] = [])
-  //         ..forEach((element3) => map[element3.spendType]?.add(element3.price));
-  //     }
-  //   });
-  //
-  //   map.forEach((key, value) {
-  //     var sum = 0;
-  //     value.forEach((element) => sum += element);
-  //     monthlySpendItemSumMap[key] = sum;
-  //   });
-  //
-  //   state = state.copyWith(monthlySpendItemSumMap: AsyncValue.data(monthlySpendItemSumMap));
-  // }
 
   ///
   Future<void> clearOneBox({required int pos}) async {

@@ -70,7 +70,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _makeMonthlySpendTimePlaceList();
 
     _makeBankNameList();
-    _makeEmoneyNameList();
   }
 
   ///
@@ -531,12 +530,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       });
     }
+
+    await _makeEmoneyNameList();
   }
 
   ///
   Future<void> _makeEmoneyNameList() async {
-    depoNameList = [];
-
     final emoneyNamesCollection = widget.isar.emoneyNames;
 
     final getEmoneyNames = await emoneyNamesCollection.where().findAll();
