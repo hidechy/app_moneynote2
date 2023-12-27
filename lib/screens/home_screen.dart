@@ -140,6 +140,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   ///
   Widget _dispDrawer() {
+    const isRelease = bool.fromEnvironment('dart.vm.product');
+
     return Drawer(
       backgroundColor: Colors.blueGrey.withOpacity(0.2),
       child: SingleChildScrollView(
@@ -149,22 +151,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-
-              ///
-
-              GestureDetector(
-                onTap: () async => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                  margin: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
-                  child: const Text('dummy data'),
+              if (!isRelease)
+                GestureDetector(
+                  onTap: () async => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                    margin: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
+                    child: const Text('dummy data'),
+                  ),
                 ),
-              ),
-
-              ///
-
               GestureDetector(
                 onTap: () async => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
                 child: Row(
@@ -203,6 +200,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
                         margin: const EdgeInsets.all(5),
                         child: const Text('収入管理'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showLicensePage(
+                    context: context,
+                    applicationIcon: const FlutterLogo(),
+                    applicationName: 'Money Note',
+                    applicationLegalese: '\u{a9} ${DateTime.now().year} toyohide',
+                    applicationVersion: '1.0',
+                  );
+                },
+                child: Row(
+                  children: [
+                    const MenuHeadIcon(),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text('ライセンス表示'),
                       ),
                     ),
                   ],
