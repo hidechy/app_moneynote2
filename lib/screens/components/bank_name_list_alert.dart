@@ -116,16 +116,14 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      MoneyDialog(
-                        context: context,
-                        widget: BankNameInputAlert(
-                          depositType: DepositType.bank,
-                          isar: widget.isar,
-                          bankName: bankNameList![i],
-                        ),
-                      );
-                    },
+                    onTap: () => MoneyDialog(
+                      context: context,
+                      widget: BankNameInputAlert(
+                        depositType: DepositType.bank,
+                        isar: widget.isar,
+                        bankName: bankNameList![i],
+                      ),
+                    ),
                     child: Icon(Icons.edit, size: 16, color: Colors.greenAccent.withOpacity(0.6)),
                   ),
                 ],

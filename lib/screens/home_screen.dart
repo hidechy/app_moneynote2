@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/collections/spend_time_place.dart';
-import 'package:money_note/screens/components/bank_price_adjust_alert.dart';
-import 'package:money_note/screens/components/spend_item_history_alert.dart';
 
+import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
+import '../collections/emoney_name.dart';
 import '../collections/money.dart';
+import '../collections/spend_time_place.dart';
 import '../extensions/extensions.dart';
 import '../state/app_params/app_params_notifier.dart';
 import '../state/calendars/calendars_notifier.dart';
@@ -14,6 +14,7 @@ import '../state/holidays/holidays_notifier.dart';
 import '../utilities/functions.dart';
 import '../utilities/utilities.dart';
 import 'components/___dummy_data_input_alert.dart';
+import 'components/bank_price_adjust_alert.dart';
 import 'components/daily_money_display_alert.dart';
 import 'components/deposit_tab_alert.dart';
 import 'components/income_input_alert.dart';
@@ -21,6 +22,7 @@ import 'components/parts/back_ground_image.dart';
 import 'components/parts/custom_shape_clipper.dart';
 import 'components/parts/menu_head_icon.dart';
 import 'components/parts/money_dialog.dart';
+import 'components/spend_item_history_alert.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends ConsumerStatefulWidget {
@@ -54,12 +56,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
 
+  List<BankName>? bankNameList = [];
+  List<EmoneyName>? emoneyNameList = [];
+
+  List<Deposit> depoNameList = [];
+  List<Deposit> depositNameList = [];
+
   ///
   void _init() {
     _makeMoneyList();
     _makeBankPriceList();
 
     _makeMonthlySpendTimePlaceList();
+
+    _makeBankNameList();
+    _makeEmoneyNameList();
   }
 
   ///
@@ -72,6 +83,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     final calendarState = ref.watch(calendarProvider);
+
+    if (depoNameList.isNotEmpty) {
+      depositNameList = [];
+      depositNameList.add(Deposit('', ''));
+
+      depoNameList.forEach((element) {
+        depositNameList.add(element);
+      });
+    }
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.withOpacity(0.3),
@@ -168,7 +188,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 60),
               if (!isRelease)
                 GestureDetector(
-                  onTap: () async => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
+                  onTap: () => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
@@ -178,7 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
               GestureDetector(
-                onTap: () async => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
+                onTap: () => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -194,12 +214,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () async {
-                  await MoneyDialog(
-                    context: context,
-                    widget: BankPriceAdjustAlert(isar: widget.isar),
-                  );
-                },
+                onTap: () => MoneyDialog(
+                  context: context,
+                  widget: BankPriceAdjustAlert(isar: widget.isar, depositNameList: depositNameList),
+                ),
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -218,7 +236,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () async {
                   await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
 
-                  // ignore: use_build_context_synchronously
                   await MoneyDialog(
                     context: context,
                     widget: IncomeInputAlert(
@@ -353,12 +370,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: GestureDetector(
             onTap: (_calendarDays[i] == '' || dateDiff > 0)
                 ? null
-                : () async {
-                    await MoneyDialog(
+                : () => MoneyDialog(
                       context: context,
                       widget: DailyMoneyDisplayAlert(date: DateTime.parse('$generateYmd 00:00:00'), isar: widget.isar),
-                    );
-                  },
+                    ),
             child: Container(
               margin: const EdgeInsets.all(1),
               padding: const EdgeInsets.all(2),
@@ -468,18 +483,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(value.toString().toCurrency()),
                   const SizedBox(width: 20),
                   GestureDetector(
-                    onTap: () {
-                      MoneyDialog(
-                        context: context,
-                        widget: SpendItemHistoryAlert(
-                          date:
-                              (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
-                          isar: widget.isar,
-                          item: key,
-                          sum: value,
-                        ),
-                      );
-                    },
+                    onTap: () => MoneyDialog(
+                      context: context,
+                      widget: SpendItemHistoryAlert(
+                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                        isar: widget.isar,
+                        item: key,
+                        sum: value,
+                      ),
+                    ),
                     child: Icon(
                       Icons.info_outline_rounded,
                       color: Colors.greenAccent.withOpacity(0.6),
@@ -494,6 +506,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     return SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: list));
+  }
+
+  ///
+  Future<void> _makeBankNameList() async {
+    depoNameList = [];
+
+    final bankNamesCollection = widget.isar.bankNames;
+
+    final getBankNames = await bankNamesCollection.where().findAll();
+
+    if (mounted) {
+      setState(() {
+        bankNameList = getBankNames;
+
+        if (bankNameList!.isNotEmpty) {
+          bankNameList!.forEach(
+            (element) => depoNameList.add(
+              Deposit('${element.depositType}-${element.id}', '${element.bankName} ${element.branchName}'),
+            ),
+          );
+        }
+      });
+    }
+  }
+
+  ///
+  Future<void> _makeEmoneyNameList() async {
+    depoNameList = [];
+
+    final emoneyNamesCollection = widget.isar.emoneyNames;
+
+    final getEmoneyNames = await emoneyNamesCollection.where().findAll();
+
+    if (mounted) {
+      setState(() {
+        emoneyNameList = getEmoneyNames;
+
+        if (emoneyNameList!.isNotEmpty) {
+          emoneyNameList!.forEach(
+            (element) => depoNameList.add(Deposit('${element.depositType}-${element.id}', element.emoneyName)),
+          );
+        }
+      });
+    }
   }
 
   ///

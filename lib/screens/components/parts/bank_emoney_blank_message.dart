@@ -27,12 +27,10 @@ class BankEmoneyBlankMessage extends StatelessWidget {
               const Text('必要であれば登録してください。'),
               GestureDetector(
                 child: Text('登録', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary)),
-                onTap: () {
-                  MoneyDialog(
-                    context: context,
-                    widget: (index != null) ? DepositTabAlert(index: 1, isar: isar) : DepositTabAlert(isar: isar),
-                  );
-                },
+                onTap: () => MoneyDialog(
+                  context: context,
+                  widget: (index != null) ? DepositTabAlert(index: 1, isar: isar) : DepositTabAlert(isar: isar),
+                ),
               ),
             ],
           ),

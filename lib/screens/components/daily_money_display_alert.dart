@@ -178,17 +178,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
             children: [
               const Text('CURRENCY', overflow: TextOverflow.ellipsis),
               GestureDetector(
-                onTap: () {
-                  MoneyDialog(
-                    context: context,
-                    widget: MoneyInputAlert(
-                      date: widget.date,
-                      isar: widget.isar,
-                      onedayMoneyList: moneyList,
-                      beforedayMoneyList: beforeMoneyList,
-                    ),
-                  );
-                },
+                onTap: () => MoneyDialog(
+                  context: context,
+                  widget: MoneyInputAlert(
+                    date: widget.date,
+                    isar: widget.isar,
+                    onedayMoneyList: moneyList,
+                    beforedayMoneyList: beforeMoneyList,
+                  ),
+                ),
                 child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
               ),
             ],
@@ -311,17 +309,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                     ),
                     const SizedBox(width: 20),
                     GestureDetector(
-                      onTap: () {
-                        MoneyDialog(
-                          context: context,
-                          widget: BankPriceInputAlert(
-                            date: widget.date,
-                            isar: widget.isar,
-                            depositType: DepositType.bank,
-                            bankName: bankNameList![i],
-                          ),
-                        );
-                      },
+                      onTap: () => MoneyDialog(
+                        context: context,
+                        widget: BankPriceInputAlert(
+                          date: widget.date,
+                          isar: widget.isar,
+                          depositType: DepositType.bank,
+                          bankName: bankNameList![i],
+                        ),
+                      ),
                       child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
                     ),
                   ],
@@ -395,17 +391,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                     ),
                     const SizedBox(width: 20),
                     GestureDetector(
-                      onTap: () {
-                        MoneyDialog(
-                          context: context,
-                          widget: BankPriceInputAlert(
-                            date: widget.date,
-                            isar: widget.isar,
-                            depositType: DepositType.emoney,
-                            emoneyName: emoneyNameList![i],
-                          ),
-                        );
-                      },
+                      onTap: () => MoneyDialog(
+                        context: context,
+                        widget: BankPriceInputAlert(
+                          date: widget.date,
+                          isar: widget.isar,
+                          depositType: DepositType.emoney,
+                          emoneyName: emoneyNameList![i],
+                        ),
+                      ),
                       child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
                     ),
                   ],
@@ -484,7 +478,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               children: [
                 const Text('SPEND', overflow: TextOverflow.ellipsis),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (onedayDateTotal == 0) {
                       Future.delayed(
                         Duration.zero,
@@ -504,7 +498,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                         ? bankPriceTotalPadMap[beforeDate.yyyymmdd]
                         : 0;
 
-                    MoneyDialog(
+                    await MoneyDialog(
                       context: context,
                       widget: SpendTimePlaceInputAlert(
                         date: widget.date,

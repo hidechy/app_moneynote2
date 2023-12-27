@@ -111,16 +111,14 @@ class _EmoneyNameListAlertState extends ConsumerState<EmoneyNameListAlert> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      MoneyDialog(
-                        context: context,
-                        widget: EmoneyNameInputAlert(
-                          isar: widget.isar,
-                          depositType: DepositType.emoney,
-                          emoneyName: emoneyNameList![i],
-                        ),
-                      );
-                    },
+                    onTap: () => MoneyDialog(
+                      context: context,
+                      widget: EmoneyNameInputAlert(
+                        isar: widget.isar,
+                        depositType: DepositType.emoney,
+                        emoneyName: emoneyNameList![i],
+                      ),
+                    ),
                     child: Icon(Icons.edit, size: 16, color: Colors.greenAccent.withOpacity(0.6)),
                   ),
                 ],
