@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import '../collections/bank_price.dart';
 import '../collections/money.dart';
 import '../extensions/extensions.dart';
+import '../state/app_params/app_params_notifier.dart';
 import '../state/calendars/calendars_notifier.dart';
 import '../state/holidays/holidays_notifier.dart';
 import '../utilities/functions.dart';
@@ -12,6 +13,7 @@ import '../utilities/utilities.dart';
 import 'components/___dummy_data_input_alert.dart';
 import 'components/daily_money_display_alert.dart';
 import 'components/deposit_tab_alert.dart';
+import 'components/income_input_alert.dart';
 import 'components/parts/back_ground_image.dart';
 import 'components/parts/custom_shape_clipper.dart';
 import 'components/parts/menu_head_icon.dart';
@@ -147,6 +149,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
+
+              ///
+
+              GestureDetector(
+                onTap: () async => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
+                  child: const Text('dummy data'),
+                ),
+              ),
+
+              ///
+
               GestureDetector(
                 onTap: () async => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
                 child: Row(
@@ -163,22 +181,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-
-              ///
-
-              const SizedBox(height: 100),
               GestureDetector(
-                onTap: () async => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                  margin: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
-                  child: const Text('dummy data'),
+                onTap: () async {
+                  await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
+
+                  // ignore: use_build_context_synchronously
+                  await MoneyDialog(
+                    context: context,
+                    widget: IncomeInputAlert(
+                      date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                      isar: widget.isar,
+                    ),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const MenuHeadIcon(),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text('収入管理'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
-              ///
             ],
           ),
         ),
@@ -268,10 +297,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 : () async {
                     await MoneyDialog(
                       context: context,
-                      widget: DailyMoneyDisplayAlert(
-                        date: DateTime.parse('$generateYmd 00:00:00'),
-                        isar: widget.isar,
-                      ),
+                      widget: DailyMoneyDisplayAlert(date: DateTime.parse('$generateYmd 00:00:00'), isar: widget.isar),
                     );
                   },
             child: Container(
@@ -330,9 +356,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       moneyList = getMoneys;
 
       if (moneyList!.isNotEmpty) {
-        moneyList!.forEach((element) {
-          monthDateSumMap[element.date] = _utility.makeCurrencySum(money: element);
-        });
+        moneyList!.forEach((element) => monthDateSumMap[element.date] = _utility.makeCurrencySum(money: element));
       }
     });
   }

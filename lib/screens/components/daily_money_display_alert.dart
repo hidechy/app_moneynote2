@@ -10,11 +10,9 @@ import '../../collections/money.dart';
 import '../../collections/spend_time_place.dart';
 import '../../enums/deposit_type.dart';
 import '../../extensions/extensions.dart';
-import '../../state/app_params/app_params_notifier.dart';
 import '../../utilities/functions.dart';
 import '../../utilities/utilities.dart';
 import 'bank_price_input_alert.dart';
-import 'income_input_alert.dart';
 import 'money_input_alert.dart';
 import 'parts/bank_emoney_blank_message.dart';
 import 'parts/money_dialog.dart';
@@ -84,7 +82,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
                 const SizedBox(height: 20),
                 _getTopInfoPlate(),
-                _dispMenuButtons(),
                 const SizedBox(height: 20),
                 _displaySingleMoney(),
                 const SizedBox(height: 20),
@@ -92,8 +89,10 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 const SizedBox(height: 20),
                 _displayEmoneyNames(),
                 const SizedBox(height: 20),
-                _displaySpendTimePlaceList(),
-                const SizedBox(height: 20),
+                if (onedayDateTotal > 0) ...[
+                  _displaySpendTimePlaceList(),
+                  const SizedBox(height: 20),
+                ],
               ],
             ),
           ),
@@ -152,9 +151,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Spend'),
-                Text(((beforeDateTotal + beforeBankTotal) - (onedayDateTotal + onedayBankTotal))
-                    .toString()
-                    .toCurrency()),
+                Text(
+                  ((beforeDateTotal + beforeBankTotal) - (onedayDateTotal + onedayBankTotal)).toString().toCurrency(),
+                ),
               ],
             ),
           ),
@@ -168,6 +167,34 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          width: context.screenSize.width,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            gradient:
+                LinearGradient(colors: [Colors.indigo.withOpacity(0.8), Colors.transparent], stops: const [0.7, 1]),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('CURRENCY', overflow: TextOverflow.ellipsis),
+              GestureDetector(
+                onTap: () {
+                  MoneyDialog(
+                    context: context,
+                    widget: MoneyInputAlert(
+                      date: widget.date,
+                      isar: widget.isar,
+                      onedayMoneyList: moneyList,
+                      beforedayMoneyList: beforeMoneyList,
+                    ),
+                  );
+                },
+                child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+              ),
+            ],
+          ),
+        ),
         _displayMoneyParts(key: '10000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_10000 : 0),
         _displayMoneyParts(key: '5000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_5000 : 0),
         _displayMoneyParts(key: '2000', value: (moneyList!.isNotEmpty) ? moneyList![0].yen_2000 : 0),
@@ -230,131 +257,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     });
   }
 
-  ///
-  Widget _dispMenuButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            GestureDetector(
-              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 0),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Icon(Icons.close, color: Colors.yellowAccent.withOpacity(0.6), size: 16),
-              ),
-            ),
-            const SizedBox(width: 5),
-            GestureDetector(
-              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 1),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6), size: 16),
-              ),
-            ),
-            if (onedayDateTotal > 0) ...[
-              const SizedBox(width: 5),
-              GestureDetector(
-                onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 2),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Icon(Icons.info_outline_rounded, color: Colors.greenAccent.withOpacity(0.6), size: 16),
-                ),
-              ),
-            ],
-            const SizedBox(width: 5),
-            GestureDetector(
-              onTap: () => ref.read(appParamProvider.notifier).setMenuNumber(menuNumber: 3),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Icon(Icons.monetization_on, color: Colors.greenAccent.withOpacity(0.6), size: 16),
-              ),
-            ),
-          ],
-        ),
-        _getMenuOpenStr(),
-      ],
-    );
-  }
-
-  ///
-  Widget _getMenuOpenStr() {
-    final menuNumber = ref.watch(appParamProvider.select((value) => value.menuNumber));
-
-    switch (menuNumber) {
-      case 1:
-        return Row(
-          children: [
-            const Text('金種枚数登録'),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () {
-                MoneyDialog(
-                  context: context,
-                  widget: MoneyInputAlert(
-                    date: widget.date,
-                    isar: widget.isar,
-                    onedayMoneyList: moneyList,
-                    beforedayMoneyList: beforeMoneyList,
-                  ),
-                );
-              },
-              child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-            ),
-          ],
-        );
-
-      case 2:
-        final oneday = widget.date.yyyymmdd;
-
-        final beforeDate =
-            DateTime(oneday.split('-')[0].toInt(), oneday.split('-')[1].toInt(), oneday.split('-')[2].toInt() - 1);
-
-        final onedayBankTotal = (bankPriceTotalPadMap[oneday] != null) ? bankPriceTotalPadMap[oneday] : 0;
-        final beforeBankTotal =
-            (bankPriceTotalPadMap[beforeDate.yyyymmdd] != null) ? bankPriceTotalPadMap[beforeDate.yyyymmdd] : 0;
-
-        return Row(
-          children: [
-            const Text('使用詳細登録'),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () async {
-                await MoneyDialog(
-                  context: context,
-                  widget: SpendTimePlaceInputAlert(
-                    date: widget.date,
-                    spend: (beforeDateTotal + beforeBankTotal!) - (onedayDateTotal + onedayBankTotal!),
-                    isar: widget.isar,
-                    spendTimePlaceList: spendTimePlaceList,
-                  ),
-                );
-              },
-              child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-            ),
-          ],
-        );
-
-      case 3:
-        return Row(
-          children: [
-            const Text('収入履歴登録'),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () {
-                // _ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
-                //
-                MoneyDialog(context: context, widget: IncomeInputAlert(date: widget.date, isar: widget.isar));
-              },
-              child: Text('OPEN', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-            ),
-          ],
-        );
-    }
-
-    return Container();
-  }
-
   //=======================================================// BankNames // s
 
   ///
@@ -375,10 +277,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
         width: context.screenSize.width,
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-            stops: const [0.7, 1],
-          ),
+          gradient: LinearGradient(colors: [Colors.indigo.withOpacity(0.8), Colors.transparent], stops: const [0.7, 1]),
         ),
         child: const Text('BANK', overflow: TextOverflow.ellipsis),
       )
@@ -462,10 +361,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
         width: context.screenSize.width,
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-            stops: const [0.7, 1],
-          ),
+          gradient: LinearGradient(colors: [Colors.indigo.withOpacity(0.8), Colors.transparent], stops: const [0.7, 1]),
         ),
         child: const Text('E-MONEY', overflow: TextOverflow.ellipsis),
       )
@@ -581,12 +477,39 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
             width: context.screenSize.width,
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.indigo.withOpacity(0.8), Colors.transparent],
-                stops: const [0.7, 1],
-              ),
+              gradient:
+                  LinearGradient(colors: [Colors.indigo.withOpacity(0.8), Colors.transparent], stops: const [0.7, 1]),
             ),
-            child: const Text('SPEND', overflow: TextOverflow.ellipsis),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('SPEND', overflow: TextOverflow.ellipsis),
+                GestureDetector(
+                  onTap: () {
+                    final oneday = widget.date.yyyymmdd;
+
+                    final beforeDate = DateTime(
+                        oneday.split('-')[0].toInt(), oneday.split('-')[1].toInt(), oneday.split('-')[2].toInt() - 1);
+
+                    final onedayBankTotal = (bankPriceTotalPadMap[oneday] != null) ? bankPriceTotalPadMap[oneday] : 0;
+                    final beforeBankTotal = (bankPriceTotalPadMap[beforeDate.yyyymmdd] != null)
+                        ? bankPriceTotalPadMap[beforeDate.yyyymmdd]
+                        : 0;
+
+                    MoneyDialog(
+                      context: context,
+                      widget: SpendTimePlaceInputAlert(
+                        date: widget.date,
+                        spend: (beforeDateTotal + beforeBankTotal!) - (onedayDateTotal + onedayBankTotal!),
+                        isar: widget.isar,
+                        spendTimePlaceList: spendTimePlaceList,
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -599,10 +522,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(key),
-              Text(value.toString().toCurrency()),
-            ],
+            children: [Text(key), Text(value.toString().toCurrency())],
           ),
         ));
       });
