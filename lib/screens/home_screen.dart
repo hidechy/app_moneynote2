@@ -207,6 +207,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               GestureDetector(
                 onTap: () {
+                  Navigator.pop(context);
+
                   showLicensePage(
                     context: context,
                     applicationIcon: const FlutterLogo(),
