@@ -236,13 +236,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () async {
                   await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
 
-                  await MoneyDialog(
-                    context: context,
-                    widget: IncomeInputAlert(
-                      date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
-                      isar: widget.isar,
-                    ),
-                  );
+                  if (mounted) {
+                    await MoneyDialog(
+                      context: context,
+                      widget: IncomeInputAlert(
+                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                        isar: widget.isar,
+                      ),
+                    );
+                  }
                 },
                 child: Row(
                   children: [
