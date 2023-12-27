@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -188,119 +190,134 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
       list.add(
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: (item != '項目名' && time != '時間' && price != 0 && place != '')
-                  ? Colors.orangeAccent.withOpacity(0.4)
-                  : Colors.white.withOpacity(0.2),
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+            ],
           ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      onTap: () {
-                        ref
-                            .read(spendTimePlaceProvider.notifier)
-                            .setBlinkingFlag(blinkingFlag: !spendTimePlaceState.blinkingFlag);
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+              child: Container(
+                width: context.screenSize.width,
+                margin: EdgeInsets.all(5),
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: (item != '項目名' && time != '時間' && price != 0 && place != '')
+                        ? Colors.orangeAccent.withOpacity(0.4)
+                        : Colors.white.withOpacity(0.2),
+                    width: 2,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: GestureDetector(
+                            onTap: () {
+                              ref
+                                  .read(spendTimePlaceProvider.notifier)
+                                  .setBlinkingFlag(blinkingFlag: !spendTimePlaceState.blinkingFlag);
 
-                        ref.read(spendTimePlaceProvider.notifier).setItemPos(pos: i);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: (item != '項目名')
-                              ? Colors.yellowAccent.withOpacity(0.2)
-                              : const Color(0xFFfffacd).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
+                              ref.read(spendTimePlaceProvider.notifier).setItemPos(pos: i);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: (item != '項目名')
+                                    ? Colors.yellowAccent.withOpacity(0.2)
+                                    : const Color(0xFFfffacd).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(item),
+                            ),
+                          ),
                         ),
-                        child: Text(item),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _showTP(pos: i),
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: (time != '時間')
-                              ? Colors.greenAccent.withOpacity(0.2)
-                              : const Color(0xFF90ee90).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
+                        const SizedBox(width: 5),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _showTP(pos: i),
+                            child: Container(
+                              padding: const EdgeInsets.all(5),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: (time != '時間')
+                                    ? Colors.greenAccent.withOpacity(0.2)
+                                    : const Color(0xFF90ee90).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(time, style: const TextStyle(fontSize: 10)),
+                            ),
+                          ),
                         ),
-                        child: Text(time, style: const TextStyle(fontSize: 10)),
-                      ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            _clearOneBox(pos: i);
+                          },
+                          child: const Icon(Icons.close, color: Colors.redAccent),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      _clearOneBox(pos: i);
-                    },
-                    child: const Icon(Icons.close, color: Colors.redAccent),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => ref.read(spendTimePlaceProvider.notifier).setMinusCheck(pos: i),
-                    child: Icon(
-                      Icons.remove,
-                      color: (spendTimePlaceState.minusCheck[i]) ? Colors.redAccent : Colors.white,
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => ref.read(spendTimePlaceProvider.notifier).setMinusCheck(pos: i),
+                          child: Icon(
+                            Icons.remove,
+                            color: (spendTimePlaceState.minusCheck[i]) ? Colors.redAccent : Colors.white,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            controller: _priceTecs[i],
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                              hintText: '金額',
+                              filled: true,
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+                            ),
+                            style: const TextStyle(fontSize: 12),
+                            onChanged: (value) {
+                              if (value != '') {
+                                ref.read(spendTimePlaceProvider.notifier).setSpendPrice(pos: i, price: value.toInt());
+                              }
+                            },
+                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _priceTecs[i],
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _placeTecs[i],
                       decoration: const InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                        hintText: '金額',
+                        hintText: '場所',
                         filled: true,
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
                       ),
                       style: const TextStyle(fontSize: 12),
-                      onChanged: (value) {
-                        if (value != '') {
-                          ref.read(spendTimePlaceProvider.notifier).setSpendPrice(pos: i, price: value.toInt());
-                        }
-                      },
+                      onChanged: (value) => ref.read(spendTimePlaceProvider.notifier).setPlace(pos: i, place: value),
                       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _placeTecs[i],
-                decoration: const InputDecoration(
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  hintText: '場所',
-                  filled: true,
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+                    )
+                  ],
                 ),
-                style: const TextStyle(fontSize: 12),
-                onChanged: (value) => ref.read(spendTimePlaceProvider.notifier).setPlace(pos: i, place: value),
-                onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-              )
-            ],
+              ),
+            ),
           ),
         ),
       );

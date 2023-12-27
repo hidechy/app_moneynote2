@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -37,8 +39,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   Widget build(BuildContext context) {
     Future(_init);
 
-    final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -63,53 +63,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
                 ],
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
-              Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.4)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(appParamProvider.notifier)
-                                .setSameMonthIncomeDeleteFlag(flag: !sameMonthIncomeDeleteFlag);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: sameMonthIncomeDeleteFlag
-                                  ? Colors.yellowAccent.withOpacity(0.2)
-                                  : const Color(0xFFfffacd).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Text('同月のデータを入れ替える'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      controller: _incomePriceEditingController,
-                      decoration: const InputDecoration(labelText: '金額'),
-                      style: const TextStyle(fontSize: 13, color: Colors.white),
-                      onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                    ),
-                    TextField(
-                      controller: _incomeSourceEditingController,
-                      decoration: const InputDecoration(labelText: '支払い元'),
-                      style: const TextStyle(fontSize: 13, color: Colors.white),
-                      onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                    ),
-                  ],
-                ),
-              ),
+              _displayInputParts(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -120,6 +74,73 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
               SizedBox(height: 40, child: _displayYearButton()),
               Expanded(child: _displayIncomeList()),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  Widget _displayInputParts() {
+    final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
+
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+          child: Container(
+            width: context.screenSize.width,
+            margin: EdgeInsets.all(5),
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(appParamProvider.notifier)
+                            .setSameMonthIncomeDeleteFlag(flag: !sameMonthIncomeDeleteFlag);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: sameMonthIncomeDeleteFlag
+                              ? Colors.yellowAccent.withOpacity(0.2)
+                              : const Color(0xFFfffacd).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text('同月のデータを入れ替える'),
+                      ),
+                    ),
+                  ],
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  controller: _incomePriceEditingController,
+                  decoration: const InputDecoration(labelText: '金額'),
+                  style: const TextStyle(fontSize: 13, color: Colors.white),
+                  onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                ),
+                TextField(
+                  controller: _incomeSourceEditingController,
+                  decoration: const InputDecoration(labelText: '支払い元'),
+                  style: const TextStyle(fontSize: 13, color: Colors.white),
+                  onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -79,22 +81,7 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
                 color: Colors.white.withOpacity(0.4),
                 thickness: 5,
               ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.4)),
-                ),
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  controller: _bankPriceEditingController,
-                  decoration: const InputDecoration(labelText: '金額'),
-                  style: const TextStyle(fontSize: 13, color: Colors.white),
-                  onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                ),
-              ),
+              _displayInputParts(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -125,6 +112,40 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
                 },
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  Widget _displayInputParts() {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+          child: Container(
+            width: context.screenSize.width,
+            margin: EdgeInsets.all(5),
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            ),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              controller: _bankPriceEditingController,
+              decoration: const InputDecoration(labelText: '金額'),
+              style: const TextStyle(fontSize: 13, color: Colors.white),
+              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+            ),
           ),
         ),
       ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -102,29 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SafeArea(
             child: Column(
               children: [
-                Container(
-                  width: context.screenSize.width,
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.1)),
-                  margin: const EdgeInsets.only(bottom: 5),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: _goPrevMonth,
-                        icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8), size: 14),
-                      ),
-                      IconButton(
-                        onPressed: (DateTime.now().yyyymm == calendarState.baseYearMonth) ? null : _goNextMonth,
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: (DateTime.now().yyyymm == calendarState.baseYearMonth)
-                              ? Colors.grey.withOpacity(0.6)
-                              : Colors.white.withOpacity(0.8),
-                          size: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _displayPrevNextButton(),
                 ConstrainedBox(
                   constraints: BoxConstraints(minHeight: context.screenSize.height * 0.3),
                   child: _getCalendar(),
@@ -135,6 +115,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       endDrawer: _dispDrawer(),
+    );
+  }
+
+  ///
+  Widget _displayPrevNextButton() {
+    final calendarState = ref.watch(calendarProvider);
+
+    return Container(
+      width: context.screenSize.width,
+      decoration: BoxDecoration(color: Colors.white.withOpacity(0.1)),
+      margin: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: _goPrevMonth,
+            icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8), size: 14),
+          ),
+          IconButton(
+            onPressed: (DateTime.now().yyyymm == calendarState.baseYearMonth) ? null : _goNextMonth,
+            icon: Icon(
+              Icons.arrow_forward_ios,
+              color: (DateTime.now().yyyymm == calendarState.baseYearMonth)
+                  ? Colors.grey.withOpacity(0.6)
+                  : Colors.white.withOpacity(0.8),
+              size: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

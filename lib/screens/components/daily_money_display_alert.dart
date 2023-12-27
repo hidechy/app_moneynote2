@@ -89,10 +89,17 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 const SizedBox(height: 20),
                 _displayEmoneyNames(),
                 const SizedBox(height: 20),
-                if (onedayDateTotal > 0) ...[
-                  _displaySpendTimePlaceList(),
-                  const SizedBox(height: 20),
-                ],
+
+                _displaySpendTimePlaceList(),
+                const SizedBox(height: 20),
+
+                // if (onedayDateTotal > 0) ...[
+                //   _displaySpendTimePlaceList(),
+                //   const SizedBox(height: 20),
+                // ],
+                //
+                //
+                //
               ],
             ),
           ),

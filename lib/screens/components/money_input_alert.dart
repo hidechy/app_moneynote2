@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -80,43 +82,7 @@ class _MoneyInputAlertState extends ConsumerState<MoneyInputAlert> {
                 color: Colors.white.withOpacity(0.4),
                 thickness: 5,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.4)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(child: _displayInputParts(name: '10000', tec: _tecYen10000)),
-                        Expanded(child: _displayInputParts(name: '5000', tec: _tecYen5000)),
-                        Expanded(child: _displayInputParts(name: '2000', tec: _tecYen2000)),
-                        Expanded(child: _displayInputParts(name: '1000', tec: _tecYen1000)),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(child: _displayInputParts(name: '500', tec: _tecYen500)),
-                        Expanded(child: _displayInputParts(name: '100', tec: _tecYen100)),
-                        Expanded(child: _displayInputParts(name: '50', tec: _tecYen50)),
-                        Expanded(child: Container()),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(child: _displayInputParts(name: '10', tec: _tecYen10)),
-                        Expanded(child: _displayInputParts(name: '5', tec: _tecYen5)),
-                        Expanded(child: _displayInputParts(name: '1', tec: _tecYen1)),
-                        Expanded(child: Container()),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              _displayInputParts(),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,7 +113,62 @@ class _MoneyInputAlertState extends ConsumerState<MoneyInputAlert> {
   }
 
   ///
-  Widget _displayInputParts({required String name, required TextEditingController tec}) {
+  Widget _displayInputParts() {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+          child: Container(
+            width: context.screenSize.width,
+            margin: EdgeInsets.all(5),
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: _displayInputTextFieldParts(name: '10000', tec: _tecYen10000)),
+                    Expanded(child: _displayInputTextFieldParts(name: '5000', tec: _tecYen5000)),
+                    Expanded(child: _displayInputTextFieldParts(name: '2000', tec: _tecYen2000)),
+                    Expanded(child: _displayInputTextFieldParts(name: '1000', tec: _tecYen1000)),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: _displayInputTextFieldParts(name: '500', tec: _tecYen500)),
+                    Expanded(child: _displayInputTextFieldParts(name: '100', tec: _tecYen100)),
+                    Expanded(child: _displayInputTextFieldParts(name: '50', tec: _tecYen50)),
+                    Expanded(child: Container()),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: _displayInputTextFieldParts(name: '10', tec: _tecYen10)),
+                    Expanded(child: _displayInputTextFieldParts(name: '5', tec: _tecYen5)),
+                    Expanded(child: _displayInputTextFieldParts(name: '1', tec: _tecYen1)),
+                    Expanded(child: Container()),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  Widget _displayInputTextFieldParts({required String name, required TextEditingController tec}) {
     return Container(
       padding: const EdgeInsets.all(10),
       child: TextField(

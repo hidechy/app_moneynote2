@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -60,8 +62,6 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
   Widget build(BuildContext context) {
     _context = context;
 
-    final bankNamesSettingState = ref.watch(bankNamesProvider);
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -80,99 +80,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
               Container(width: context.screenSize.width),
               const Text('金融機関追加'),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
-              Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.4)),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            controller: _bankNumberEditingController,
-                            decoration: const InputDecoration(labelText: '金融機関番号'),
-                            style: const TextStyle(fontSize: 13, color: Colors.white),
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 2,
-                          child: TextField(
-                            controller: _bankNameEditingController,
-                            decoration: const InputDecoration(labelText: '金融機関名'),
-                            style: const TextStyle(fontSize: 13, color: Colors.white),
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            controller: _branchNumberEditingController,
-                            decoration: const InputDecoration(labelText: '支店番号'),
-                            style: const TextStyle(fontSize: 13, color: Colors.white),
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 2,
-                          child: TextField(
-                            controller: _branchNameEditingController,
-                            decoration: const InputDecoration(labelText: '支店名'),
-                            style: const TextStyle(fontSize: 13, color: Colors.white),
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButton(
-                            isExpanded: true,
-                            dropdownColor: Colors.pinkAccent.withOpacity(0.1),
-                            iconEnabledColor: Colors.white,
-                            items: AccountType.values.map((e) {
-                              return DropdownMenuItem(
-                                value: e,
-                                child: Text(e.japanName, style: const TextStyle(fontSize: 12)),
-                              );
-                            }).toList(),
-                            value: (_selectedAccountType != AccountType.blank)
-                                ? _selectedAccountType
-                                : bankNamesSettingState.accountType,
-                            onChanged: (value) {
-                              ref.read(bankNamesProvider.notifier).setAccountType(accountType: value!);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 2,
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            controller: _accountNumberEditingController,
-                            decoration: const InputDecoration(labelText: '口座番号'),
-                            style: const TextStyle(fontSize: 13, color: Colors.white),
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              _displayInputParts(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -215,6 +123,119 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
                 ],
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///
+  Widget _displayInputParts() {
+    final bankNamesSettingState = ref.watch(bankNamesProvider);
+
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+          child: Container(
+            width: context.screenSize.width,
+            margin: EdgeInsets.all(5),
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _bankNumberEditingController,
+                        decoration: const InputDecoration(labelText: '金融機関番号'),
+                        style: const TextStyle(fontSize: 13, color: Colors.white),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: _bankNameEditingController,
+                        decoration: const InputDecoration(labelText: '金融機関名'),
+                        style: const TextStyle(fontSize: 13, color: Colors.white),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _branchNumberEditingController,
+                        decoration: const InputDecoration(labelText: '支店番号'),
+                        style: const TextStyle(fontSize: 13, color: Colors.white),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: _branchNameEditingController,
+                        decoration: const InputDecoration(labelText: '支店名'),
+                        style: const TextStyle(fontSize: 13, color: Colors.white),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButton(
+                        isExpanded: true,
+                        dropdownColor: Colors.pinkAccent.withOpacity(0.1),
+                        iconEnabledColor: Colors.white,
+                        items: AccountType.values.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(e.japanName, style: const TextStyle(fontSize: 12)),
+                          );
+                        }).toList(),
+                        value: (_selectedAccountType != AccountType.blank)
+                            ? _selectedAccountType
+                            : bankNamesSettingState.accountType,
+                        onChanged: (value) {
+                          ref.read(bankNamesProvider.notifier).setAccountType(accountType: value!);
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: _accountNumberEditingController,
+                        decoration: const InputDecoration(labelText: '口座番号'),
+                        style: const TextStyle(fontSize: 13, color: Colors.white),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
