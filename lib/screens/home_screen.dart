@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:money_note/collections/spend_time_place.dart';
+import 'package:money_note/screens/components/spend_item_history_alert.dart';
 
 import '../collections/bank_price.dart';
 import '../collections/money.dart';
@@ -438,7 +439,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(key), Text(value.toString().toCurrency())],
+            children: [
+              Text(key),
+              Row(
+                children: [
+                  Text(value.toString().toCurrency()),
+                  const SizedBox(width: 20),
+                  GestureDetector(
+                    onTap: () {
+                      MoneyDialog(
+                        context: context,
+                        widget: SpendItemHistoryAlert(
+                          date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                          isar: widget.isar,
+                          item: key,
+                          sum: value,
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.info_outline_rounded,
+                      color: Colors.greenAccent.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ));
       });
