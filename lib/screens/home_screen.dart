@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:money_note/collections/spend_time_place.dart';
+import 'package:money_note/screens/components/bank_price_adjust_alert.dart';
 import 'package:money_note/screens/components/spend_item_history_alert.dart';
 
 import '../collections/bank_price.dart';
@@ -186,7 +187,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
                         margin: const EdgeInsets.all(5),
-                        child: const Text('金融機関、電子マネー管理'),
+                        child: const Text('金融機関、電子マネー名称登録'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  await MoneyDialog(
+                    context: context,
+                    widget: BankPriceAdjustAlert(isar: widget.isar),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const MenuHeadIcon(),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text('金融機関、電子マネー金額修正'),
                       ),
                     ),
                   ],
@@ -450,7 +472,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       MoneyDialog(
                         context: context,
                         widget: SpendItemHistoryAlert(
-                          date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                          date:
+                              (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
                           isar: widget.isar,
                           item: key,
                           sum: value,
