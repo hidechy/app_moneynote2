@@ -15,6 +15,7 @@ import '../../utilities/utilities.dart';
 import 'bank_price_input_alert.dart';
 import 'money_input_alert.dart';
 import 'parts/bank_emoney_blank_message.dart';
+import 'parts/error_dialog.dart';
 import 'parts/money_dialog.dart';
 import 'spend_time_place_input_alert.dart';
 
@@ -89,17 +90,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 const SizedBox(height: 20),
                 _displayEmoneyNames(),
                 const SizedBox(height: 20),
-
                 _displaySpendTimePlaceList(),
                 const SizedBox(height: 20),
-
-                // if (onedayDateTotal > 0) ...[
-                //   _displaySpendTimePlaceList(),
-                //   const SizedBox(height: 20),
-                // ],
-                //
-                //
-                //
               ],
             ),
           ),
@@ -493,6 +485,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 const Text('SPEND', overflow: TextOverflow.ellipsis),
                 GestureDetector(
                   onTap: () {
+                    if (onedayDateTotal == 0) {
+                      Future.delayed(
+                        Duration.zero,
+                        () => error_dialog(context: context, title: '登録できません。', content: '先にCURRENCYを入力してください。'),
+                      );
+
+                      return;
+                    }
+
                     final oneday = widget.date.yyyymmdd;
 
                     final beforeDate = DateTime(

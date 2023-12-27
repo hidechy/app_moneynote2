@@ -97,7 +97,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
 
   ///
   Widget _displayInputParts() {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
@@ -109,8 +109,8 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
           filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
           child: Container(
             width: context.screenSize.width,
-            margin: EdgeInsets.all(5),
-            padding: EdgeInsets.all(5),
+            margin: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(10),
