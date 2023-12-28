@@ -165,6 +165,25 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
       return;
     }
 
+    //---------------------------//
+    final bankPricesCollection = widget.isar.bankPrices;
+
+    final getBankPrices = await bankPricesCollection
+        .filter()
+        .depositTypeEqualTo(widget.depositType.japanName)
+        .bankIdEqualTo(bankId)
+        .dateEqualTo(widget.date.yyyymmdd)
+        .findAll();
+
+    if (getBankPrices.isNotEmpty) {
+      await widget.isar.writeTxn(() async {
+        getBankPrices.forEach((element) {
+          bankPricesCollection.delete(element.id);
+        });
+      });
+    }
+    //---------------------------//
+
     final bankPrice = BankPrice()
       ..date = widget.date.yyyymmdd
       ..depositType = widget.depositType.japanName

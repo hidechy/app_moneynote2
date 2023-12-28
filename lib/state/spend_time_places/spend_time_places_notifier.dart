@@ -6,11 +6,11 @@ import 'spend_time_places_response_state.dart';
 
 final spendTimePlaceProvider =
     StateNotifierProvider.autoDispose<SpendTimePlaceNotifier, SpendTimePlacesResponseState>((ref) {
-  final spendTime = List.generate(10, (index) => '時間');
-  final spendPlace = List.generate(10, (index) => '');
-  final spendItem = List.generate(10, (index) => '項目名');
-  final spendPrice = List.generate(10, (index) => 0);
-  final minusCheck = List.generate(10, (index) => false);
+  final spendTime = List.generate(20, (index) => '時間');
+  final spendPlace = List.generate(20, (index) => '');
+  final spendItem = List.generate(20, (index) => '項目名');
+  final spendPrice = List.generate(20, (index) => 0);
+  final minusCheck = List.generate(20, (index) => false);
 
   return SpendTimePlaceNotifier(
     SpendTimePlacesResponseState(
@@ -89,11 +89,11 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
 
   ///
   Future<void> clearInputValue() async {
-    final spendTime = List.generate(10, (index) => '時間');
-    final spendPlace = List.generate(10, (index) => '');
-    final spendItem = List.generate(10, (index) => '項目名');
-    final spendPrice = List.generate(10, (index) => 0);
-    final minusCheck = List.generate(10, (index) => false);
+    final spendTime = List.generate(20, (index) => '時間');
+    final spendPlace = List.generate(20, (index) => '');
+    final spendItem = List.generate(20, (index) => '項目名');
+    final spendPrice = List.generate(20, (index) => 0);
+    final minusCheck = List.generate(20, (index) => false);
 
     state = state.copyWith(
       spendTime: spendTime,

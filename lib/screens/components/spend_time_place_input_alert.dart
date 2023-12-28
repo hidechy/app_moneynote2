@@ -42,7 +42,35 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
   final List<TextEditingController> _placeTecs = [];
   final List<TextEditingController> _priceTecs = [];
 
-  final List<String> _timeUnknownItem = ['クレジット', '共済代', '投資', '税金', '年金', '国民年金基金', '健康保険代', '利息'];
+  final List<String> _timeUnknownItem = [
+//    '食費',
+    '住居費',
+//    '交通費',
+//    '支払い',
+    'クレジット',
+//    '遊興費',
+//    '趣味',
+//    '交際費',
+//    '雑費',
+//    '教育費',
+//    '機材費',
+//    '被服費',
+//    '医療費',
+//    '美容費',
+//    '通信費',
+    '保険料',
+    '水道光熱費',
+    '共済代',
+    '投資',
+    '手数料',
+    '税金',
+    '年金',
+    '国民年金基金',
+    '健康保険代',
+    '利息',
+    '不明',
+    'プラス',
+  ];
 
   ///
   @override
@@ -69,7 +97,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
   ///
   Future<void> _makeTecs() async {
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 20; i++) {
       _placeTecs.add(TextEditingController(text: ''));
       _priceTecs.add(TextEditingController(text: ''));
     }
@@ -182,7 +210,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
     final spendTimePlaceState = ref.watch(spendTimePlaceProvider);
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 20; i++) {
       final item = spendTimePlaceState.spendItem[i];
       final time = spendTimePlaceState.spendTime[i];
       final price = spendTimePlaceState.spendPrice[i];
@@ -405,7 +433,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
     var spendPriceCount = 0;
     ////////////////////////// 同数チェック
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 20; i++) {
       //===============================================
       if (spendTimePlaceState.spendItem[i] != '項目名' &&
           spendTimePlaceState.spendTime[i] != '時間' &&

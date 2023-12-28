@@ -174,7 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   ///
   Widget _dispDrawer() {
-    const isRelease = bool.fromEnvironment('dart.vm.product');
+//    const isRelease = bool.fromEnvironment('dart.vm.product');
 
     return Drawer(
       backgroundColor: Colors.blueGrey.withOpacity(0.2),
@@ -185,17 +185,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-              if (!isRelease)
-                GestureDetector(
-                  onTap: () => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                    margin: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
-                    child: const Text('dummy data'),
-                  ),
+//              if (!isRelease)
+              GestureDetector(
+                onTap: () => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
+                  child: const Text('dummy data'),
                 ),
+              ),
               GestureDetector(
                 onTap: () => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
                 child: Row(
@@ -506,7 +506,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       });
     }
 
-    return SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: list));
+    return SingleChildScrollView(
+      child: DefaultTextStyle(
+        style: const TextStyle(fontSize: 10),
+        child: Column(mainAxisSize: MainAxisSize.min, children: list),
+      ),
+    );
   }
 
   ///

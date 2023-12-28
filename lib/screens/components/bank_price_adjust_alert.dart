@@ -199,6 +199,8 @@ class _BankPriceAdjustAlertState extends ConsumerState<BankPriceAdjustAlert> {
     var adjustPriceCount = 0;
     ////////////////////////// 同数チェック
 
+    final insertBankPriceList = <String>[];
+
     for (var i = 0; i < 10; i++) {
       //===============================================
       if (bankPriceAdjustState.adjustDate[i] != '日付' &&
@@ -213,6 +215,8 @@ class _BankPriceAdjustAlertState extends ConsumerState<BankPriceAdjustAlert> {
             ..bankId = exDeposit[1].toInt()
             ..price = bankPriceAdjustState.adjustPrice[i],
         );
+
+        insertBankPriceList.add('${exDeposit[0]}|${exDeposit[1]}|${bankPriceAdjustState.adjustDate[i]}');
       }
       //===============================================
 
@@ -253,6 +257,32 @@ class _BankPriceAdjustAlertState extends ConsumerState<BankPriceAdjustAlert> {
 
       return;
     }
+
+    //---------------------------//
+    final bankPricesCollection = widget.isar.bankPrices;
+
+    insertBankPriceList.forEach((element) async {
+      final exElement = element.split('|');
+
+      final getBankPrices = await bankPricesCollection
+          .filter()
+          .depositTypeEqualTo(exElement[0])
+          .bankIdEqualTo(exElement[1].toInt())
+          .dateEqualTo(exElement[2])
+          .findAll();
+
+      if (getBankPrices.isNotEmpty) {
+        await widget.isar.writeTxn(
+          () async {
+            getBankPrices.forEach((element2) {
+              bankPricesCollection.delete(element2.id);
+            });
+          },
+        );
+      }
+    });
+
+    //---------------------------//
 
     await widget.isar.writeTxn(() async {
       for (final bankPrice in list) {
