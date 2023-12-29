@@ -42,8 +42,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
 
-  int onedayDateTotal = 0;
-  int beforeDateTotal = 0;
+  int onedayMoneyTotal = 0;
+  int beforeMoneyTotal = 0;
+
+  int dispTotalBank = 0;
+  int dispTotalEmoney = 0;
 
   ///
   void _init() {
@@ -128,7 +131,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Start'),
-                Text((beforeDateTotal + beforeBankTotal!).toString().toCurrency()),
+                Text((beforeMoneyTotal + beforeBankTotal!).toString().toCurrency()),
               ],
             ),
           ),
@@ -139,7 +142,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('End'),
-                Text((onedayDateTotal + onedayBankTotal!).toString().toCurrency()),
+                Text((onedayMoneyTotal + onedayBankTotal!).toString().toCurrency()),
               ],
             ),
           ),
@@ -151,7 +154,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               children: [
                 const Text('Spend'),
                 Text(
-                  ((beforeDateTotal + beforeBankTotal) - (onedayDateTotal + onedayBankTotal)).toString().toCurrency(),
+                  ((beforeMoneyTotal + beforeBankTotal) - (onedayMoneyTotal + onedayBankTotal)).toString().toCurrency(),
                 ),
               ],
             ),
@@ -188,6 +191,19 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                   ),
                 ),
                 child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(),
+              Text(
+                onedayMoneyTotal.toString().toCurrency(),
+                style: const TextStyle(color: Colors.yellowAccent),
               ),
             ],
           ),
@@ -229,7 +245,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
       moneyList = getMoneys;
 
       if (moneyList!.isNotEmpty) {
-        onedayDateTotal = _utility.makeCurrencySum(money: moneyList![0]);
+        onedayMoneyTotal = _utility.makeCurrencySum(money: moneyList![0]);
       }
     });
   }
@@ -249,7 +265,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
       beforeMoneyList = getBeforeDateMoneys;
 
       if (beforeMoneyList!.isNotEmpty) {
-        beforeDateTotal = _utility.makeCurrencySum(money: beforeMoneyList![0]);
+        beforeMoneyTotal = _utility.makeCurrencySum(money: beforeMoneyList![0]);
       }
     });
   }
@@ -290,6 +306,30 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
       ));
     } else {
       final list2 = <Widget>[];
+
+      var sum = 0;
+      for (var i = 0; i < bankNameList!.length; i++) {
+        if (bankPricePadMap['${bankNameList![i].depositType}-${bankNameList![i].id}'] != null) {
+          final bankPriceMap = bankPricePadMap['${bankNameList![i].depositType}-${bankNameList![i].id}'];
+          if (bankPriceMap![widget.date.yyyymmdd] != null) {
+            sum += bankPriceMap[widget.date.yyyymmdd]!;
+          }
+        }
+      }
+
+      list2.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(),
+            Text(
+              sum.toString().toCurrency(),
+              style: const TextStyle(color: Colors.yellowAccent),
+            ),
+          ],
+        ),
+      ));
 
       for (var i = 0; i < bankNameList!.length; i++) {
         list2.add(
@@ -372,6 +412,31 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
       ));
     } else {
       final list2 = <Widget>[];
+
+      var sum = 0;
+      for (var i = 0; i < emoneyNameList!.length; i++) {
+        if (bankPricePadMap['${emoneyNameList![i].depositType}-${emoneyNameList![i].id}'] != null) {
+          final bankPriceMap = bankPricePadMap['${emoneyNameList![i].depositType}-${emoneyNameList![i].id}'];
+
+          if (bankPriceMap![widget.date.yyyymmdd] != null) {
+            sum += bankPriceMap[widget.date.yyyymmdd]!;
+          }
+        }
+      }
+
+      list2.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(),
+            Text(
+              sum.toString().toCurrency(),
+              style: const TextStyle(color: Colors.yellowAccent),
+            ),
+          ],
+        ),
+      ));
 
       for (var i = 0; i < emoneyNameList!.length; i++) {
         list2.add(
@@ -479,7 +544,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                 const Text('SPEND', overflow: TextOverflow.ellipsis),
                 GestureDetector(
                   onTap: () async {
-                    if (onedayDateTotal == 0) {
+                    if (onedayMoneyTotal == 0) {
                       Future.delayed(
                         Duration.zero,
                         () => error_dialog(context: context, title: '登録できません。', content: '先にCURRENCYを入力してください。'),
@@ -502,7 +567,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
                       context: context,
                       widget: SpendTimePlaceInputAlert(
                         date: widget.date,
-                        spend: (beforeDateTotal + beforeBankTotal!) - (onedayDateTotal + onedayBankTotal!),
+                        spend: (beforeMoneyTotal + beforeBankTotal!) - (onedayMoneyTotal + onedayBankTotal!),
                         isar: widget.isar,
                         spendTimePlaceList: spendTimePlaceList,
                       ),
@@ -518,6 +583,25 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
     ];
 
     if (spendTimePlaceList!.isNotEmpty) {
+      var sum = 0;
+      makeMonthlySpendItemSumMap(spendTimePlaceList: spendTimePlaceList!).forEach((key, value) {
+        sum += value;
+      });
+
+      list.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(),
+            Text(
+              sum.toString().toCurrency(),
+              style: const TextStyle(color: Colors.yellowAccent),
+            ),
+          ],
+        ),
+      ));
+
       makeMonthlySpendItemSumMap(spendTimePlaceList: spendTimePlaceList!).forEach((key, value) {
         list.add(Container(
           padding: const EdgeInsets.all(10),
