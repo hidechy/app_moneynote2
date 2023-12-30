@@ -130,7 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 _displayPrevNextButton(),
                 ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.45),
+                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.4),
                   child: _getCalendar(),
                 ),
                 Expanded(child: _displayMonthlySpendTimePlaceList()),
@@ -399,7 +399,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: context.screenSize.height / 30),
+                          constraints: BoxConstraints(minHeight: context.screenSize.height / 40),
                           child: Text(_calendarDays[i].padLeft(2, '0')),
                         ),
                         Row(
@@ -471,6 +471,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final list = <Widget>[];
 
     if (monthlySpendTimePlaceList!.isNotEmpty) {
+      var sum = 0;
+
+      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
+        sum += value;
+      });
+
+      list.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(),
+            Text(
+              sum.toString().toCurrency(),
+              style: const TextStyle(color: Colors.yellowAccent),
+            ),
+          ],
+        ),
+      ));
+
       makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
         list.add(Container(
           padding: const EdgeInsets.all(10),

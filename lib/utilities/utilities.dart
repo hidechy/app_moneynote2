@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../collections/money.dart';
 
 class Utility {
+  ///
   Color getYoubiColor({
     required String date,
     required String youbiStr,
@@ -60,53 +61,4 @@ class Utility {
 
     return sum;
   }
-//
-// ///
-// int makeTotalMoney({required int currencySum, required WidgetRef ref, required DateTime date}) {
-//   var totalMoney = 0;
-//
-//   final list = <int>[currencySum];
-//
-//   final bankPriceState = ref.watch(bankPriceProvider);
-//
-//   final bankPriceDatePadMap = (bankPriceState.bankPriceDatePadMap.value != null)
-//       ? bankPriceState.bankPriceDatePadMap.value
-//       : <String, Map<String, int>>{};
-//
-//   bankPriceDatePadMap?.forEach((key, value) {
-//     value.forEach((key2, value2) {
-//       if (date.yyyymmdd == key2) {
-//         list.add(value2);
-//       }
-//     });
-//   });
-//
-//   list.forEach((element) => totalMoney += element);
-//
-//   return totalMoney;
-// }
-//
-// ///
-// Future<String> getMoneyMinDate({required WidgetRef ref}) async {
-//   var moneyMinDate = '';
-//
-//   final moneyList = ref.watch(moneyProvider.select((value) => value.moneyList));
-//
-//   final dateList = <String>[];
-//   moneyList.value?.forEach((element) {
-//     dateList.add(element.date);
-//   });
-//
-//   dateList.sort((a, b) => a.compareTo(b));
-//
-//   if (dateList.isNotEmpty) {
-//     moneyMinDate = dateList[0];
-//   }
-//
-//   return moneyMinDate;
-// }
-//
-//
-//
-//
 }
