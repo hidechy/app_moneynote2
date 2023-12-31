@@ -59,9 +59,14 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
 
   ///
   void makeTab() {
-    tabs = [];
+    tabs = [
+      TabInfo(
+        '${widget.date.yyyymmdd} (${widget.date.youbiStr.substring(0, 3)})',
+        DailyMoneyDisplayPage(date: widget.date, isar: widget.isar),
+      ),
+    ];
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 1; i < 7; i++) {
       final day = widget.date.add(Duration(days: i * -1));
 
       final youbi = day.youbiStr.substring(0, 3);

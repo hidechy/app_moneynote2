@@ -51,10 +51,27 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   int dispTotalBank = 0;
   int dispTotalEmoney = 0;
 
-  @override
-  void initState() {
-    super.initState();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   _makeBankNameList();
+  //   _makeEmoneyNameList();
+  //
+  //   _makeBankPriceList();
+  //   _makeMoneyList();
+  //   _makeBeforeMoneyList();
+  //
+  //   _makeSpendTimePlaceList();
+  // }
+  //
+  // ///
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
 
+  void _init() {
     _makeBankNameList();
     _makeEmoneyNameList();
 
@@ -67,13 +84,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
   ///
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  ///
-  @override
   Widget build(BuildContext context) {
+    Future(() => _init());
+
     final oneday = widget.date.yyyymmdd;
 
     final beforeDate =
@@ -195,6 +208,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                             ((beforeMoneyTotal + beforeBankTotal) - (onedayMoneyTotal + onedayBankTotal))
                                 .toString()
                                 .toCurrency(),
+                            style: TextStyle(color: (onedayMoneyTotal == 0) ? Color(0xFFFBB6CE) : Colors.white),
                           ),
                         ],
                       ),
