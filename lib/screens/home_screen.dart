@@ -196,18 +196,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         MoneyDialog(
                           context: context,
                           widget: MoneyListAlert(
-
-
-
-
-                            isar:widget.isar,
-
-
-
-
+                            isar: widget.isar,
                             date: (widget.baseYm != null)
                                 ? DateTime.parse('${widget.baseYm}-01 00:00:00')
                                 : DateTime.now(),
+                            moneyList: moneyList,
+                            bankNameList: bankNameList,
+                            emoneyNameList: emoneyNameList,
+                            bankPriceList: bankPriceList,
                           ),
                         );
                       },

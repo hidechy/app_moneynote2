@@ -1,46 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/screens/components/parts/money_list_display_cell.dart';
 
+import '../../collections/bank_name.dart';
 import '../../collections/bank_price.dart';
+import '../../collections/emoney_name.dart';
 import '../../collections/money.dart';
 import '../../extensions/extensions.dart';
+import '../../state/holidays/holidays_notifier.dart';
 import '../../utilities/functions.dart';
+import '../../utilities/utilities.dart';
 
-class MoneyListAlert extends StatefulWidget {
-  const MoneyListAlert({super.key, required this.date, required this.isar});
+class MoneyListAlert extends ConsumerStatefulWidget {
+  const MoneyListAlert({
+    super.key,
+    required this.date,
+    required this.isar,
+    this.moneyList,
+    this.bankNameList,
+    this.emoneyNameList,
+    this.bankPriceList,
+  });
 
   final DateTime date;
   final Isar isar;
 
+  final List<Money>? moneyList;
+
+  final List<BankName>? bankNameList;
+  final List<EmoneyName>? emoneyNameList;
+
+  final List<BankPrice>? bankPriceList;
+
   @override
-  State<MoneyListAlert> createState() => _MoneyListAlertState();
+  ConsumerState<MoneyListAlert> createState() => _MoneyListAlertState();
 }
 
-class _MoneyListAlertState extends State<MoneyListAlert> {
-  List<Money>? moneyList = [];
+class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
+  final Utility _utility = Utility();
 
   Map<String, Money> dateMoneyMap = {};
-
-  List<BankPrice>? bankPriceList = [];
 
   Map<String, Map<String, int>> bankPricePadMap = {};
   Map<String, int> bankPriceTotalPadMap = {};
 
-  Map<String, Map<String, int>> bankPricePadMapDateDepositReverse = {};
+  Map<String, String> _holidayMap = {};
 
   ///
-  void _init() {
-    _makeMoneyList();
+  @override
+  void initState() {
+    super.initState();
 
-    _makeBankPriceList();
+    _makeDateMoneyMap();
+
+    _makeBankPricePadMap();
   }
 
   ///
   @override
   Widget build(BuildContext context) {
-    Future(_init);
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -59,7 +79,7 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
               Container(width: context.screenSize.width),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [const Text('CURRENCY枚数リスト'), Text(widget.date.yyyymm)],
+                children: [const Text('月間金額推移'), Text(widget.date.yyyymm)],
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               Expanded(child: _dispDateMoneyList()),
@@ -71,176 +91,196 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
   }
 
   ///
-  Future<void> _makeMoneyList() async {
-    dateMoneyMap = {};
+  void _makeBankPricePadMap() {
+    if (widget.bankPriceList != null) {
+      final bankPriceMap = makeBankPriceMap(bankPriceList: widget.bankPriceList!);
+      bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
+      bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
+    }
+  }
 
-    final moneyCollection = widget.isar.moneys;
-
-    final getMoneys = await moneyCollection.where().sortByDate().findAll();
-
-    setState(() {
-      moneyList = getMoneys;
-
-      if (moneyList!.isNotEmpty) {
-        moneyList!.forEach((element) {
-          dateMoneyMap[element.date] = element;
-        });
-      }
-    });
+  ///
+  void _makeDateMoneyMap() {
+    if (widget.moneyList!.isNotEmpty) {
+      widget.moneyList!.forEach((element) {
+        dateMoneyMap[element.date] = element;
+      });
+    }
   }
 
   ///
   Widget _dispDateMoneyList() {
-//    print(bankPricePadMapDateDepositReverse);
+    if (dateMoneyMap.isEmpty) {
+      return Container();
+    }
 
-    /*
+    final holidayState = ref.watch(holidayProvider);
 
-flutter: {
-2023-12-27: {
-bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
-emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
-},
-
-2023-12-28: {
-bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
-emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
-},
-
-2023-12-29: {
-bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
-emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
-},
-
-2023-12-30: {
-bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
-emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
-},
-
-2023-12-31: {
-bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
-emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
-}
-
-}
-
-  */
+    if (holidayState.holidayMap.value != null) {
+      _holidayMap = holidayState.holidayMap.value!;
+    }
 
     //---------------------// 見出し行
     final list = <Widget>[
       Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           _displayBlank(),
           const SizedBox(width: 10),
-          _displayMidashiList(),
+          _displayCurrencyMidashi(),
+          const SizedBox(width: 10),
+          _displayBankMidashi(),
+          const SizedBox(width: 10),
+          _displayEmoneyMidashi(),
         ],
       )
     ];
     //---------------------// 見出し行
 
     dateMoneyMap.forEach((key, value) {
-      list.add(Row(
-        children: [
-          _displayDate(date: DateTime.parse('$key 00:00:00')),
-          const SizedBox(width: 10),
-          _displayCurrencyList(value: value),
-        ],
+      final genDate = DateTime.parse('$key 00:00:00');
+
+      list.add(DecoratedBox(
+        decoration: BoxDecoration(
+          color: _utility.getYoubiColor(date: genDate.yyyymmdd, youbiStr: genDate.youbiStr, holidayMap: _holidayMap),
+        ),
+        child: Row(
+          children: [
+            _displayDate(date: genDate),
+            const SizedBox(width: 10),
+            _displayCurrencyList(value: value),
+            const SizedBox(width: 10),
+            _displayBankList(date: genDate),
+            const SizedBox(width: 10),
+            _displayEmoneyList(date: genDate),
+          ],
+        ),
       ));
     });
 
-    return SingleChildScrollView(scrollDirection: Axis.horizontal, child: Column(children: list));
-  }
-
-  Widget _displayBlank() {
-    return Container(
-      width: 140,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.transparent.withOpacity(0.2)),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DefaultTextStyle(
+        style: const TextStyle(fontSize: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: list,
+        ),
       ),
-      margin: const EdgeInsets.all(1),
-      padding: const EdgeInsets.all(1),
-      child: const Text(''),
     );
   }
 
   ///
-  Widget _displayMidashiList() {
+  Widget _displayBlank() {
+    return const MoneyListDisplayCell(
+      widget: Text(''),
+      width: 100,
+      color: Colors.transparent,
+      borderColor: Colors.transparent,
+      alignment: Alignment.topLeft,
+    );
+  }
+
+  ///
+  Widget _displayCurrencyMidashi() {
     const width = 70;
     final color = Colors.yellowAccent.withOpacity(0.1);
+    final minHeight = context.screenSize.height / 40;
 
     return Row(
       children: [
-        _displayCurrencyParts(
-            value: 10000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 5000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 2000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 1000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 500,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 100,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 50,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 10,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 5,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
-        _displayCurrencyParts(
-            value: 1,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.transparent,
-            alignment: Alignment.center),
+        MoneyListDisplayCell(
+          widget: const Text('10000'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('5000'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('2000'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('1000'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('500'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('100'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('50'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('10'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('5'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
+        MoneyListDisplayCell(
+          widget: const Text('1'),
+          width: width.toDouble(),
+          minHeight: minHeight,
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        ),
       ],
     );
   }
 
   ///
   Widget _displayDate({required DateTime date}) {
-    return Container(
-      width: 140,
-      decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.2))),
-      margin: const EdgeInsets.all(1),
-      padding: const EdgeInsets.all(1),
-      child: Text('${date.yyyymmdd}（${date.youbiStr.substring(0, 3)}）'),
+    return MoneyListDisplayCell(
+      widget: Text('${date.yyyymmdd}（${date.youbiStr.substring(0, 3)}）'),
+      width: 100,
+      color: Colors.transparent,
+      borderColor: Colors.white.withOpacity(0.2),
+      alignment: Alignment.topLeft,
     );
   }
 
@@ -251,120 +291,171 @@ emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50
 
     return Row(
       children: [
-        _displayCurrencyParts(
-            value: value.yen_10000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_5000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_2000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_1000,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_500,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_100,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_50,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_10,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_5,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
-        _displayCurrencyParts(
-            value: value.yen_1,
-            width: width.toDouble(),
-            color: color,
-            borderColor: Colors.white.withOpacity(0.2),
-            alignment: Alignment.topRight),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_10000.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_5000.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_2000.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_1000.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_500.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_100.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_50.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_10.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_5.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
+        MoneyListDisplayCell(
+          widget: Text(value.yen_1.toString().toCurrency()),
+          width: width.toDouble(),
+          color: color,
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.topRight,
+        ),
       ],
     );
   }
 
   ///
-  Widget _displayCurrencyParts({
-    required int value,
-    required double width,
-    required Color color,
-    required Color borderColor,
-    required Alignment alignment,
-  }) {
-    return Container(
-      decoration: BoxDecoration(border: Border.all(color: borderColor), color: color),
-      margin: const EdgeInsets.all(1),
-      padding: const EdgeInsets.all(1),
-      width: width,
-      alignment: alignment,
-      child: Text(value.toString()),
+  Widget _displayBankMidashi() {
+    return Row(
+      children: widget.bankNameList!.map((e) {
+        return MoneyListDisplayCell(
+          widget: Column(children: [Text(e.bankName), Text(e.branchName)]),
+          width: 100,
+          minHeight: context.screenSize.height / 40,
+          color: Colors.yellowAccent.withOpacity(0.1),
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        );
+      }).toList(),
     );
   }
 
   ///
-  Future<void> _makeBankPriceList() async {
-    final bankPricesCollection = widget.isar.bankPrices;
+  Widget _displayBankList({required DateTime date}) {
+    return (widget.bankNameList!.isNotEmpty)
+        ? Row(
+            children: widget.bankNameList!.map((e) {
+              final bankPricePadData = bankPricePadMap['${e.depositType}-${e.id}'];
 
-    final getBankPrices = await bankPricesCollection.where().findAll();
+              if (bankPricePadData == null) {
+                return MoneyListDisplayCell(
+                  widget: const Text('0'),
+                  width: 100,
+                  color: Colors.transparent,
+                  borderColor: Colors.white.withOpacity(0.2),
+                  alignment: Alignment.topRight,
+                );
+              }
 
-    setState(() {
-      bankPriceList = getBankPrices;
-
-      if (bankPriceList != null) {
-        final bankPriceMap = makeBankPriceMap(bankPriceList: bankPriceList!);
-        bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
-        bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
-
-        if (bankPricePadMap.isNotEmpty) {
-          _makeBankPricePadMapDateDepositReverse(data: bankPricePadMap);
-        }
-      }
-    });
+              return MoneyListDisplayCell(
+                widget: Text((bankPricePadData[date.yyyymmdd] != null)
+                    ? bankPricePadData[date.yyyymmdd].toString().toCurrency()
+                    : 0.toString()),
+                width: 100,
+                color: Colors.transparent,
+                borderColor: Colors.white.withOpacity(0.2),
+                alignment: Alignment.topRight,
+              );
+            }).toList(),
+          )
+        : Container();
   }
 
   ///
-  void _makeBankPricePadMapDateDepositReverse({required Map<String, Map<String, int>> data}) {
-    bankPricePadMapDateDepositReverse = {};
+  Widget _displayEmoneyMidashi() {
+    return Row(
+      children: widget.emoneyNameList!.map((e) {
+        return MoneyListDisplayCell(
+          widget: Text(e.emoneyName),
+          width: 100,
+          minHeight: context.screenSize.height / 40,
+          color: Colors.yellowAccent.withOpacity(0.1),
+          borderColor: Colors.white.withOpacity(0.2),
+          alignment: Alignment.center,
+        );
+      }).toList(),
+    );
+  }
 
-    final map = <String, int>{};
+  ///
+  Widget _displayEmoneyList({required DateTime date}) {
+    return (widget.emoneyNameList!.isNotEmpty)
+        ? Row(
+            children: widget.emoneyNameList!.map((e) {
+              final bankPricePadData = bankPricePadMap['${e.depositType}-${e.id}'];
 
-    data.forEach((key, value) {
-      value.forEach((key2, value2) {
-        map[key] = value2;
-        bankPricePadMapDateDepositReverse[key2] = map;
-      });
-    });
+              if (bankPricePadData == null) {
+                return MoneyListDisplayCell(
+                  widget: const Text('0'),
+                  width: 100,
+                  color: Colors.transparent,
+                  borderColor: Colors.white.withOpacity(0.2),
+                  alignment: Alignment.topRight,
+                );
+              }
+
+              return MoneyListDisplayCell(
+                widget: Text((bankPricePadData[date.yyyymmdd] != null)
+                    ? bankPricePadData[date.yyyymmdd].toString().toCurrency()
+                    : 0.toString()),
+                width: 100,
+                color: Colors.transparent,
+                borderColor: Colors.white.withOpacity(0.2),
+                alignment: Alignment.topRight,
+              );
+            }).toList(),
+          )
+        : Container();
   }
 }
