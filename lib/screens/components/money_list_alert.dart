@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 
+import '../../collections/bank_price.dart';
 import '../../collections/money.dart';
 import '../../extensions/extensions.dart';
+import '../../utilities/functions.dart';
 
 class MoneyListAlert extends StatefulWidget {
   const MoneyListAlert({super.key, required this.date, required this.isar});
@@ -20,9 +22,18 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
 
   Map<String, Money> dateMoneyMap = {};
 
+  List<BankPrice>? bankPriceList = [];
+
+  Map<String, Map<String, int>> bankPricePadMap = {};
+  Map<String, int> bankPriceTotalPadMap = {};
+
+  Map<String, Map<String, int>> bankPricePadMapDateDepositReverse = {};
+
   ///
   void _init() {
     _makeMoneyList();
+
+    _makeBankPriceList();
   }
 
   ///
@@ -48,10 +59,7 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
               Container(width: context.screenSize.width),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('CURRENCY枚数リスト'),
-                  Text(widget.date.yyyymm),
-                ],
+                children: [const Text('CURRENCY枚数リスト'), Text(widget.date.yyyymm)],
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               Expanded(child: _dispDateMoneyList()),
@@ -83,36 +91,56 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
 
   ///
   Widget _dispDateMoneyList() {
+//    print(bankPricePadMapDateDepositReverse);
+
+    /*
+
+flutter: {
+2023-12-27: {
+bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
+emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
+},
+
+2023-12-28: {
+bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
+emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
+},
+
+2023-12-29: {
+bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
+emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
+},
+
+2023-12-30: {
+bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
+emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
+},
+
+2023-12-31: {
+bank-1: 10000, bank-2: 20000, bank-3: 30000, bank-4: 40000, bank-5: 50000,
+emoney-1: 10000, emoney-2: 20000, emoney-3: 30000, emoney-4: 40000, emoney-5: 50000
+}
+
+}
+
+  */
+
+    //---------------------// 見出し行
     final list = <Widget>[
       Row(
         children: [
-          Container(
-            width: 140,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.transparent.withOpacity(0.2)),
-            ),
-            margin: const EdgeInsets.all(1),
-            padding: const EdgeInsets.all(1),
-            child: const Text(''),
-          ),
+          _displayBlank(),
           const SizedBox(width: 10),
           _displayMidashiList(),
         ],
       )
     ];
+    //---------------------// 見出し行
 
     dateMoneyMap.forEach((key, value) {
       list.add(Row(
         children: [
-          Container(
-            width: 140,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-            ),
-            margin: const EdgeInsets.all(1),
-            padding: const EdgeInsets.all(1),
-            child: Text('$key（${DateTime.parse('$key 00:00:00').youbiStr.substring(0, 3)}）'),
-          ),
+          _displayDate(date: DateTime.parse('$key 00:00:00')),
           const SizedBox(width: 10),
           _displayCurrencyList(value: value),
         ],
@@ -120,6 +148,18 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
     });
 
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child: Column(children: list));
+  }
+
+  Widget _displayBlank() {
+    return Container(
+      width: 140,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.transparent.withOpacity(0.2)),
+      ),
+      margin: const EdgeInsets.all(1),
+      padding: const EdgeInsets.all(1),
+      child: const Text(''),
+    );
   }
 
   ///
@@ -190,6 +230,17 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
             borderColor: Colors.transparent,
             alignment: Alignment.center),
       ],
+    );
+  }
+
+  ///
+  Widget _displayDate({required DateTime date}) {
+    return Container(
+      width: 140,
+      decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.2))),
+      margin: const EdgeInsets.all(1),
+      padding: const EdgeInsets.all(1),
+      child: Text('${date.yyyymmdd}（${date.youbiStr.substring(0, 3)}）'),
     );
   }
 
@@ -273,16 +324,47 @@ class _MoneyListAlertState extends State<MoneyListAlert> {
     required Alignment alignment,
   }) {
     return Container(
-      decoration: BoxDecoration(
-//        border: Border.all(color: Colors.white.withOpacity(0.2)),
-        border: Border.all(color: borderColor),
-        color: color,
-      ),
+      decoration: BoxDecoration(border: Border.all(color: borderColor), color: color),
       margin: const EdgeInsets.all(1),
       padding: const EdgeInsets.all(1),
       width: width,
       alignment: alignment,
       child: Text(value.toString()),
     );
+  }
+
+  ///
+  Future<void> _makeBankPriceList() async {
+    final bankPricesCollection = widget.isar.bankPrices;
+
+    final getBankPrices = await bankPricesCollection.where().findAll();
+
+    setState(() {
+      bankPriceList = getBankPrices;
+
+      if (bankPriceList != null) {
+        final bankPriceMap = makeBankPriceMap(bankPriceList: bankPriceList!);
+        bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
+        bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
+
+        if (bankPricePadMap.isNotEmpty) {
+          _makeBankPricePadMapDateDepositReverse(data: bankPricePadMap);
+        }
+      }
+    });
+  }
+
+  ///
+  void _makeBankPricePadMapDateDepositReverse({required Map<String, Map<String, int>> data}) {
+    bankPricePadMapDateDepositReverse = {};
+
+    final map = <String, int>{};
+
+    data.forEach((key, value) {
+      value.forEach((key2, value2) {
+        map[key] = value2;
+        bankPricePadMapDateDepositReverse[key2] = map;
+      });
+    });
   }
 }
