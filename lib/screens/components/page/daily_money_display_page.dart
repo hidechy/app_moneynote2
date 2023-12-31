@@ -74,6 +74,17 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   ///
   @override
   Widget build(BuildContext context) {
+    final oneday = widget.date.yyyymmdd;
+
+    final beforeDate =
+        DateTime(oneday.split('-')[0].toInt(), oneday.split('-')[1].toInt(), oneday.split('-')[2].toInt() - 1);
+
+    final onedayBankTotal = (bankPriceTotalPadMap[oneday] != null) ? bankPriceTotalPadMap[oneday] : 0;
+    final beforeBankTotal =
+        (bankPriceTotalPadMap[beforeDate.yyyymmdd] != null) ? bankPriceTotalPadMap[beforeDate.yyyymmdd] : 0;
+
+    final spendDiff = (beforeMoneyTotal + beforeBankTotal!) - (onedayMoneyTotal + onedayBankTotal!);
+
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -100,8 +111,10 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                 const SizedBox(height: 20),
                 _displayEmoneyNames(),
                 const SizedBox(height: 20),
-                _displaySpendTimePlaceList(),
-                const SizedBox(height: 20),
+                if (spendDiff > 0) ...[
+                  _displaySpendTimePlaceList(),
+                  const SizedBox(height: 20),
+                ],
               ],
             ),
           ),
@@ -626,26 +639,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                         ? bankPriceTotalPadMap[beforeDate.yyyymmdd]
                         : 0;
 
-                    final spendDiff = (beforeMoneyTotal + beforeBankTotal!) - (onedayMoneyTotal + onedayBankTotal!);
-
-                    if (spendDiff == 0) {
-                      Future.delayed(
-                        Duration.zero,
-                        () => error_dialog(
-                          context: context,
-                          title: '登録できません。',
-                          content: '前日との差額がないため、消費金額の登録はできません。',
-                        ),
-                      );
-
-                      return;
-                    }
-
                     await MoneyDialog(
                       context: context,
                       widget: SpendTimePlaceInputAlert(
                         date: widget.date,
-                        spend: (beforeMoneyTotal + beforeBankTotal) - (onedayMoneyTotal + onedayBankTotal),
+                        spend: (beforeMoneyTotal + beforeBankTotal!) - (onedayMoneyTotal + onedayBankTotal!),
                         isar: widget.isar,
                         spendTimePlaceList: spendTimePlaceList,
                       ),
