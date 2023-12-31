@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/screens/components/money_list_alert.dart';
 
 import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
@@ -147,27 +150,79 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _displayPrevNextButton() {
     final calendarState = ref.watch(calendarProvider);
 
-    return Container(
-      width: context.screenSize.width,
-      decoration: BoxDecoration(color: Colors.white.withOpacity(0.1)),
-      margin: const EdgeInsets.only(bottom: 5),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: _goPrevMonth,
-            icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8), size: 14),
-          ),
-          IconButton(
-            onPressed: (DateTime.now().yyyymm == calendarState.baseYearMonth) ? null : _goNextMonth,
-            icon: Icon(
-              Icons.arrow_forward_ios,
-              color: (DateTime.now().yyyymm == calendarState.baseYearMonth)
-                  ? Colors.grey.withOpacity(0.6)
-                  : Colors.white.withOpacity(0.8),
-              size: 14,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+          child: Container(
+            width: context.screenSize.width,
+            margin: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: _goPrevMonth,
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8), size: 14),
+                    ),
+                    IconButton(
+                      onPressed: (DateTime.now().yyyymm == calendarState.baseYearMonth) ? null : _goNextMonth,
+                      icon: Icon(
+                        Icons.arrow_forward_ios,
+                        color: (DateTime.now().yyyymm == calendarState.baseYearMonth)
+                            ? Colors.grey.withOpacity(0.6)
+                            : Colors.white.withOpacity(0.8),
+                        size: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        MoneyDialog(
+                          context: context,
+                          widget: MoneyListAlert(
+
+
+
+
+                            isar:widget.isar,
+
+
+
+
+                            date: (widget.baseYm != null)
+                                ? DateTime.parse('${widget.baseYm}-01 00:00:00')
+                                : DateTime.now(),
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        Icons.list,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

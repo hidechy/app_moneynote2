@@ -82,7 +82,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
               children: [
                 const SizedBox(height: 20),
                 Container(width: context.screenSize.width),
-                Text(widget.date.yyyymmdd),
+                Text('${widget.date.yyyymmdd}（${widget.date.youbiStr.substring(0, 3)}）'),
                 Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
                 const SizedBox(height: 20),
                 _getTopInfoPlate(),
