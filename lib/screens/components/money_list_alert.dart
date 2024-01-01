@@ -48,6 +48,8 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
 
   Map<String, String> _holidayMap = {};
 
+  int midashiDivide = 35;
+
   ///
   @override
   void initState() {
@@ -140,22 +142,24 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
     dateMoneyMap.forEach((key, value) {
       final genDate = DateTime.parse('$key 00:00:00');
 
-      list.add(DecoratedBox(
-        decoration: BoxDecoration(
-          color: _utility.getYoubiColor(date: genDate.yyyymmdd, youbiStr: genDate.youbiStr, holidayMap: _holidayMap),
-        ),
-        child: Row(
-          children: [
-            _displayDate(date: genDate),
-            const SizedBox(width: 10),
-            _displayCurrencyList(value: value),
-            const SizedBox(width: 10),
-            _displayBankList(date: genDate),
-            const SizedBox(width: 10),
-            _displayEmoneyList(date: genDate),
-          ],
-        ),
-      ));
+      if (widget.date.yyyymm == genDate.yyyymm) {
+        list.add(DecoratedBox(
+          decoration: BoxDecoration(
+            color: _utility.getYoubiColor(date: genDate.yyyymmdd, youbiStr: genDate.youbiStr, holidayMap: _holidayMap),
+          ),
+          child: Row(
+            children: [
+              _displayDate(date: genDate),
+              const SizedBox(width: 10),
+              _displayCurrencyList(value: value),
+              const SizedBox(width: 10),
+              _displayBankList(date: genDate),
+              const SizedBox(width: 10),
+              _displayEmoneyList(date: genDate),
+            ],
+          ),
+        ));
+      }
     });
 
     return SingleChildScrollView(
@@ -185,7 +189,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
   Widget _displayCurrencyMidashi() {
     const width = 70;
     final color = Colors.yellowAccent.withOpacity(0.1);
-    final minHeight = context.screenSize.height / 40;
+    final minHeight = context.screenSize.height / midashiDivide;
 
     return Row(
       children: [
@@ -372,7 +376,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
         return MoneyListDisplayCell(
           widget: Column(children: [Text(e.bankName), Text(e.branchName)]),
           width: 100,
-          minHeight: context.screenSize.height / 40,
+          minHeight: context.screenSize.height / midashiDivide,
           color: Colors.yellowAccent.withOpacity(0.1),
           borderColor: Colors.white.withOpacity(0.2),
           alignment: Alignment.center,
@@ -419,7 +423,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
         return MoneyListDisplayCell(
           widget: Text(e.emoneyName),
           width: 100,
-          minHeight: context.screenSize.height / 40,
+          minHeight: context.screenSize.height / midashiDivide,
           color: Colors.yellowAccent.withOpacity(0.1),
           borderColor: Colors.white.withOpacity(0.2),
           alignment: Alignment.center,
