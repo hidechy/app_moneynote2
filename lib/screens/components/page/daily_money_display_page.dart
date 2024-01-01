@@ -85,7 +85,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   ///
   @override
   Widget build(BuildContext context) {
-    Future(() => _init());
+    Future(_init);
 
     final oneday = widget.date.yyyymmdd;
 
@@ -208,7 +208,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                             ((beforeMoneyTotal + beforeBankTotal) - (onedayMoneyTotal + onedayBankTotal))
                                 .toString()
                                 .toCurrency(),
-                            style: TextStyle(color: (onedayMoneyTotal == 0) ? Color(0xFFFBB6CE) : Colors.white),
+                            style: TextStyle(color: (onedayMoneyTotal == 0) ? const Color(0xFFFBB6CE) : Colors.white),
                           ),
                         ],
                       ),
