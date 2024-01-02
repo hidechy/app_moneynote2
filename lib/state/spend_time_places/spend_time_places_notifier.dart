@@ -115,11 +115,22 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
     final spendPlace = <String>[...state.spendPlace];
     final minusChecks = <bool>[...state.minusCheck];
 
+    final minus = minusChecks[pos];
+    final price = spendPrice[pos];
+
     spendItem[pos] = '項目名';
     spendTime[pos] = '時間';
     spendPrice[pos] = 0;
     spendPlace[pos] = '';
     minusChecks[pos] = false;
+
+    var diff = state.diff;
+
+    if (minus) {
+      diff -= price;
+    } else {
+      diff += price;
+    }
 
     state = state.copyWith(
       spendTime: spendTime,
@@ -127,6 +138,7 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
       spendItem: spendItem,
       spendPrice: spendPrice,
       minusCheck: minusChecks,
+      diff: diff,
     );
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/collections/spend_time_place.dart';
 
+import '../../collections/spend_time_place.dart';
 import '../../extensions/extensions.dart';
 
 class SpendItemHistoryAlert extends StatefulWidget {
@@ -91,23 +91,25 @@ class _SpendItemHistoryAlertState extends State<SpendItemHistoryAlert> {
     final list = <Widget>[];
 
     for (var i = 0; i < spendItemPlaceHistoryList!.length; i++) {
-      list.add(Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text(spendItemPlaceHistoryList![i].date),
-                const SizedBox(width: 10),
-                Text(spendItemPlaceHistoryList![i].time),
-              ],
-            ),
-            Text(spendItemPlaceHistoryList![i].price.toString().toCurrency()),
-          ],
-        ),
-      ));
+      if (widget.date.month == DateTime.parse('${spendItemPlaceHistoryList![i].date} 00:00:00').month) {
+        list.add(Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(spendItemPlaceHistoryList![i].date),
+                  const SizedBox(width: 10),
+                  Text(spendItemPlaceHistoryList![i].time),
+                ],
+              ),
+              Text(spendItemPlaceHistoryList![i].price.toString().toCurrency()),
+            ],
+          ),
+        ));
+      }
     }
 
     return SingleChildScrollView(child: Column(children: list));

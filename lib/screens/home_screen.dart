@@ -26,6 +26,7 @@ import 'components/parts/custom_shape_clipper.dart';
 import 'components/parts/menu_head_icon.dart';
 import 'components/parts/money_dialog.dart';
 import 'components/spend_item_history_alert.dart';
+import 'components/spend_monthly_list_alert.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends ConsumerStatefulWidget {
@@ -92,9 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       depositNameList = [];
       depositNameList.add(Deposit('', ''));
 
-      depoNameList.forEach((element) {
-        depositNameList.add(element);
-      });
+      depoNameList.forEach((element) => depositNameList.add(element));
     }
 
     return Scaffold(
@@ -135,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 _displayPrevNextButton(),
                 ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.4),
+                  constraints: BoxConstraints(minHeight: context.screenSize.height * 0.45),
                   child: _getCalendar(),
                 ),
                 Expanded(child: _displayMonthlySpendTimePlaceList()),
@@ -480,7 +479,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Future<void> _makeMoneyList() async {
     final moneyCollection = widget.isar.moneys;
 
-    final getMoneys = await moneyCollection.where().findAll();
+    final getMoneys = await moneyCollection.where().sortByDate().findAll();
 
     setState(() {
       moneyList = getMoneys;
@@ -515,7 +514,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final yearmonth = (widget.baseYm != null) ? widget.baseYm : DateTime.now().yyyymm;
 
-    final getSpendTimePlaces = await spendTimePlacesCollection.filter().dateStartsWith(yearmonth!).findAll();
+    final getSpendTimePlaces =
+        await spendTimePlacesCollection.filter().dateStartsWith(yearmonth!).sortByDate().findAll();
 
     if (mounted) {
       setState(() => monthlySpendTimePlaceList = getSpendTimePlaces);
@@ -538,7 +538,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    MoneyDialog(
+                      context: context,
+                      widget: SpendMonthlyListAlert(
+                        isar: widget.isar,
+                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
+                      const Text('日別'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
           ],
         ),

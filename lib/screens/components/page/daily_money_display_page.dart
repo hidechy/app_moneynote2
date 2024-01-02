@@ -51,26 +51,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   int dispTotalBank = 0;
   int dispTotalEmoney = 0;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   _makeBankNameList();
-  //   _makeEmoneyNameList();
-  //
-  //   _makeBankPriceList();
-  //   _makeMoneyList();
-  //   _makeBeforeMoneyList();
-  //
-  //   _makeSpendTimePlaceList();
-  // }
-  //
-  // ///
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
-
   void _init() {
     _makeBankNameList();
     _makeEmoneyNameList();
@@ -429,7 +409,10 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(bankNameList![i].bankName),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(bankNameList![i].bankName), Text(bankNameList![i].branchName)],
+                ),
                 Row(
                   children: [
                     Text(
@@ -674,9 +657,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
     if (spendTimePlaceList!.isNotEmpty) {
       var sum = 0;
-      makeMonthlySpendItemSumMap(spendTimePlaceList: spendTimePlaceList!).forEach((key, value) {
-        sum += value;
-      });
+      makeMonthlySpendItemSumMap(spendTimePlaceList: spendTimePlaceList!).forEach((key, value) => sum += value);
 
       list.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
