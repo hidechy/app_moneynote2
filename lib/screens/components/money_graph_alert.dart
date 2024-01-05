@@ -30,20 +30,20 @@ class MoneyGraphAlert extends ConsumerStatefulWidget {
 class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
   final Utility _utility = Utility();
 
-  LineChartData data = LineChartData();
+  LineChartData _data = LineChartData();
 
-  List<FlSpot> flspots = [];
+  List<FlSpot> _flspots = [];
 
-  Map<String, String> dateMap = {};
+  Map<String, String> _dateMap = {};
 
-  double minGraphRate = 0.6;
+  final double _minGraphRate = 0.6;
 
-  final ScrollController scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   ///
   @override
   Widget build(BuildContext context) {
-    setChartData();
+    _setChartData();
 
     final graphWidthState = ref.watch(graphWidthProvider);
 
@@ -52,7 +52,7 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
       contentPadding: EdgeInsets.zero,
       content: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        controller: scrollController,
+        controller: _scrollController,
         child: SizedBox(
           width: context.screenSize.width * graphWidthState,
           height: context.screenSize.height - 50,
@@ -66,7 +66,7 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               const SizedBox(height: 20),
-              Expanded(child: LineChart(data)),
+              Expanded(child: LineChart(_data)),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,29 +78,29 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
                           backgroundColor: Colors.indigo.withOpacity(0.3),
                         ),
                         onPressed: () => ref.read(graphWidthProvider.notifier).setGraphWidth(
-                              width: (graphWidthState == minGraphRate)
-                                  ? (flspots.length / 10).ceil().toDouble()
-                                  : minGraphRate,
+                              width: (graphWidthState == _minGraphRate)
+                                  ? (_flspots.length / 10).ceil().toDouble()
+                                  : _minGraphRate,
                             ),
                         child: const Text('width'),
                       ),
-                      if (graphWidthState > minGraphRate)
+                      if (graphWidthState > _minGraphRate)
                         Row(
                           children: [
                             const SizedBox(width: 10),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(backgroundColor: Colors.pinkAccent.withOpacity(0.3)),
-                              onPressed: () => scrollController.jumpTo(scrollController.position.maxScrollExtent),
+                              onPressed: () => _scrollController.jumpTo(_scrollController.position.maxScrollExtent),
                               child: const Text('jump'),
                             ),
                           ],
                         ),
                     ],
                   ),
-                  if (graphWidthState > minGraphRate)
+                  if (graphWidthState > _minGraphRate)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.pinkAccent.withOpacity(0.3)),
-                      onPressed: () => scrollController.jumpTo(scrollController.position.minScrollExtent),
+                      onPressed: () => _scrollController.jumpTo(_scrollController.position.minScrollExtent),
                       child: const Text('back'),
                     ),
                 ],
@@ -113,7 +113,7 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
   }
 
   ///
-  void setChartData() {
+  void _setChartData() {
     final map = <String, int>{};
 
     widget.monthDateSumMap.forEach((key, value) {
@@ -123,16 +123,16 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
       }
     });
 
-    flspots = [];
-    dateMap = {};
+    _flspots = [];
+    _dateMap = {};
 
     final list = <int>[];
 
     var i = 0;
 
     map.forEach((key, value) {
-      flspots.add(FlSpot((i + 1).toDouble(), value.toDouble()));
-      dateMap[(i + 1).toString()] = key;
+      _flspots.add(FlSpot((i + 1).toDouble(), value.toDouble()));
+      _dateMap[(i + 1).toString()] = key;
       list.add(value);
       i++;
     });
@@ -145,10 +145,10 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
     final graphMin = ((minValue / warisuu).floor()) * warisuu;
     final graphMax = ((maxValue / warisuu).ceil()) * warisuu;
 
-    data = LineChartData(
+    _data = LineChartData(
       ///
       minX: 1,
-      maxX: flspots.length.toDouble(),
+      maxX: _flspots.length.toDouble(),
       //
       minY: graphMin.toDouble(),
       maxY: graphMax.toDouble(),
@@ -176,10 +176,10 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
             showTitles: true,
             reservedSize: 50,
             getTitlesWidget: (value, meta) {
-              final year = DateTime.parse(dateMap[value.toInt().toString()].toString()).year.toString().padLeft(2, '0');
+              final year = DateTime.parse(_dateMap[value.toInt().toString()].toString()).year.toString().padLeft(2, '0');
               final month =
-                  DateTime.parse(dateMap[value.toInt().toString()].toString()).month.toString().padLeft(2, '0');
-              final day = DateTime.parse(dateMap[value.toInt().toString()].toString()).day.toString().padLeft(2, '0');
+                  DateTime.parse(_dateMap[value.toInt().toString()].toString()).month.toString().padLeft(2, '0');
+              final day = DateTime.parse(_dateMap[value.toInt().toString()].toString()).day.toString().padLeft(2, '0');
               final monthday = '$month-$day';
 
               return SideTitleWidget(
@@ -220,7 +220,7 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
 
       ///
       lineBarsData: [
-        LineChartBarData(spots: flspots, barWidth: 5, isStrokeCapRound: true, color: Colors.yellowAccent),
+        LineChartBarData(spots: _flspots, barWidth: 5, isStrokeCapRound: true, color: Colors.yellowAccent),
       ],
     );
   }
@@ -230,10 +230,10 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
     final graphWidthState = ref.watch(graphWidthProvider);
 
     // ignore: avoid_bool_literals_in_conditional_expressions
-    var showTitles = (graphWidthState == minGraphRate) ? false : true;
+    var showTitles = (graphWidthState == _minGraphRate) ? false : true;
 
     if (flag == 'left') {
-      if (dateMap.length <= 5) {
+      if (_dateMap.length <= 5) {
         showTitles = true;
       }
     }
@@ -245,7 +245,7 @@ class _MoneyGraphAlertState extends ConsumerState<MoneyGraphAlert> {
   double _getLeftTitleWidth() {
     var width = 100.0;
 
-    switch (dateMap.length) {
+    switch (_dateMap.length) {
       case 1:
       case 2:
         width = context.screenSize.width / 2;

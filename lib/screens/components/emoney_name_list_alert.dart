@@ -20,7 +20,8 @@ class EmoneyNameListAlert extends ConsumerStatefulWidget {
 }
 
 class _EmoneyNameListAlertState extends ConsumerState<EmoneyNameListAlert> {
-  List<EmoneyName>? emoneyNameList = [];
+  // ignore: use_late_for_private_fields_and_variables
+  List<EmoneyName>? _emoneyNameList = [];
 
   ///
   @override
@@ -85,7 +86,7 @@ class _EmoneyNameListAlertState extends ConsumerState<EmoneyNameListAlert> {
 
     if (mounted) {
       setState(() {
-        emoneyNameList = getEmoneyNames;
+        _emoneyNameList = getEmoneyNames;
       });
     }
   }
@@ -94,7 +95,7 @@ class _EmoneyNameListAlertState extends ConsumerState<EmoneyNameListAlert> {
   Future<List<Widget>> _displayEmoneyNames() async {
     final list = <Widget>[];
 
-    for (var i = 0; i < emoneyNameList!.length; i++) {
+    for (var i = 0; i < _emoneyNameList!.length; i++) {
       list.add(
         Container(
           width: context.screenSize.width,
@@ -106,7 +107,7 @@ class _EmoneyNameListAlertState extends ConsumerState<EmoneyNameListAlert> {
             children: [
               Expanded(
                 child: Text(
-                    '${emoneyNameList![i].depositType}-${emoneyNameList![i].id}: ${emoneyNameList![i].emoneyName}'),
+                    '${_emoneyNameList![i].depositType}-${_emoneyNameList![i].id}: ${_emoneyNameList![i].emoneyName}'),
               ),
               Row(
                 children: [
@@ -116,7 +117,7 @@ class _EmoneyNameListAlertState extends ConsumerState<EmoneyNameListAlert> {
                       widget: EmoneyNameInputAlert(
                         isar: widget.isar,
                         depositType: DepositType.emoney,
-                        emoneyName: emoneyNameList![i],
+                        emoneyName: _emoneyNameList![i],
                       ),
                     ),
                     child: Icon(Icons.edit, size: 16, color: Colors.greenAccent.withOpacity(0.6)),

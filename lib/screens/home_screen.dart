@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/screens/components/spend_yearly_block_alert.dart';
 
 import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
@@ -328,7 +329,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               GestureDetector(
-                onTap: () async {},
+                onTap: () {
+                  MoneyDialog(
+                    context: context,
+                    widget: SpendYearlyBlockAlert(
+                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                        isar: widget.isar),
+                  );
+                },
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -337,7 +345,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
                         margin: const EdgeInsets.all(5),
-                        child: const Text('年間使用金額'),
+                        child: const Text('年間使用金額比較'),
                       ),
                     ),
                   ],

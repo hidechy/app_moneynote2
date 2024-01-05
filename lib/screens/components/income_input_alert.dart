@@ -24,10 +24,10 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   final TextEditingController _incomePriceEditingController = TextEditingController();
   final TextEditingController _incomeSourceEditingController = TextEditingController();
 
-  List<Income>? incomeList = [];
+  List<Income>? _incomeList = [];
 
-  List<String> yearList = [];
-  List<int> sameYearMonthIdList = [];
+  List<String> _yearList = [];
+  List<int> _sameYearMonthIdList = [];
 
   ///
   void _init() {
@@ -149,8 +149,8 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
   ///
   Future<void> _makeIncomeList() async {
-    yearList = [];
-    sameYearMonthIdList = [];
+    _yearList = [];
+    _sameYearMonthIdList = [];
 
     final map = <String, String>{};
     final map2 = <int, String>{};
@@ -161,10 +161,10 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
     if (mounted) {
       setState(() {
-        incomeList = getIncomes;
+        _incomeList = getIncomes;
 
-        if (incomeList != null) {
-          incomeList!.forEach((element) {
+        if (_incomeList != null) {
+          _incomeList!.forEach((element) {
             map[element.date.split('-')[0]] = '';
 
             // ignore: literal_only_boolean_expressions
@@ -174,11 +174,11 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
           });
 
           map.forEach((key, value) {
-            yearList.add(key);
+            _yearList.add(key);
           });
 
           map2.forEach((key, value) {
-            sameYearMonthIdList.add(key);
+            _sameYearMonthIdList.add(key);
           });
         }
       });
@@ -210,7 +210,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: yearList.map((e) {
+            children: _yearList.map((e) {
               return GestureDetector(
                 onTap: () async {
                   await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: e);
@@ -239,13 +239,13 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
     var icList = <Income>[];
 
-    if (incomeList!.isNotEmpty) {
+    if (_incomeList!.isNotEmpty) {
       final selectedIncomeYear = ref.watch(appParamProvider.select((value) => value.selectedIncomeYear));
 
       if (selectedIncomeYear == '') {
-        icList = incomeList!;
+        icList = _incomeList!;
       } else {
-        incomeList!.forEach((element) {
+        _incomeList!.forEach((element) {
           if (element.date.split('-')[0] == selectedIncomeYear) {
             icList.add(element);
           }
@@ -299,7 +299,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
     if (sameMonthIncomeDeleteFlag) {
       final incomeCollection = widget.isar.incomes;
       await widget.isar.writeTxn(() async {
-        sameYearMonthIdList.forEach(incomeCollection.delete);
+        _sameYearMonthIdList.forEach(incomeCollection.delete);
       });
     }
 

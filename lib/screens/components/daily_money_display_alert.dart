@@ -26,15 +26,15 @@ class DailyMoneyDisplayAlert extends ConsumerStatefulWidget {
 }
 
 class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert> {
-  List<TabInfo> tabs = [];
+  List<TabInfo> _tabs = [];
 
   ///
   @override
   Widget build(BuildContext context) {
-    makeTab();
+    _makeTab();
 
     return DefaultTabController(
-      length: tabs.length,
+      length: _tabs.length,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: PreferredSize(
@@ -48,18 +48,18 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
             bottom: TabBar(
               isScrollable: true,
               indicatorColor: Colors.blueAccent,
-              tabs: tabs.map((TabInfo tab) => Tab(text: tab.label)).toList(),
+              tabs: _tabs.map((TabInfo tab) => Tab(text: tab.label)).toList(),
             ),
           ),
         ),
-        body: TabBarView(children: tabs.map((tab) => tab.widget).toList()),
+        body: TabBarView(children: _tabs.map((tab) => tab.widget).toList()),
       ),
     );
   }
 
   ///
-  void makeTab() {
-    tabs = [
+  void _makeTab() {
+    _tabs = [
       TabInfo(
         '${widget.date.yyyymmdd} (${widget.date.youbiStr.substring(0, 3)})',
         DailyMoneyDisplayPage(date: widget.date, isar: widget.isar),
@@ -72,7 +72,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayAlert>
       final youbi = day.youbiStr.substring(0, 3);
 
       if (widget.moneyMap[day.yyyymmdd] != null) {
-        tabs.add(
+        _tabs.add(
           TabInfo(
             '${day.yyyymmdd} ($youbi)',
             DailyMoneyDisplayPage(date: day, isar: widget.isar),

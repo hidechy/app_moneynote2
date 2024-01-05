@@ -19,7 +19,8 @@ class BankNameListAlert extends ConsumerStatefulWidget {
 }
 
 class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
-  List<BankName>? bankNameList = [];
+  // ignore: use_late_for_private_fields_and_variables
+  List<BankName>? _bankNameList = [];
 
   ///
   @override
@@ -81,7 +82,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
 
     if (mounted) {
       setState(() {
-        bankNameList = getBankNames;
+        _bankNameList = getBankNames;
       });
     }
   }
@@ -90,7 +91,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
   Future<List<Widget>> _displayBankNames() async {
     final list = <Widget>[];
 
-    for (var i = 0; i < bankNameList!.length; i++) {
+    for (var i = 0; i < _bankNameList!.length; i++) {
       list.add(
         Container(
           // ignore: use_build_context_synchronously
@@ -106,10 +107,10 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${bankNameList![i].depositType}-${bankNameList![i].id}: ${bankNameList![i].bankName} (${bankNameList![i].bankNumber}) ',
+                      '${_bankNameList![i].depositType}-${_bankNameList![i].id}: ${_bankNameList![i].bankName} (${_bankNameList![i].bankNumber}) ',
                     ),
-                    Text('${bankNameList![i].branchName} (${bankNameList![i].branchNumber})'),
-                    Text('${bankNameList![i].accountType} ${bankNameList![i].accountNumber}'),
+                    Text('${_bankNameList![i].branchName} (${_bankNameList![i].branchNumber})'),
+                    Text('${_bankNameList![i].accountType} ${_bankNameList![i].accountNumber}'),
                   ],
                 ),
               ),
@@ -121,7 +122,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
                       widget: BankNameInputAlert(
                         depositType: DepositType.bank,
                         isar: widget.isar,
-                        bankName: bankNameList![i],
+                        bankName: _bankNameList![i],
                       ),
                     ),
                     child: Icon(Icons.edit, size: 16, color: Colors.greenAccent.withOpacity(0.6)),

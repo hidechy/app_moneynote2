@@ -24,7 +24,8 @@ class SpendItemHistoryAlert extends StatefulWidget {
 }
 
 class _SpendItemHistoryAlertState extends State<SpendItemHistoryAlert> {
-  List<SpendTimePlace>? spendItemPlaceHistoryList = [];
+  // ignore: use_late_for_private_fields_and_variables
+  List<SpendTimePlace>? _spendItemPlaceHistoryList = [];
 
   ///
   void _init() {
@@ -82,7 +83,7 @@ class _SpendItemHistoryAlertState extends State<SpendItemHistoryAlert> {
         await spendTimePlacesCollection.filter().spendTypeEqualTo(widget.item).sortByDate().findAll();
 
     if (mounted) {
-      setState(() => spendItemPlaceHistoryList = getSpendTimePlaces);
+      setState(() => _spendItemPlaceHistoryList = getSpendTimePlaces);
     }
   }
 
@@ -90,8 +91,8 @@ class _SpendItemHistoryAlertState extends State<SpendItemHistoryAlert> {
   Widget _displaySpendItemPlaceHistoryList() {
     final list = <Widget>[];
 
-    for (var i = 0; i < spendItemPlaceHistoryList!.length; i++) {
-      if (widget.date.month == DateTime.parse('${spendItemPlaceHistoryList![i].date} 00:00:00').month) {
+    for (var i = 0; i < _spendItemPlaceHistoryList!.length; i++) {
+      if (widget.date.month == DateTime.parse('${_spendItemPlaceHistoryList![i].date} 00:00:00').month) {
         list.add(Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
@@ -100,12 +101,12 @@ class _SpendItemHistoryAlertState extends State<SpendItemHistoryAlert> {
             children: [
               Row(
                 children: [
-                  Text(spendItemPlaceHistoryList![i].date),
+                  Text(_spendItemPlaceHistoryList![i].date),
                   const SizedBox(width: 10),
-                  Text(spendItemPlaceHistoryList![i].time),
+                  Text(_spendItemPlaceHistoryList![i].time),
                 ],
               ),
-              Text(spendItemPlaceHistoryList![i].price.toString().toCurrency()),
+              Text(_spendItemPlaceHistoryList![i].price.toString().toCurrency()),
             ],
           ),
         ));

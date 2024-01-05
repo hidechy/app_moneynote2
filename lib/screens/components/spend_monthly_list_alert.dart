@@ -22,9 +22,10 @@ class SpendMonthlyListAlert extends ConsumerStatefulWidget {
 class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
   final Utility _utility = Utility();
 
-  List<SpendTimePlace>? monthlySpendTimePlaceList = [];
+  // ignore: use_late_for_private_fields_and_variables
+  List<SpendTimePlace>? _monthlySpendTimePlaceList = [];
 
-  Map<String, Map<String, int>> monthlySpendTimePlaceMap = {};
+  final Map<String, Map<String, int>> _monthlySpendTimePlaceMap = {};
 
   Map<String, String> _holidayMap = {};
 
@@ -76,14 +77,14 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
 
     if (mounted) {
       setState(() {
-        monthlySpendTimePlaceList = getSpendTimePlaces;
+        _monthlySpendTimePlaceList = getSpendTimePlaces;
 
         final map = <String, List<SpendTimePlace>>{};
-        monthlySpendTimePlaceList!.forEach((element) => map[element.date] = []);
-        monthlySpendTimePlaceList!.forEach((element) => map[element.date]?.add(element));
+        _monthlySpendTimePlaceList!.forEach((element) => map[element.date] = []);
+        _monthlySpendTimePlaceList!.forEach((element) => map[element.date]?.add(element));
 
         map.forEach((key, value) {
-          monthlySpendTimePlaceMap[key] = makeMonthlySpendItemSumMap(spendTimePlaceList: value);
+          _monthlySpendTimePlaceMap[key] = makeMonthlySpendItemSumMap(spendTimePlaceList: value);
         });
       });
     }
@@ -99,7 +100,7 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
       _holidayMap = holidayState.holidayMap.value!;
     }
 
-    monthlySpendTimePlaceMap.forEach((key, value) {
+    _monthlySpendTimePlaceMap.forEach((key, value) {
       var sum = 0;
       value.forEach((key2, value2) => sum += value2);
 

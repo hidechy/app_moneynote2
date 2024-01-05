@@ -41,14 +41,13 @@ class MoneyListAlert extends ConsumerStatefulWidget {
 class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
   final Utility _utility = Utility();
 
-  Map<String, Money> dateMoneyMap = {};
+  final Map<String, Money> _dateMoneyMap = {};
 
-  Map<String, Map<String, int>> bankPricePadMap = {};
-  Map<String, int> bankPriceTotalPadMap = {};
+  Map<String, Map<String, int>> _bankPricePadMap = {};
 
   Map<String, String> _holidayMap = {};
 
-  int midashiDivide = 35;
+  final int _midashiDivide = 35;
 
   ///
   @override
@@ -96,8 +95,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
   void _makeBankPricePadMap() {
     if (widget.bankPriceList != null) {
       final bankPriceMap = makeBankPriceMap(bankPriceList: widget.bankPriceList!);
-      bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
-      bankPriceTotalPadMap = bankPriceMap['bankPriceTotalPadMap'];
+      _bankPricePadMap = bankPriceMap['bankPriceDatePadMap'];
     }
   }
 
@@ -105,14 +103,14 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
   void _makeDateMoneyMap() {
     if (widget.moneyList!.isNotEmpty) {
       widget.moneyList!.forEach((element) {
-        dateMoneyMap[element.date] = element;
+        _dateMoneyMap[element.date] = element;
       });
     }
   }
 
   ///
   Widget _dispDateMoneyList() {
-    if (dateMoneyMap.isEmpty) {
+    if (_dateMoneyMap.isEmpty) {
       return Container();
     }
 
@@ -139,7 +137,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
     ];
     //---------------------// 見出し行
 
-    dateMoneyMap.forEach((key, value) {
+    _dateMoneyMap.forEach((key, value) {
       final genDate = DateTime.parse('$key 00:00:00');
 
       if (widget.date.yyyymm == genDate.yyyymm) {
@@ -189,7 +187,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
   Widget _displayCurrencyMidashi() {
     const width = 70;
     final color = Colors.yellowAccent.withOpacity(0.1);
-    final minHeight = context.screenSize.height / midashiDivide;
+    final minHeight = context.screenSize.height / _midashiDivide;
 
     return Row(
       children: [
@@ -376,7 +374,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
         return MoneyListDisplayCell(
           widget: Column(children: [Text(e.bankName), Text(e.branchName)]),
           width: 100,
-          minHeight: context.screenSize.height / midashiDivide,
+          minHeight: context.screenSize.height / _midashiDivide,
           color: Colors.yellowAccent.withOpacity(0.1),
           borderColor: Colors.white.withOpacity(0.2),
           alignment: Alignment.center,
@@ -390,7 +388,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
     return (widget.bankNameList!.isNotEmpty)
         ? Row(
             children: widget.bankNameList!.map((e) {
-              final bankPricePadData = bankPricePadMap['${e.depositType}-${e.id}'];
+              final bankPricePadData = _bankPricePadMap['${e.depositType}-${e.id}'];
 
               if (bankPricePadData == null) {
                 return MoneyListDisplayCell(
@@ -423,7 +421,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
         return MoneyListDisplayCell(
           widget: Text(e.emoneyName),
           width: 100,
-          minHeight: context.screenSize.height / midashiDivide,
+          minHeight: context.screenSize.height / _midashiDivide,
           color: Colors.yellowAccent.withOpacity(0.1),
           borderColor: Colors.white.withOpacity(0.2),
           alignment: Alignment.center,
@@ -437,7 +435,7 @@ class _MoneyListAlertState extends ConsumerState<MoneyListAlert> {
     return (widget.emoneyNameList!.isNotEmpty)
         ? Row(
             children: widget.emoneyNameList!.map((e) {
-              final bankPricePadData = bankPricePadMap['${e.depositType}-${e.id}'];
+              final bankPricePadData = _bankPricePadMap['${e.depositType}-${e.id}'];
 
               if (bankPricePadData == null) {
                 return MoneyListDisplayCell(
