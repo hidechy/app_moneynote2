@@ -1,4 +1,6 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:money_note/extensions/extensions.dart';
 
 import '../collections/money.dart';
 
@@ -60,5 +62,43 @@ class Utility {
         (yen_1 * 1);
 
     return sum;
+  }
+
+  ///
+  List<LineTooltipItem> getGraphToolTip(List<LineBarSpot> touchedSpots) {
+    final list = <LineTooltipItem>[];
+
+    touchedSpots.forEach((element) {
+      final textStyle = TextStyle(
+        color: element.bar.gradient?.colors.first ?? element.bar.color ?? Colors.blueGrey,
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+      );
+
+      final price = element.y.round().toString().split('.')[0].toCurrency();
+
+      list.add(
+        LineTooltipItem(
+          price,
+          textStyle,
+          textAlign: TextAlign.end,
+        ),
+      );
+    });
+
+    return list;
+  }
+
+  ///
+  FlGridData getFlGridData() {
+    const flline = FlLine(color: Colors.white30, strokeWidth: 1);
+
+    return FlGridData(
+      //横線
+      getDrawingHorizontalLine: (value) => flline,
+
+      //縦線
+      getDrawingVerticalLine: (value) => flline,
+    );
   }
 }

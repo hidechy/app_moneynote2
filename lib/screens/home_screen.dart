@@ -20,6 +20,7 @@ import 'components/bank_price_adjust_alert.dart';
 import 'components/daily_money_display_alert.dart';
 import 'components/deposit_tab_alert.dart';
 import 'components/income_input_alert.dart';
+import 'components/money_graph_alert.dart';
 import 'components/money_list_alert.dart';
 import 'components/parts/back_ground_image.dart';
 import 'components/parts/custom_shape_clipper.dart';
@@ -196,6 +197,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       onTap: () {
                         MoneyDialog(
                           context: context,
+                          widget: MoneyGraphAlert(
+                            date: (widget.baseYm != null)
+                                ? DateTime.parse('${widget.baseYm}-01 00:00:00')
+                                : DateTime.now(),
+                            isar: widget.isar,
+                            monthDateSumMap: monthDateSumMap,
+                            bankPriceTotalPadMap: bankPriceTotalPadMap,
+                          ),
+                        );
+                      },
+                      child: Icon(Icons.show_chart, color: Colors.white.withOpacity(0.8)),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        MoneyDialog(
+                          context: context,
                           widget: MoneyListAlert(
                             isar: widget.isar,
                             date: (widget.baseYm != null)
@@ -308,6 +326,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
+              Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
+              GestureDetector(
+                onTap: () async {},
+                child: Row(
+                  children: [
+                    const MenuHeadIcon(),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text('年間使用金額'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
