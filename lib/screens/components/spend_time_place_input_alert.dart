@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -217,16 +215,22 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
       final place = spendTimePlaceState.spendPlace[i];
 
       list.add(
-        DecoratedBox(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+        Stack(
+          children: [
+            Positioned(
+              bottom: 5,
+              right: 15,
+              child: Text(
+                (i + 1).toString().padLeft(2, '0'),
+                style: TextStyle(fontSize: 60, color: Colors.grey.withOpacity(0.3)),
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
+                ],
+              ),
               child: Container(
                 width: context.screenSize.width,
                 margin: const EdgeInsets.all(5),
@@ -346,7 +350,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
                 ),
               ),
             ),
-          ),
+          ],
         ),
       );
     }
