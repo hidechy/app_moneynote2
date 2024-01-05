@@ -452,17 +452,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(_calendarDays[i].padLeft(2, '0')),
+                        const SizedBox(height: 5),
                         ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: context.screenSize.height / 40),
-                          child: Text(_calendarDays[i].padLeft(2, '0')),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [Container(), Text(dateSum)],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [Container(), Text(inputFlag)],
+                          constraints: BoxConstraints(minHeight: context.screenSize.height / 25),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [Container(), Text(dateSum)],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [Container(), Text(inputFlag)],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
