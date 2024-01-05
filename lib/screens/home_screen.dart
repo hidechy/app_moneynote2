@@ -327,31 +327,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-              Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
-              GestureDetector(
-                onTap: () {
-                  MoneyDialog(
-                    context: context,
-                    widget: SpendYearlyBlockAlert(
-                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
-                        isar: widget.isar),
-                  );
-                },
-                child: Row(
-                  children: [
-                    const MenuHeadIcon(),
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                        margin: const EdgeInsets.all(5),
-                        child: const Text('年間使用金額比較'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
@@ -603,6 +578,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     children: [
                       Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
                       const Text('日別'),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 20),
+                GestureDetector(
+                  onTap: () {
+                    MoneyDialog(
+                      context: context,
+                      widget: SpendYearlyBlockAlert(
+                          date:
+                              (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                          isar: widget.isar),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
+                      const Text('年間'),
                     ],
                   ),
                 ),
