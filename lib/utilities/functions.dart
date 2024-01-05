@@ -157,3 +157,40 @@ Map<String, int> makeMonthlySpendItemSumMap({required List<SpendTimePlace> spend
 
   return monthlySpendItemSumMap;
 }
+
+///
+Map<String, Map<String, int>> makeYearlySpendItemSumMap({required List<SpendTimePlace> spendTimePlaceList}) {
+  final yearlySpendItemSumMap = <String, Map<String, int>>{};
+
+  final list = <String>[];
+  SpendType.values.forEach((element) => list.add(element.japanName!));
+
+  final map = <String, Map<String, List<int>>>{};
+
+  list.forEach((element) {
+    final filtered = spendTimePlaceList.where((element2) => element2.spendType == element).toList();
+
+    if (filtered.isNotEmpty) {
+      filtered
+        ..forEach((element3) => map[element3.spendType] = {element3.date.split('-')[1]: []})
+        ..forEach((element3) => map[element3.spendType]?[element3.date.split('-')[1]]?.add(element3.price));
+    }
+  });
+
+  ///
+  map.forEach((key, value) {
+    value.forEach((key2, value2) {
+      var sum = 0;
+      value2.forEach((element4) => sum += element4);
+      yearlySpendItemSumMap[key] = {key2: sum};
+    });
+  });
+
+  /*
+  print(yearlySpendItemSumMap);
+
+flutter: {食費: {01: 300}, 交通費: {01: 600}, 支払い: {01: 900}}
+  */
+
+  return yearlySpendItemSumMap;
+}
