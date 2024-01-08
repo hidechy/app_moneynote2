@@ -158,13 +158,13 @@ class SpendTimePlaceNotifier extends StateNotifier<SpendTimePlacesResponseState>
         spendTime[i] = updateSpendTimePlace[i].time;
         spendPlace[i] = updateSpendTimePlace[i].place;
 
+        diff += updateSpendTimePlace[i].price;
+
         if (updateSpendTimePlace[i].price < 0) {
           spendPrice[i] = updateSpendTimePlace[i].price * -1;
-          diff += updateSpendTimePlace[i].price * -1;
           minusChecks[i] = true;
         } else {
           spendPrice[i] = updateSpendTimePlace[i].price;
-          diff += updateSpendTimePlace[i].price;
           minusChecks[i] = false;
         }
       }

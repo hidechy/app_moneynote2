@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/screens/components/spend_yearly_block_alert.dart';
 
 import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
@@ -29,6 +28,7 @@ import 'components/parts/menu_head_icon.dart';
 import 'components/parts/money_dialog.dart';
 import 'components/spend_item_history_alert.dart';
 import 'components/spend_monthly_list_alert.dart';
+import 'components/spend_yearly_block_alert.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends ConsumerStatefulWidget {
@@ -139,6 +139,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   constraints: BoxConstraints(minHeight: context.screenSize.height * 0.45),
                   child: _getCalendar(),
                 ),
+                _displayMonthSum(),
                 Expanded(child: _displayMonthlySpendTimePlaceList()),
               ],
             ),
@@ -150,14 +151,74 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   ///
+  Widget _displayMonthSum() {
+    var sum = 0;
+    if (monthlySpendTimePlaceList!.isNotEmpty) {
+      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
+        sum += value;
+      });
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: DefaultTextStyle(
+        style: const TextStyle(fontSize: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    MoneyDialog(
+                      context: context,
+                      widget: SpendMonthlyListAlert(
+                        isar: widget.isar,
+                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
+                      const Text('日別'),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 20),
+                GestureDetector(
+                  onTap: () {
+                    MoneyDialog(
+                      context: context,
+                      widget: SpendYearlyBlockAlert(
+                          date:
+                              (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
+                          isar: widget.isar),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
+                      const Text('年間'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ///
   Widget _displayPrevNextButton() {
     final calendarState = ref.watch(calendarProvider);
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2)),
-        ],
+        boxShadow: [BoxShadow(blurRadius: 24, spreadRadius: 16, color: Colors.black.withOpacity(0.2))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -551,61 +612,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final list = <Widget>[];
 
     if (monthlySpendTimePlaceList!.isNotEmpty) {
-      var sum = 0;
-
-      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
-        sum += value;
-      });
-
-      list.add(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    MoneyDialog(
-                      context: context,
-                      widget: SpendMonthlyListAlert(
-                        isar: widget.isar,
-                        date: (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
-                      const Text('日別'),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 20),
-                GestureDetector(
-                  onTap: () {
-                    MoneyDialog(
-                      context: context,
-                      widget: SpendYearlyBlockAlert(
-                          date:
-                              (widget.baseYm != null) ? DateTime.parse('${widget.baseYm}-01 00:00:00') : DateTime.now(),
-                          isar: widget.isar),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Icon(Icons.calendar_month_rounded, color: Colors.white.withOpacity(0.8)),
-                      const Text('年間'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
-          ],
-        ),
-      ));
-
       makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
         list.add(Container(
           padding: const EdgeInsets.all(10),
