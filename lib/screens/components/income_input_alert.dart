@@ -27,7 +27,10 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   List<Income>? _incomeList = [];
 
   List<String> _yearList = [];
-  List<int> _sameYearMonthIdList = [];
+  // List<int> _sameYearMonthIdList = [];
+  //
+  //
+  //
 
   ///
   void _init() {
@@ -82,7 +85,11 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
   ///
   Widget _displayInputParts() {
-    final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
+    // final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
+    //
+    //
+    //
+    //
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -105,27 +112,27 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
             ),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        ref
-                            .read(appParamProvider.notifier)
-                            .setSameMonthIncomeDeleteFlag(flag: !sameMonthIncomeDeleteFlag);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: sameMonthIncomeDeleteFlag
-                              ? Colors.yellowAccent.withOpacity(0.2)
-                              : const Color(0xFFfffacd).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Text('同月のデータを入れ替える'),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     GestureDetector(
+                //       onTap: () {
+                //         ref
+                //             .read(appParamProvider.notifier)
+                //             .setSameMonthIncomeDeleteFlag(flag: !sameMonthIncomeDeleteFlag);
+                //       },
+                //       child: Container(
+                //         padding: const EdgeInsets.all(5),
+                //         decoration: BoxDecoration(
+                //           color: sameMonthIncomeDeleteFlag
+                //               ? Colors.yellowAccent.withOpacity(0.2)
+                //               : const Color(0xFFfffacd).withOpacity(0.1),
+                //           borderRadius: BorderRadius.circular(10),
+                //         ),
+                //         child: const Text('同月のデータを入れ替える'),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 TextField(
                   keyboardType: TextInputType.number,
                   controller: _incomePriceEditingController,
@@ -150,10 +157,16 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   ///
   Future<void> _makeIncomeList() async {
     _yearList = [];
-    _sameYearMonthIdList = [];
+    // _sameYearMonthIdList = [];
+    //
+    //
+    //
 
     final map = <String, String>{};
-    final map2 = <int, String>{};
+    // final map2 = <int, String>{};
+    //
+    //
+    //
 
     final incomesCollection = widget.isar.incomes;
 
@@ -167,19 +180,22 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
           _incomeList!.forEach((element) {
             map[element.date.split('-')[0]] = '';
 
-            // ignore: literal_only_boolean_expressions
-            if (widget.date.yyyymm == '${element.date.split('-')[0]}-${element.date.split('-')[1]}') {
-              map2[element.id] = '';
-            }
+            // // ignore: literal_only_boolean_expressions
+            // if (widget.date.yyyymm == '${element.date.split('-')[0]}-${element.date.split('-')[1]}') {
+            //   map2[element.id] = '';
+            // }
+            //
           });
 
           map.forEach((key, value) {
             _yearList.add(key);
           });
 
-          map2.forEach((key, value) {
-            _sameYearMonthIdList.add(key);
-          });
+          // map2.forEach((key, value) {
+          //   _sameYearMonthIdList.add(key);
+          // });
+          //
+          //
         }
       });
     }
@@ -270,7 +286,15 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(),
+                  GestureDetector(
+                    onTap: () async {
+                      await _deleteIncome(id: element.id);
+                    },
+                    child: Text(
+                      'delete',
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
                   Text(element.sourceName),
                 ],
               ),
@@ -294,14 +318,16 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
       return;
     }
 
-    final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
-
-    if (sameMonthIncomeDeleteFlag) {
-      final incomeCollection = widget.isar.incomes;
-      await widget.isar.writeTxn(() async {
-        _sameYearMonthIdList.forEach(incomeCollection.delete);
-      });
-    }
+    // final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
+    //
+    // if (sameMonthIncomeDeleteFlag) {
+    //   final incomeCollection = widget.isar.incomes;
+    //   await widget.isar.writeTxn(() async {
+    //     _sameYearMonthIdList.forEach(incomeCollection.delete);
+    //   });
+    // }
+    //
+    //
 
     final income = Income()
       ..date = widget.date.yyyymmdd
@@ -313,8 +339,33 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
     _incomeSourceEditingController.clear();
     _incomePriceEditingController.clear();
 
+    // await ref.read(appParamProvider.notifier).setSameMonthIncomeDeleteFlag(flag: false);
+    //
+    //
+    //
+  }
+
+  ///
+  Future<void> _deleteIncome({required int id}) async {
+    final incomeCollection = widget.isar.incomes;
+
+    await widget.isar.writeTxn(() async => incomeCollection.delete(id));
+  }
+
+  /*
+
+    ///
+  Future<void> _deleteBankName() async {
+    final bankNameCollection = widget.isar.bankNames;
+
+    await widget.isar.writeTxn(() async => bankNameCollection.delete(widget.bankName!.id));
+
     if (mounted) {
-      Navigator.pop(context);
+      Navigator.pop(_context);
     }
   }
+
+
+
+  */
 }
