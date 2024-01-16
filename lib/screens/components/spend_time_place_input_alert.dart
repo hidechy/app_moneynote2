@@ -68,6 +68,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
     '利息',
     '不明',
     'プラス',
+    '収入',
   ];
 
   ///
@@ -110,7 +111,10 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
       for (var i = 0; i < widget.spendTimePlaceList!.length; i++) {
         _placeTecs[i].text = widget.spendTimePlaceList![i].place;
-        _priceTecs[i].text = widget.spendTimePlaceList![i].price.toString();
+
+        _priceTecs[i].text = (widget.spendTimePlaceList![i].price > 0)
+            ? widget.spendTimePlaceList![i].price.toString()
+            : (widget.spendTimePlaceList![i].price * -1).toString();
       }
     }
   }

@@ -26,6 +26,7 @@ enum SpendType {
   interest,
   unknown,
   plus,
+  benefit,
 }
 
 extension SpendTypeExtension on SpendType {
@@ -86,6 +87,8 @@ extension SpendTypeExtension on SpendType {
         return '不明';
       case SpendType.plus:
         return 'プラス';
+      case SpendType.benefit:
+        return '収入';
     }
   }
 }
