@@ -155,9 +155,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   ///
   Widget _displayMonthSum() {
-    var sum = 0;
+    var plusVal = 0;
+    var minusVal = 0;
+
     if (monthlySpendTimePlaceList!.isNotEmpty) {
-      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) => sum += value);
+      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
+        if (value > 0) {
+          plusVal += value;
+        }
+
+        if (value < 0) {
+          minusVal += value;
+        }
+      });
     }
 
     return Container(
@@ -206,7 +216,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ],
             ),
-            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
+            RichText(
+              text: TextSpan(
+                text: plusVal.toString().toCurrency(),
+                style: const TextStyle(color: Colors.yellowAccent, fontSize: 12),
+                children: <TextSpan>[
+                  const TextSpan(text: ' + ', style: TextStyle(color: Colors.white)),
+                  TextSpan(text: minusVal.toString().toCurrency(), style: const TextStyle(color: Colors.greenAccent)),
+                  const TextSpan(text: ' = ', style: TextStyle(color: Colors.white)),
+                  TextSpan(
+                    text: (plusVal + minusVal).toString().toCurrency(),
+                    style: const TextStyle(color: Colors.orangeAccent),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
