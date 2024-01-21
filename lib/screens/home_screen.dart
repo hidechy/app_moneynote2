@@ -602,16 +602,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(),
-                                  (dateDiff > 0 || dateSum == 0) ? Container() : Text(dateSum.toString().toCurrency()),
+                                  (dateDiff > 0 || dateSum == 0)
+                                      ? Container()
+                                      : Text((zenjitsuSum - dateSum).toString().toCurrency()),
                                 ],
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Container(),
-                                  (dateDiff > 0 || dateSum == 0)
-                                      ? Container()
-                                      : Text((zenjitsuSum - dateSum).toString().toCurrency()),
+                                  (dateDiff > 0 || dateSum == 0) ? Container() : Text(dateSum.toString().toCurrency()),
                                 ],
                               ),
                             ],

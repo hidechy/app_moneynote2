@@ -83,9 +83,8 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
         _monthlySpendTimePlaceList!.forEach((element) => map[element.date] = []);
         _monthlySpendTimePlaceList!.forEach((element) => map[element.date]?.add(element));
 
-        map.forEach((key, value) {
-          _monthlySpendTimePlaceMap[key] = makeMonthlySpendItemSumMap(spendTimePlaceList: value);
-        });
+        map.forEach(
+            (key, value) => _monthlySpendTimePlaceMap[key] = makeMonthlySpendItemSumMap(spendTimePlaceList: value));
       });
     }
   }
@@ -100,47 +99,56 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
       _holidayMap = holidayState.holidayMap.value!;
     }
 
-    _monthlySpendTimePlaceMap.forEach((key, value) {
+    for (var i = 1; i <= widget.date.day; i++) {
+      final genDate =
+          DateTime(widget.date.yyyymmdd.split('-')[0].toInt(), widget.date.yyyymmdd.split('-')[1].toInt(), i).yyyymmdd;
+
       var sum = 0;
-      value.forEach((key2, value2) => sum += value2);
+      _monthlySpendTimePlaceMap[genDate]?.forEach((key, value) => sum += value);
 
       final list2 = <Widget>[];
-      value.forEach((key2, value2) {
+      _monthlySpendTimePlaceMap[genDate]?.forEach((key, value) {
         list2.add(Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(key2), Text(value2.toString().toCurrency())],
+            children: [Text(key), Text(value.toString().toCurrency())],
           ),
         ));
       });
 
-      list.add(Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white.withOpacity(0.3)),
-          color: _utility.getYoubiColor(
-            date: DateTime.parse('$key 00:00:00').yyyymmdd,
-            youbiStr: DateTime.parse('$key 00:00:00').youbiStr,
-            holidayMap: _holidayMap,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text(key), Text(sum.toString().toCurrency())],
+      list.add(
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white.withOpacity(0.3)),
+            color: _utility.getYoubiColor(
+              date: DateTime.parse('$genDate 00:00:00').yyyymmdd,
+              youbiStr: DateTime.parse('$genDate 00:00:00').youbiStr,
+              holidayMap: _holidayMap,
             ),
-            const SizedBox(height: 10),
-            Column(children: list2),
-          ],
+          ),
+          child: (sum == 0)
+              ? Text(genDate)
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [Text(genDate), Text(sum.toString().toCurrency())],
+                    ),
+                    const SizedBox(height: 10),
+                    Column(children: list2),
+                  ],
+                ),
         ),
-      ));
-    });
+      );
+    }
 
-    return SingleChildScrollView(child: Column(children: list));
+    return SingleChildScrollView(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: list),
+    );
   }
 }
