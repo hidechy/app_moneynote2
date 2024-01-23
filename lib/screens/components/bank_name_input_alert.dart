@@ -106,7 +106,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
                             ),
                             const SizedBox(height: 10),
                             GestureDetector(
-                              onTap: _deleteBankName,
+                              onTap: _showDeleteDialog,
                               child: Text('金融機関を削除する',
                                   style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary)),
                             ),
@@ -322,6 +322,27 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
     if (mounted) {
       Navigator.pop(context);
     }
+  }
+
+  ///
+  void _showDeleteDialog() {
+    final Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text('いいえ'));
+
+    final Widget continueButton = TextButton(
+        onPressed: () {
+          _deleteBankName();
+
+          Navigator.pop(context);
+        },
+        child: const Text('はい'));
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.blueGrey.withOpacity(0.3),
+      content: const Text('このデータを消去しますか？'),
+      actions: [cancelButton, continueButton],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
   }
 
   ///

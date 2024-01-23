@@ -151,7 +151,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () async => await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: ''),
+            onTap: () async => ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: ''),
             child: Container(
               margin: const EdgeInsets.all(5),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -166,7 +166,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: _yearList.map((e) {
               return GestureDetector(
-                onTap: () async => await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: e),
+                onTap: () async => ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: e),
                 child: Container(
                   margin: const EdgeInsets.all(5),
                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -222,7 +222,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () async => await _deleteIncome(id: element.id),
+                    onTap: () async => _showDeleteDialog(id: element.id),
                     child: Text(
                       'delete',
                       style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary),
@@ -263,9 +263,29 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   }
 
   ///
+  void _showDeleteDialog({required int id}) {
+    final Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text('いいえ'));
+
+    final Widget continueButton = TextButton(
+        onPressed: () {
+          _deleteIncome(id: id);
+
+          Navigator.pop(context);
+        },
+        child: const Text('はい'));
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.blueGrey.withOpacity(0.3),
+      content: const Text('このデータを消去しますか？'),
+      actions: [cancelButton, continueButton],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
+  }
+
+  ///
   Future<void> _deleteIncome({required int id}) async {
     final incomeCollection = widget.isar.incomes;
-
     await widget.isar.writeTxn(() async => incomeCollection.delete(id));
   }
 }

@@ -120,7 +120,7 @@ class _BankPriceAdjustAlertState extends ConsumerState<BankPriceAdjustAlert> {
                       const SizedBox(width: 10),
                       SizedBox(
                         width: context.screenSize.width / 6,
-                        child: Text(bankPriceAdjustState.adjustDate[i]),
+                        child: Text(bankPriceAdjustState.adjustDate[i], style: const TextStyle(fontSize: 10)),
                       ),
                       const SizedBox(width: 20),
                       Expanded(

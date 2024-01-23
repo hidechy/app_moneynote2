@@ -21,7 +21,7 @@ class SpendItemInputAlert extends ConsumerStatefulWidget {
 class _SpendItemInputAlertState extends ConsumerState<SpendItemInputAlert> {
   final TextEditingController _spendItemEditingController = TextEditingController();
 
-  List<SpendItem>? _spendItemList = [];
+  late List<SpendItem>? _spendItemList;
 
   ///
   void _init() {
@@ -132,7 +132,7 @@ class _SpendItemInputAlertState extends ConsumerState<SpendItemInputAlert> {
 
   ///
   Widget _displaySpendItemList() {
-    List<Widget> list = [];
+    final list = <Widget>[];
 
     final oneWidth = context.screenSize.width / 5;
 
@@ -140,7 +140,9 @@ class _SpendItemInputAlertState extends ConsumerState<SpendItemInputAlert> {
       _spendItemList!.forEach((element) {
         list.add(
           GestureDetector(
-            onLongPress: () => _deleteSpendItem(id: element.id),
+            onLongPress: () {
+              _showDeleteDialog(id: element.id);
+            },
             child: Container(
               width: oneWidth,
               padding: const EdgeInsets.all(2),
@@ -155,6 +157,27 @@ class _SpendItemInputAlertState extends ConsumerState<SpendItemInputAlert> {
     }
 
     return Wrap(children: list);
+  }
+
+  ///
+  void _showDeleteDialog({required int id}) {
+    final Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text('いいえ'));
+
+    final Widget continueButton = TextButton(
+        onPressed: () {
+          _deleteSpendItem(id: id);
+
+          Navigator.pop(context);
+        },
+        child: const Text('はい'));
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.blueGrey.withOpacity(0.3),
+      content: const Text('このデータを消去しますか？'),
+      actions: [cancelButton, continueButton],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
   }
 
   ///

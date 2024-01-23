@@ -71,7 +71,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
     '収入',
   ];
 
-  List<SpendItem>? _spendItemList = [];
+  late List<SpendItem>? _spendItemList;
 
   ///
   @override

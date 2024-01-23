@@ -705,6 +705,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   Future<void> _makeSpendItemList() async {
     final spendItemsCollection = widget.isar.spendItems;
     final getSpendItems = await spendItemsCollection.where().findAll();
-    setState(() => _spendItemList = getSpendItems);
+
+    if (mounted) {
+      setState(() => _spendItemList = getSpendItems);
+    }
   }
 }

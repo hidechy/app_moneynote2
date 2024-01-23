@@ -72,7 +72,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
                             ),
                             const SizedBox(height: 10),
                             GestureDetector(
-                              onTap: _deleteEmoneyName,
+                              onTap: _showDeleteDialog,
                               child: Text('電子マネーを削除する',
                                   style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary)),
                             ),
@@ -177,6 +177,27 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
     if (mounted) {
       Navigator.pop(context);
     }
+  }
+
+  ///
+  void _showDeleteDialog() {
+    final Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text('いいえ'));
+
+    final Widget continueButton = TextButton(
+        onPressed: () {
+          _deleteEmoneyName();
+
+          Navigator.pop(context);
+        },
+        child: const Text('はい'));
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.blueGrey.withOpacity(0.3),
+      content: const Text('このデータを消去しますか？'),
+      actions: [cancelButton, continueButton],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
   }
 
   ///
