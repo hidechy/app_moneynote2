@@ -39,13 +39,9 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
 
   final TextEditingController _bankPriceEditingController = TextEditingController();
 
-  late BuildContext _context;
-
   ///
   @override
   Widget build(BuildContext context) {
-    _context = context;
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -86,10 +82,7 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(),
-                  TextButton(
-                    onPressed: _insertBankMoney,
-                    child: const Text('残高を入力する'),
-                  ),
+                  TextButton(onPressed: _insertBankMoney, child: const Text('残高を入力する')),
                 ],
               ),
               FutureBuilder<List<Widget>>(
@@ -99,10 +92,7 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
                     return Expanded(
                       child: SingleChildScrollView(
                         child: Column(
-                          children: [
-                            Column(children: snapshot.data!),
-                            const SizedBox(height: 20),
-                          ],
+                          children: [Column(children: snapshot.data!), const SizedBox(height: 20)],
                         ),
                       ),
                     );
@@ -159,7 +149,7 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
     if (_bankPriceEditingController.text == '' && bankId > 0) {
       Future.delayed(
         Duration.zero,
-        () => error_dialog(context: _context, title: '登録できません。', content: '値を正しく入力してください。'),
+        () => error_dialog(context: context, title: '登録できません。', content: '値を正しく入力してください。'),
       );
 
       return;
@@ -177,9 +167,7 @@ class _BankPriceInputAlertState extends ConsumerState<BankPriceInputAlert> {
 
     if (getBankPrices.isNotEmpty) {
       await widget.isar.writeTxn(() async {
-        getBankPrices.forEach((element) {
-          bankPricesCollection.delete(element.id);
-        });
+        getBankPrices.forEach((element) => bankPricesCollection.delete(element.id));
       });
     }
     //---------------------------//

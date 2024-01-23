@@ -1,6 +1,6 @@
 import '../collections/bank_price.dart';
+import '../collections/spend_item.dart';
 import '../collections/spend_time_place.dart';
-import '../enums/spend_type.dart';
 import '../extensions/extensions.dart';
 
 ///
@@ -132,11 +132,15 @@ flutter: {2023-12-17: 300000, 2023-12-18: 300000, 2023-12-19: 300000, 2023-12-20
 }
 
 ///
-Map<String, int> makeMonthlySpendItemSumMap({required List<SpendTimePlace> spendTimePlaceList}) {
+Map<String, int> makeMonthlySpendItemSumMap(
+    {required List<SpendTimePlace> spendTimePlaceList, List<SpendItem>? spendItemList}) {
   final monthlySpendItemSumMap = <String, int>{};
 
   final list = <String>[];
-  SpendType.values.forEach((element) => list.add(element.japanName!));
+
+  if (spendItemList!.isNotEmpty) {
+    spendItemList.forEach((element) => list.add(element.spendItemName));
+  }
 
   final map = <String, List<int>>{};
 
@@ -159,11 +163,15 @@ Map<String, int> makeMonthlySpendItemSumMap({required List<SpendTimePlace> spend
 }
 
 ///
-Map<String, Map<String, int>> makeYearlySpendItemSumMap({required List<SpendTimePlace> spendTimePlaceList}) {
+Map<String, Map<String, int>> makeYearlySpendItemSumMap(
+    {required List<SpendTimePlace> spendTimePlaceList, List<SpendItem>? spendItemList}) {
   final yearlySpendItemSumMap = <String, Map<String, int>>{};
 
   final list = <String>[];
-  SpendType.values.forEach((element) => list.add(element.japanName!));
+
+  if (spendItemList!.isNotEmpty) {
+    spendItemList.forEach((element) => list.add(element.spendItemName));
+  }
 
   final map = <String, Map<String, List<int>>>{};
 

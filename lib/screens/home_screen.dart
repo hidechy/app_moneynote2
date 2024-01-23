@@ -8,6 +8,7 @@ import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
 import '../collections/emoney_name.dart';
 import '../collections/money.dart';
+import '../collections/spend_item.dart';
 import '../collections/spend_time_place.dart';
 import '../extensions/extensions.dart';
 import '../state/app_params/app_params_notifier.dart';
@@ -27,6 +28,7 @@ import 'components/parts/custom_shape_clipper.dart';
 import 'components/parts/menu_head_icon.dart';
 import 'components/parts/money_dialog.dart';
 import 'components/spend_item_history_alert.dart';
+import 'components/spend_item_input_alert.dart';
 import 'components/spend_monthly_list_alert.dart';
 import 'components/spend_yearly_block_alert.dart';
 
@@ -73,6 +75,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<Deposit> depoNameList = [];
   List<Deposit> depositNameList = [];
 
+  List<SpendItem>? _spendItemList = [];
+
   ///
   void _init() {
     _makeMoneyList();
@@ -81,6 +85,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _makeMonthlySpendTimePlaceList();
 
     _makeBankNameList();
+
+    _makeSpendItemList();
   }
 
   ///
@@ -159,7 +165,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     var minusVal = 0;
 
     if (monthlySpendTimePlaceList!.isNotEmpty) {
-      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
+      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!, spendItemList: _spendItemList)
+          .forEach((key, value) {
         if (value > 0) {
           plusVal += value;
         }
@@ -412,6 +419,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               GestureDetector(
                 onTap: () {
+                  MoneyDialog(context: context, widget: SpendItemInputAlert(isar: widget.isar));
+                },
+                child: Row(
+                  children: [
+                    const MenuHeadIcon(),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text('消費アイテム管理'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
                   Navigator.pop(context);
 
                   showLicensePage(
@@ -584,8 +609,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         height: 10,
                                         decoration: BoxDecoration(
                                           color: inputedFlag
-                                              ? Colors.yellowAccent.withOpacity(0.2)
-                                              : Colors.black.withOpacity(0.2),
+                                              ? Colors.yellowAccent.withOpacity(0.3)
+                                              : Colors.black.withOpacity(0.3),
                                           borderRadius: BorderRadius.circular(10),
                                         ),
                                       ),
@@ -695,7 +720,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final list = <Widget>[];
 
     if (monthlySpendTimePlaceList!.isNotEmpty) {
-      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!).forEach((key, value) {
+      makeMonthlySpendItemSumMap(spendTimePlaceList: monthlySpendTimePlaceList!, spendItemList: _spendItemList)
+          .forEach((key, value) {
         list.add(Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
@@ -797,5 +823,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       context,
       MaterialPageRoute(builder: (context) => HomeScreen(isar: widget.isar, baseYm: calendarState.nextYearMonth)),
     );
+  }
+
+  ///
+  Future<void> _makeSpendItemList() async {
+    final spendItemsCollection = widget.isar.spendItems;
+    final getSpendItems = await spendItemsCollection.where().findAll();
+    setState(() => _spendItemList = getSpendItems);
   }
 }

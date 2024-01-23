@@ -32,8 +32,6 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
 
   AccountType _selectedAccountType = AccountType.blank;
 
-  late BuildContext _context;
-
   ///
   @override
   void initState() {
@@ -60,8 +58,6 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
   ///
   @override
   Widget build(BuildContext context) {
-    _context = context;
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -254,7 +250,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
         (accountType == AccountType.blank)) {
       Future.delayed(
         Duration.zero,
-        () => error_dialog(context: _context, title: '登録できません。', content: '値を正しく入力してください。'),
+        () => error_dialog(context: context, title: '登録できません。', content: '値を正しく入力してください。'),
       );
 
       return;
@@ -278,7 +274,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
     _accountNumberEditingController.clear();
 
     if (mounted) {
-      Navigator.pop(_context);
+      Navigator.pop(context);
     }
   }
 
@@ -294,7 +290,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
         (accountType == AccountType.blank)) {
       Future.delayed(
         Duration.zero,
-        () => error_dialog(context: _context, title: '登録できません。', content: '値を正しく入力してください。'),
+        () => error_dialog(context: context, title: '登録できません。', content: '値を正しく入力してください。'),
       );
 
       return;
@@ -324,7 +320,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
     _accountNumberEditingController.clear();
 
     if (mounted) {
-      Navigator.pop(_context);
+      Navigator.pop(context);
     }
   }
 
@@ -335,7 +331,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
     await widget.isar.writeTxn(() async => bankNameCollection.delete(widget.bankName!.id));
 
     if (mounted) {
-      Navigator.pop(_context);
+      Navigator.pop(context);
     }
   }
 }

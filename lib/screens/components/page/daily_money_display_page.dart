@@ -11,9 +11,9 @@ import '../../../collections/bank_price.dart';
 import '../../../collections/emoney_name.dart';
 import '../../../collections/income.dart';
 import '../../../collections/money.dart';
+import '../../../collections/spend_item.dart';
 import '../../../collections/spend_time_place.dart';
 import '../../../enums/deposit_type.dart';
-import '../../../enums/spend_type.dart';
 import '../../../extensions/extensions.dart';
 import '../../../utilities/functions.dart';
 import '../../../utilities/utilities.dart';
@@ -56,6 +56,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
   final Map<String, Income> _incomeMap = {};
 
+  List<SpendItem>? _spendItemList = [];
+
   ///
   void _init() {
     _makeBankNameList();
@@ -68,6 +70,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     _makeIncomeMap();
 
     _makeSpendTimePlaceList();
+
+    _makeSpendItemList();
   }
 
   ///
@@ -399,10 +403,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(),
-            Text(
-              sum.toString().toCurrency(),
-              style: const TextStyle(color: Colors.yellowAccent),
-            ),
+            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
           ],
         ),
       ));
@@ -505,10 +506,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(),
-            Text(
-              sum.toString().toCurrency(),
-              style: const TextStyle(color: Colors.yellowAccent),
-            ),
+            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
           ],
         ),
       ));
@@ -655,7 +653,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
     if (_spendTimePlaceList!.isNotEmpty) {
       var sum = 0;
-      makeMonthlySpendItemSumMap(spendTimePlaceList: _spendTimePlaceList!).forEach((key, value) => sum += value);
+      makeMonthlySpendItemSumMap(spendItemList: _spendItemList, spendTimePlaceList: _spendTimePlaceList!)
+          .forEach((key, value) => sum += value);
 
       list.add(Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -663,16 +662,14 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(),
-            Text(
-              sum.toString().toCurrency(),
-              style: const TextStyle(color: Colors.yellowAccent),
-            ),
+            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
           ],
         ),
       ));
 
-      makeMonthlySpendItemSumMap(spendTimePlaceList: _spendTimePlaceList!).forEach((key, value) {
-        final dispItem = (key != SpendType.benefit.japanName)
+      makeMonthlySpendItemSumMap(spendTimePlaceList: _spendTimePlaceList!, spendItemList: _spendItemList)
+          .forEach((key, value) {
+        final dispItem = (key != '収入')
             ? key
             : (_incomeMap[widget.date.yyyymmdd] == null)
                 ? '$key(---)'
@@ -683,10 +680,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              FittedBox(child: Text(dispItem)),
-              Text(value.toString().toCurrency()),
-            ],
+            children: [FittedBox(child: Text(dispItem)), Text(value.toString().toCurrency())],
           ),
         ));
       });
@@ -704,10 +698,13 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     final getIncomes =
         await incomeCollection.filter().dateStartsWith('${exDate[0]}-${exDate[1]}').sortByDate().findAll();
 
-    setState(() {
-      getIncomes.forEach((element) {
-        _incomeMap[element.date] = element;
-      });
-    });
+    setState(() => getIncomes.forEach((element) => _incomeMap[element.date] = element));
+  }
+
+  ///
+  Future<void> _makeSpendItemList() async {
+    final spendItemsCollection = widget.isar.spendItems;
+    final getSpendItems = await spendItemsCollection.where().findAll();
+    setState(() => _spendItemList = getSpendItems);
   }
 }

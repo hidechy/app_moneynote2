@@ -27,10 +27,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   List<Income>? _incomeList = [];
 
   List<String> _yearList = [];
-  // List<int> _sameYearMonthIdList = [];
-  //
-  //
-  //
 
   ///
   void _init() {
@@ -60,10 +56,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
               Container(width: context.screenSize.width),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('収入履歴登録'),
-                  Text(widget.date.yyyymmdd),
-                ],
+                children: [const Text('収入履歴登録'), Text(widget.date.yyyymmdd)],
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               _displayInputParts(),
@@ -85,12 +78,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
   ///
   Widget _displayInputParts() {
-    // final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
-    //
-    //
-    //
-    //
-
     return DecoratedBox(
       decoration: BoxDecoration(
         boxShadow: [
@@ -112,27 +99,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
             ),
             child: Column(
               children: [
-                // Row(
-                //   children: [
-                //     GestureDetector(
-                //       onTap: () {
-                //         ref
-                //             .read(appParamProvider.notifier)
-                //             .setSameMonthIncomeDeleteFlag(flag: !sameMonthIncomeDeleteFlag);
-                //       },
-                //       child: Container(
-                //         padding: const EdgeInsets.all(5),
-                //         decoration: BoxDecoration(
-                //           color: sameMonthIncomeDeleteFlag
-                //               ? Colors.yellowAccent.withOpacity(0.2)
-                //               : const Color(0xFFfffacd).withOpacity(0.1),
-                //           borderRadius: BorderRadius.circular(10),
-                //         ),
-                //         child: const Text('同月のデータを入れ替える'),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 TextField(
                   keyboardType: TextInputType.number,
                   controller: _incomePriceEditingController,
@@ -157,16 +123,8 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
   ///
   Future<void> _makeIncomeList() async {
     _yearList = [];
-    // _sameYearMonthIdList = [];
-    //
-    //
-    //
 
     final map = <String, String>{};
-    // final map2 = <int, String>{};
-    //
-    //
-    //
 
     final incomesCollection = widget.isar.incomes;
 
@@ -177,25 +135,8 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
         _incomeList = getIncomes;
 
         if (_incomeList != null) {
-          _incomeList!.forEach((element) {
-            map[element.date.split('-')[0]] = '';
-
-            // // ignore: literal_only_boolean_expressions
-            // if (widget.date.yyyymm == '${element.date.split('-')[0]}-${element.date.split('-')[1]}') {
-            //   map2[element.id] = '';
-            // }
-            //
-          });
-
-          map.forEach((key, value) {
-            _yearList.add(key);
-          });
-
-          // map2.forEach((key, value) {
-          //   _sameYearMonthIdList.add(key);
-          // });
-          //
-          //
+          _incomeList!.forEach((element) => map[element.date.split('-')[0]] = '');
+          map.forEach((key, value) => _yearList.add(key));
         }
       });
     }
@@ -210,10 +151,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () async {
-              await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');
-              // await IncomeRepository().selectByYear(year: '', ref: ref);
-            },
+            onTap: () async => await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: ''),
             child: Container(
               margin: const EdgeInsets.all(5),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -228,10 +166,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: _yearList.map((e) {
               return GestureDetector(
-                onTap: () async {
-                  await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: e);
-                  // await IncomeRepository().selectByYear(year: e, ref: ref);
-                },
+                onTap: () async => await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: e),
                 child: Container(
                   margin: const EdgeInsets.all(5),
                   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -287,9 +222,7 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () async {
-                      await _deleteIncome(id: element.id);
-                    },
+                    onTap: () async => await _deleteIncome(id: element.id),
                     child: Text(
                       'delete',
                       style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary),
@@ -318,17 +251,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
       return;
     }
 
-    // final sameMonthIncomeDeleteFlag = ref.watch(appParamProvider.select((value) => value.sameMonthIncomeDeleteFlag));
-    //
-    // if (sameMonthIncomeDeleteFlag) {
-    //   final incomeCollection = widget.isar.incomes;
-    //   await widget.isar.writeTxn(() async {
-    //     _sameYearMonthIdList.forEach(incomeCollection.delete);
-    //   });
-    // }
-    //
-    //
-
     final income = Income()
       ..date = widget.date.yyyymmdd
       ..sourceName = _incomeSourceEditingController.text
@@ -338,11 +260,6 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
     _incomeSourceEditingController.clear();
     _incomePriceEditingController.clear();
-
-    // await ref.read(appParamProvider.notifier).setSameMonthIncomeDeleteFlag(flag: false);
-    //
-    //
-    //
   }
 
   ///
@@ -351,21 +268,4 @@ class _IncomeListAlertState extends ConsumerState<IncomeInputAlert> {
 
     await widget.isar.writeTxn(() async => incomeCollection.delete(id));
   }
-
-  /*
-
-    ///
-  Future<void> _deleteBankName() async {
-    final bankNameCollection = widget.isar.bankNames;
-
-    await widget.isar.writeTxn(() async => bankNameCollection.delete(widget.bankName!.id));
-
-    if (mounted) {
-      Navigator.pop(_context);
-    }
-  }
-
-
-
-  */
 }

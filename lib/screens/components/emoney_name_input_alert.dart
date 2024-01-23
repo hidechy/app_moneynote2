@@ -26,8 +26,6 @@ class EmoneyNameInputAlert extends ConsumerStatefulWidget {
 class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
   final TextEditingController _emoneyNameEditingController = TextEditingController();
 
-  late BuildContext _context;
-
   ///
   @override
   void initState() {
@@ -41,8 +39,6 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
   ///
   @override
   Widget build(BuildContext context) {
-    _context = context;
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -134,7 +130,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
     if (_emoneyNameEditingController.text == '') {
       Future.delayed(
         Duration.zero,
-        () => error_dialog(context: _context, title: '登録できません。', content: '値を正しく入力してください。'),
+        () => error_dialog(context: context, title: '登録できません。', content: '値を正しく入力してください。'),
       );
 
       return;
@@ -149,7 +145,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
     _emoneyNameEditingController.clear();
 
     if (mounted) {
-      Navigator.pop(_context);
+      Navigator.pop(context);
     }
   }
 
@@ -158,7 +154,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
     if (_emoneyNameEditingController.text == '') {
       Future.delayed(
         Duration.zero,
-        () => error_dialog(context: _context, title: '登録できません。', content: '値を正しく入力してください。'),
+        () => error_dialog(context: context, title: '登録できません。', content: '値を正しく入力してください。'),
       );
 
       return;
@@ -179,7 +175,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
     _emoneyNameEditingController.clear();
 
     if (mounted) {
-      Navigator.pop(_context);
+      Navigator.pop(context);
     }
   }
 
@@ -190,7 +186,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
     await widget.isar.writeTxn(() async => emoneyNameCollection.delete(widget.emoneyName!.id));
 
     if (mounted) {
-      Navigator.pop(_context);
+      Navigator.pop(context);
     }
   }
 }

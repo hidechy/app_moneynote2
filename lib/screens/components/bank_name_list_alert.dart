@@ -59,9 +59,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
                 future: _displayBankNames(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return Expanded(
-                      child: Column(children: snapshot.data!),
-                    );
+                    return Expanded(child: Column(children: snapshot.data!));
                   }
 
                   return Container();
@@ -81,9 +79,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
     final getBankNames = await bankNamesCollection.where().findAll();
 
     if (mounted) {
-      setState(() {
-        _bankNameList = getBankNames;
-      });
+      setState(() => _bankNameList = getBankNames);
     }
   }
 
@@ -94,7 +90,6 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
     for (var i = 0; i < _bankNameList!.length; i++) {
       list.add(
         Container(
-          // ignore: use_build_context_synchronously
           width: context.screenSize.width,
           margin: const EdgeInsets.all(3),
           padding: const EdgeInsets.all(3),
@@ -120,10 +115,7 @@ class _BankNameListAlertState extends ConsumerState<BankNameListAlert> {
                     onTap: () => MoneyDialog(
                       context: context,
                       widget: BankNameInputAlert(
-                        depositType: DepositType.bank,
-                        isar: widget.isar,
-                        bankName: _bankNameList![i],
-                      ),
+                          depositType: DepositType.bank, isar: widget.isar, bankName: _bankNameList![i]),
                     ),
                     child: Icon(Icons.edit, size: 16, color: Colors.greenAccent.withOpacity(0.6)),
                   ),

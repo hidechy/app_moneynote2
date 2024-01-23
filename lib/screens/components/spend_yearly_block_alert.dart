@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 
+import '../../collections/spend_item.dart';
 import '../../collections/spend_time_place.dart';
 import '../../extensions/extensions.dart';
 import '../../utilities/functions.dart';
@@ -23,9 +24,13 @@ class _SpendYearlyBlockAlertState extends ConsumerState<SpendYearlyBlockAlert> {
 
   Map<String, Map<String, int>> _yearlySpendSumMap = {};
 
+  List<SpendItem>? _spendItemList = [];
+
   ///
   void _init() {
     _makeYearlySpendSumMap();
+
+    _makeSpendItemList();
   }
 
   ///
@@ -74,7 +79,8 @@ class _SpendYearlyBlockAlertState extends ConsumerState<SpendYearlyBlockAlert> {
         _yearlySpendTimePlaceList = getSpendTimePlaces;
 
         if (_yearlySpendTimePlaceList != null) {
-          _yearlySpendSumMap = makeYearlySpendItemSumMap(spendTimePlaceList: _yearlySpendTimePlaceList!);
+          _yearlySpendSumMap =
+              makeYearlySpendItemSumMap(spendItemList: _spendItemList, spendTimePlaceList: _yearlySpendTimePlaceList!);
         }
       });
     }
@@ -88,9 +94,7 @@ class _SpendYearlyBlockAlertState extends ConsumerState<SpendYearlyBlockAlert> {
 
     _yearlySpendSumMap.forEach((key, value) {
       var sum = 0;
-      value.forEach((key2, value2) {
-        sum += value2;
-      });
+      value.forEach((key2, value2) => sum += value2);
 
       list.add(Container(
         width: context.screenSize.width,
@@ -100,10 +104,7 @@ class _SpendYearlyBlockAlertState extends ConsumerState<SpendYearlyBlockAlert> {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(key),
-            Text(sum.toString().toCurrency()),
-          ],
+          children: [Text(key), Text(sum.toString().toCurrency())],
         ),
       ));
 
@@ -118,10 +119,7 @@ class _SpendYearlyBlockAlertState extends ConsumerState<SpendYearlyBlockAlert> {
             decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
             child: Stack(
               children: [
-                Text(
-                  i.toString().padLeft(2, '0'),
-                  style: const TextStyle(color: Colors.grey),
-                ),
+                Text(i.toString().padLeft(2, '0'), style: const TextStyle(color: Colors.grey)),
                 Container(
                   alignment: Alignment.topRight,
                   child: Text(
@@ -144,5 +142,12 @@ class _SpendYearlyBlockAlertState extends ConsumerState<SpendYearlyBlockAlert> {
     return SingleChildScrollView(
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: list),
     );
+  }
+
+  ///
+  Future<void> _makeSpendItemList() async {
+    final spendItemsCollection = widget.isar.spendItems;
+    final getSpendItems = await spendItemsCollection.where().findAll();
+    setState(() => _spendItemList = getSpendItems);
   }
 }

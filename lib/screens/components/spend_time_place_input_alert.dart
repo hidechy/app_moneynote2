@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 
+import '../../collections/spend_item.dart';
 import '../../collections/spend_time_place.dart';
-import '../../enums/spend_type.dart';
 import '../../extensions/extensions.dart';
 import '../../state/spend_time_places/spend_time_places_notifier.dart';
 import 'parts/error_dialog.dart';
@@ -71,6 +71,8 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
     '収入',
   ];
 
+  List<SpendItem>? _spendItemList = [];
+
   ///
   @override
   void initState() {
@@ -120,8 +122,15 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
   }
 
   ///
+  void _init() {
+    _makeSpendItemList();
+  }
+
+  ///
   @override
   Widget build(BuildContext context) {
+    Future(_init);
+
     final spendTimePlaceState = ref.watch(spendTimePlaceProvider);
 
     Future(() => ref.read(spendTimePlaceProvider.notifier).setBaseDiff(baseDiff: widget.spend.toString()));
@@ -294,9 +303,7 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
                         ),
                         const SizedBox(width: 10),
                         GestureDetector(
-                          onTap: () {
-                            _clearOneBox(pos: i);
-                          },
+                          onTap: () => _clearOneBox(pos: i),
                           child: const Icon(Icons.close, color: Colors.redAccent),
                         ),
                       ],
@@ -369,32 +376,34 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
     return SingleChildScrollView(
       child: Column(
-        children: SpendType.values.map((e) {
-          return GestureDetector(
-            onTap: () async {
-              await ref.read(spendTimePlaceProvider.notifier).setBlinkingFlag(blinkingFlag: false);
+        children: (_spendItemList!.isNotEmpty)
+            ? _spendItemList!.map((e) {
+                return GestureDetector(
+                  onTap: () async {
+                    await ref.read(spendTimePlaceProvider.notifier).setBlinkingFlag(blinkingFlag: false);
 
-              await ref.read(spendTimePlaceProvider.notifier).setSpendItem(pos: itemPos, item: e.japanName!);
+                    await ref.read(spendTimePlaceProvider.notifier).setSpendItem(pos: itemPos, item: e.spendItemName);
 
-              if (_timeUnknownItem.contains(e.japanName)) {
-                await ref.read(spendTimePlaceProvider.notifier).setTime(pos: itemPos, time: '00:00');
-              }
-            },
-            child: Container(
-              width: double.infinity,
-              margin: const EdgeInsets.all(5),
-              padding: const EdgeInsets.all(5),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: (e.japanName == spendItem[itemPos])
-                    ? Colors.yellowAccent.withOpacity(0.2)
-                    : Colors.blueGrey.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(e.japanName!, style: const TextStyle(fontSize: 10)),
-            ),
-          );
-        }).toList(),
+                    if (_timeUnknownItem.contains(e.spendItemName)) {
+                      await ref.read(spendTimePlaceProvider.notifier).setTime(pos: itemPos, time: '00:00');
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: (e.spendItemName == spendItem[itemPos])
+                          ? Colors.yellowAccent.withOpacity(0.2)
+                          : Colors.blueGrey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(e.spendItemName, style: const TextStyle(fontSize: 10)),
+                  ),
+                );
+              }).toList()
+            : [],
       ),
     );
   }
@@ -510,11 +519,8 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
     }
 
     final spendTimePlaceCollection = widget.isar.spendTimePlaces;
-    await widget.isar.writeTxn(() async {
-      widget.spendTimePlaceList?.forEach((element) {
-        spendTimePlaceCollection.delete(element.id);
-      });
-    });
+    await widget.isar.writeTxn(
+        () async => widget.spendTimePlaceList?.forEach((element) => spendTimePlaceCollection.delete(element.id)));
 
     await widget.isar.writeTxn(() async {
       for (final spendTimePlace in list) {
@@ -527,5 +533,12 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
     if (mounted) {
       Navigator.pop(context);
     }
+  }
+
+  ///
+  Future<void> _makeSpendItemList() async {
+    final spendItemsCollection = widget.isar.spendItems;
+    final getSpendItems = await spendItemsCollection.where().findAll();
+    setState(() => _spendItemList = getSpendItems);
   }
 }

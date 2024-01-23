@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 
+import '../../collections/spend_item.dart';
 import '../../collections/spend_time_place.dart';
 import '../../extensions/extensions.dart';
 import '../../state/holidays/holidays_notifier.dart';
@@ -29,9 +30,13 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
 
   Map<String, String> _holidayMap = {};
 
+  List<SpendItem>? _spendItemList = [];
+
   ///
   void _init() {
     _makeMonthlySpendTimePlaceList();
+
+    _makeSpendItemList();
   }
 
   ///
@@ -83,8 +88,8 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
         _monthlySpendTimePlaceList!.forEach((element) => map[element.date] = []);
         _monthlySpendTimePlaceList!.forEach((element) => map[element.date]?.add(element));
 
-        map.forEach(
-            (key, value) => _monthlySpendTimePlaceMap[key] = makeMonthlySpendItemSumMap(spendTimePlaceList: value));
+        map.forEach((key, value) => _monthlySpendTimePlaceMap[key] =
+            makeMonthlySpendItemSumMap(spendTimePlaceList: value, spendItemList: _spendItemList));
       });
     }
   }
@@ -147,8 +152,13 @@ class _SpendMonthlyListAlertState extends ConsumerState<SpendMonthlyListAlert> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: list),
-    );
+    return SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: list));
+  }
+
+  ///
+  Future<void> _makeSpendItemList() async {
+    final spendItemsCollection = widget.isar.spendItems;
+    final getSpendItems = await spendItemsCollection.where().findAll();
+    setState(() => _spendItemList = getSpendItems);
   }
 }
