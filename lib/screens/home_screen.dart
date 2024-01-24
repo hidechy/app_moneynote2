@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/collections/config.dart';
 
 import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
@@ -77,6 +78,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   List<SpendItem>? _spendItemList = [];
 
+  final Map<String, String> _configMap = {};
+
   ///
   void _init() {
     _makeMoneyList();
@@ -87,6 +90,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _makeBankNameList();
 
     _makeSpendItemList();
+
+    _makeConfigMap();
   }
 
   ///
@@ -398,6 +403,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
+              if (_configMap['investInfoDisplayFlag'] != null && _configMap['investInfoDisplayFlag'] == 'on') ...[
+                GestureDetector(
+                  onTap: () async {},
+                  child: Row(
+                    children: [
+                      const MenuHeadIcon(),
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                          margin: const EdgeInsets.all(5),
+                          child: const Text('投資商品名称登録'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               Divider(color: Colors.white.withOpacity(0.5), indent: 20, endIndent: 20),
               GestureDetector(
                 onTap: () async {
@@ -840,5 +863,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final spendItemsCollection = widget.isar.spendItems;
     final getSpendItems = await spendItemsCollection.where().findAll();
     setState(() => _spendItemList = getSpendItems);
+  }
+
+  ///
+  Future<void> _makeConfigMap() async {
+    final configsCollection = widget.isar.configs;
+    final getConfigs = await configsCollection.where().findAll();
+    setState(() {
+      getConfigs.forEach((element) {
+        _configMap[element.configKey] = element.configValue;
+      });
+    });
   }
 }
