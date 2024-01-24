@@ -16,7 +16,7 @@ import '../state/calendars/calendars_notifier.dart';
 import '../state/holidays/holidays_notifier.dart';
 import '../utilities/functions.dart';
 import '../utilities/utilities.dart';
-import 'components/___dummy_data_input_alert.dart';
+import 'components/app_setting_alert.dart';
 import 'components/bank_price_adjust_alert.dart';
 import 'components/daily_money_display_alert.dart';
 import 'components/deposit_tab_alert.dart';
@@ -332,8 +332,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   ///
   Widget _dispDrawer() {
-    const isRelease = bool.fromEnvironment('dart.vm.product');
-
     return Drawer(
       backgroundColor: Colors.blueGrey.withOpacity(0.2),
       child: SingleChildScrollView(
@@ -343,17 +341,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-              if (!isRelease)
-                GestureDetector(
-                  onTap: () => MoneyDialog(context: context, widget: DummyDataInputAlert(isar: widget.isar)),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
-                    margin: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
-                    child: const Text('dummy data'),
-                  ),
-                ),
               GestureDetector(
                 onTap: () => MoneyDialog(context: context, widget: DepositTabAlert(isar: widget.isar)),
                 child: Row(
@@ -389,6 +376,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
+              Divider(color: Colors.white.withOpacity(0.5), indent: 20, endIndent: 20),
+              GestureDetector(
+                onTap: () async {
+                  await MoneyDialog(
+                    context: context,
+                    widget: AppSettingAlert(isar: widget.isar),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const MenuHeadIcon(),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                        margin: const EdgeInsets.all(5),
+                        child: const Text('設定'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(color: Colors.white.withOpacity(0.5), indent: 20, endIndent: 20),
               GestureDetector(
                 onTap: () async {
                   await ref.read(appParamProvider.notifier).setSelectedIncomeYear(year: '');

@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'collections/bank_name.dart';
 import 'collections/bank_price.dart';
+import 'collections/config.dart';
 import 'collections/emoney_name.dart';
 import 'collections/income.dart';
 import 'collections/money.dart';
@@ -26,6 +27,7 @@ void main() async {
     MoneySchema,
     SpendTimePlaceSchema,
     SpendItemSchema,
+    ConfigSchema,
   ], directory: dir.path);
 
   runApp(ProviderScope(child: MyApp(isar: isar)));
