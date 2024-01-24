@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/enums/invest_type.dart';
-import 'package:money_note/state/invest/invest_notifier.dart';
 
+import '../../collections/invest_name.dart';
+import '../../enums/invest_type.dart';
 import '../../extensions/extensions.dart';
+import '../../state/invest/invest_notifier.dart';
+import 'parts/error_dialog.dart';
 
 class InvestNameInputAlert extends ConsumerStatefulWidget {
   const InvestNameInputAlert({super.key, required this.isar});
@@ -21,9 +23,18 @@ class InvestNameInputAlert extends ConsumerStatefulWidget {
 class _InvestNameInputAlertState extends ConsumerState<InvestNameInputAlert> {
   final TextEditingController _investNameEditingController = TextEditingController();
 
+  late List<InvestName>? _investNameList;
+
+  ///
+  void _init() {
+    _makeInvestNameList();
+  }
+
   ///
   @override
   Widget build(BuildContext context) {
+    Future(_init);
+
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -43,33 +54,17 @@ class _InvestNameInputAlertState extends ConsumerState<InvestNameInputAlert> {
               const Text('投資商品名称登録'),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               _displayInputParts(),
-
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Container(),
-              //     (widget.emoneyName != null)
-              //         ? Column(
-              //       children: [
-              //         GestureDetector(
-              //           onTap: _updateEmoneyName,
-              //           child: Text('電子マネーを更新する',
-              //               style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary)),
-              //         ),
-              //         const SizedBox(height: 10),
-              //         GestureDetector(
-              //           onTap: _showDeleteDialog,
-              //           child: Text('電子マネーを削除する',
-              //               style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary)),
-              //         ),
-              //       ],
-              //     )
-              //         : TextButton(
-              //       onPressed: _inputEmoneyName,
-              //       child: const Text('電子マネーを追加する', style: TextStyle(fontSize: 12)),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(),
+                  TextButton(
+                    onPressed: _inputInvestName,
+                    child: const Text('消費アイテムを追加する', style: TextStyle(fontSize: 12)),
+                  ),
+                ],
+              ),
+              Expanded(child: _displayInvestNamesList()),
             ],
           ),
         ),
@@ -106,7 +101,6 @@ class _InvestNameInputAlertState extends ConsumerState<InvestNameInputAlert> {
             child: Column(
               children: [
                 TextField(
-                  keyboardType: TextInputType.number,
                   controller: _investNameEditingController,
                   decoration: const InputDecoration(labelText: '投資商品名称'),
                   style: const TextStyle(fontSize: 13, color: Colors.white),
@@ -123,9 +117,7 @@ class _InvestNameInputAlertState extends ConsumerState<InvestNameInputAlert> {
                     );
                   }).toList(),
                   value: selectedInvestItem,
-                  onChanged: (value) {
-                    ref.read(investProvider.notifier).setSelectedInvestItem(item: value!);
-                  },
+                  onChanged: (value) => ref.read(investProvider.notifier).setSelectedInvestItem(item: value!),
                 ),
               ],
             ),
@@ -133,5 +125,102 @@ class _InvestNameInputAlertState extends ConsumerState<InvestNameInputAlert> {
         ),
       ),
     );
+  }
+
+  ///
+  Future<void> _inputInvestName() async {
+    if (_investNameEditingController.text == '') {
+      Future.delayed(
+        Duration.zero,
+        () => error_dialog(context: context, title: '登録できません。', content: '値を正しく入力してください。'),
+      );
+
+      return;
+    }
+
+    final selectedInvestItem = ref.watch(investProvider.select((value) => value.selectedInvestItem));
+
+    final investName = InvestName()
+      ..investName = _investNameEditingController.text
+      ..investType = selectedInvestItem;
+
+    await widget.isar.writeTxn(() async => widget.isar.investNames.put(investName));
+
+    _investNameEditingController.clear();
+
+    await ref.read(investProvider.notifier).setSelectedInvestItem(item: '');
+  }
+
+  ///
+  Future<void> _makeInvestNameList() async {
+    final investNamesCollection = widget.isar.investNames;
+
+    final getInvestNames = await investNamesCollection.where().findAll();
+
+    setState(() => _investNameList = getInvestNames);
+  }
+
+  ///
+  Widget _displayInvestNamesList() {
+    final list = <Widget>[];
+
+    final investNameEnMap = <String, String>{};
+    InvestType.values.forEach((element) => investNameEnMap[element.japanName] = element.name);
+
+    if (_investNameList!.isNotEmpty) {
+      _investNameList!.forEach((element) {
+        list.add(GestureDetector(
+          onLongPress: () => _showDeleteDialog(id: element.id),
+          child: Container(
+            width: context.screenSize.width,
+            padding: const EdgeInsets.all(5),
+            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            decoration: BoxDecoration(border: Border.all(color: Colors.white.withOpacity(0.4))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    Text(investNameEnMap[element.investType] ?? '', style: const TextStyle(color: Colors.grey)),
+                  ],
+                ),
+                Text(element.investName),
+              ],
+            ),
+          ),
+        ));
+      });
+    }
+
+    return SingleChildScrollView(child: Column(children: list));
+  }
+
+  ///
+  void _showDeleteDialog({required int id}) {
+    final Widget cancelButton = TextButton(onPressed: () => Navigator.pop(context), child: const Text('いいえ'));
+
+    final Widget continueButton = TextButton(
+        onPressed: () {
+          _deleteInvestName(id: id);
+
+          Navigator.pop(context);
+        },
+        child: const Text('はい'));
+
+    final alert = AlertDialog(
+      backgroundColor: Colors.blueGrey.withOpacity(0.3),
+      content: const Text('このデータを消去しますか？'),
+      actions: [cancelButton, continueButton],
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => alert);
+  }
+
+  ///
+  Future<void> _deleteInvestName({required int id}) async {
+    final investNamesCollection = widget.isar.investNames;
+    await widget.isar.writeTxn(() async => investNamesCollection.delete(id));
   }
 }

@@ -140,9 +140,7 @@ class _SpendItemInputAlertState extends ConsumerState<SpendItemInputAlert> {
       _spendItemList!.forEach((element) {
         list.add(
           GestureDetector(
-            onLongPress: () {
-              _showDeleteDialog(id: element.id);
-            },
+            onLongPress: () => _showDeleteDialog(id: element.id),
             child: Container(
               width: oneWidth,
               padding: const EdgeInsets.all(2),
