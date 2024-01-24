@@ -74,7 +74,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
             children: [
               const SizedBox(height: 20),
               Container(width: context.screenSize.width),
-              const Text('金融機関追加'),
+              const Text('金融機関名称登録'),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               _displayInputParts(),
               Row(
@@ -166,7 +166,7 @@ class _BankNameInputAlertState extends ConsumerState<BankNameInputAlert> {
                       flex: 2,
                       child: TextField(
                         controller: _bankNameEditingController,
-                        decoration: const InputDecoration(labelText: '金融機関名'),
+                        decoration: const InputDecoration(labelText: '金融機関名称'),
                         style: const TextStyle(fontSize: 13, color: Colors.white),
                         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                       ),

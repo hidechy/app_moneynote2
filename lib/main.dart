@@ -9,6 +9,7 @@ import 'collections/bank_price.dart';
 import 'collections/config.dart';
 import 'collections/emoney_name.dart';
 import 'collections/income.dart';
+import 'collections/invest_name.dart';
 import 'collections/money.dart';
 import 'collections/spend_item.dart';
 import 'collections/spend_time_place.dart';
@@ -28,6 +29,7 @@ void main() async {
     SpendTimePlaceSchema,
     SpendItemSchema,
     ConfigSchema,
+    InvestNameSchema,
   ], directory: dir.path);
 
   runApp(ProviderScope(child: MyApp(isar: isar)));

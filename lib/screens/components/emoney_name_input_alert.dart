@@ -55,7 +55,7 @@ class _EmoneyNameInputAlertState extends ConsumerState<EmoneyNameInputAlert> {
             children: [
               const SizedBox(height: 20),
               Container(width: context.screenSize.width),
-              const Text('電子マネー追加'),
+              const Text('電子マネー名称登録'),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
               _displayInputParts(),
               Row(

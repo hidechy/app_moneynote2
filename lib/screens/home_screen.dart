@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:money_note/collections/config.dart';
+import 'package:money_note/screens/components/invest_name_input_alert.dart';
 
 import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
@@ -383,12 +384,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               Divider(color: Colors.white.withOpacity(0.5), indent: 20, endIndent: 20),
               GestureDetector(
-                onTap: () async {
-                  await MoneyDialog(
-                    context: context,
-                    widget: AppSettingAlert(isar: widget.isar),
-                  );
-                },
+                onTap: () async => MoneyDialog(
+                  context: context,
+                  widget: AppSettingAlert(isar: widget.isar),
+                ),
                 child: Row(
                   children: [
                     const MenuHeadIcon(),
@@ -405,7 +404,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               if (_configMap['investInfoDisplayFlag'] != null && _configMap['investInfoDisplayFlag'] == 'on') ...[
                 GestureDetector(
-                  onTap: () async {},
+                  onTap: () async => MoneyDialog(
+                    context: context,
+                    widget: InvestNameInputAlert(isar: widget.isar),
+                  ),
                   child: Row(
                     children: [
                       const MenuHeadIcon(),
