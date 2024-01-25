@@ -5,16 +5,6 @@ import '../extensions/extensions.dart';
 
 ///
 Map<String, dynamic> makeBankPriceMap({required List<BankPrice> bankPriceList}) {
-  final map2 = <String, List<BankPrice>>{};
-
-  bankPriceList
-    ..forEach((element) {
-      map2['${element.depositType}-${element.bankId}'] = [];
-    })
-    ..forEach((element) {
-      map2['${element.depositType}-${element.bankId}']?.add(element);
-    });
-
   //=======================//
 
   final map3 = <String, Map<String, int>>{};
@@ -59,7 +49,7 @@ emoney-5: [{2023-12-11: 50000}]}
     final diff = now.difference(dt).inDays;
 
     bplMap.forEach((deposit, value) {
-      final map4 = <String, int>{};
+      final map5 = <String, int>{};
 
       var price = 0;
       for (var i = 0; i <= diff; i++) {
@@ -70,11 +60,11 @@ emoney-5: [{2023-12-11: 50000}]}
             price = element[date] ?? 0;
           }
 
-          map4[date] = price;
+          map5[date] = price;
         });
       }
 
-      map3[deposit] = map4;
+      map3[deposit] = map5;
     });
 
     //--- (2)
@@ -101,12 +91,12 @@ emoney-5: [{2023-12-11: 50000}]}
 
   final map4 = <String, int>{};
 
-  final aaa = <String, List<int>>{};
+  final map6 = <String, List<int>>{};
   map3
-    ..forEach((key, value) => value.forEach((key2, value2) => aaa[key2] = []))
-    ..forEach((key, value) => value.forEach((key2, value2) => aaa[key2]?.add(value2)));
+    ..forEach((key, value) => value.forEach((key2, value2) => map6[key2] = []))
+    ..forEach((key, value) => value.forEach((key2, value2) => map6[key2]?.add(value2)));
 
-//print(aaa);
+//print(map6);
 /*
 flutter: {
 2023-12-17: [10000, 20000, 30000, 40000, 50000, 10000, 20000, 30000, 40000, 50000],
@@ -115,7 +105,7 @@ flutter: {
 2023-12-20: [10000, 20000, 30000, 40000, 50000, 10000, 20000, 30000, 40000, 50000]}
 */
 
-  aaa.forEach((key, value) {
+  map6.forEach((key, value) {
     var sum = 0;
     value.forEach((element) => sum += element);
     map4[key] = sum;

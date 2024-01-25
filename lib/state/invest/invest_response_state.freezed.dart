@@ -18,6 +18,11 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$InvestResponseState {
   String get selectedInvestItem => throw _privateConstructorUsedError;
 
+  ///
+  String get investInputDate => throw _privateConstructorUsedError;
+  List<int> get investIdList => throw _privateConstructorUsedError;
+  List<int> get investPriceList => throw _privateConstructorUsedError;
+
   @JsonKey(ignore: true)
   $InvestResponseStateCopyWith<InvestResponseState> get copyWith =>
       throw _privateConstructorUsedError;
@@ -29,7 +34,11 @@ abstract class $InvestResponseStateCopyWith<$Res> {
           InvestResponseState value, $Res Function(InvestResponseState) then) =
       _$InvestResponseStateCopyWithImpl<$Res, InvestResponseState>;
   @useResult
-  $Res call({String selectedInvestItem});
+  $Res call(
+      {String selectedInvestItem,
+      String investInputDate,
+      List<int> investIdList,
+      List<int> investPriceList});
 }
 
 /// @nodoc
@@ -46,12 +55,27 @@ class _$InvestResponseStateCopyWithImpl<$Res, $Val extends InvestResponseState>
   @override
   $Res call({
     Object? selectedInvestItem = null,
+    Object? investInputDate = null,
+    Object? investIdList = null,
+    Object? investPriceList = null,
   }) {
     return _then(_value.copyWith(
       selectedInvestItem: null == selectedInvestItem
           ? _value.selectedInvestItem
           : selectedInvestItem // ignore: cast_nullable_to_non_nullable
               as String,
+      investInputDate: null == investInputDate
+          ? _value.investInputDate
+          : investInputDate // ignore: cast_nullable_to_non_nullable
+              as String,
+      investIdList: null == investIdList
+          ? _value.investIdList
+          : investIdList // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      investPriceList: null == investPriceList
+          ? _value.investPriceList
+          : investPriceList // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ) as $Val);
   }
 }
@@ -64,7 +88,11 @@ abstract class _$$InvestResponseStateImplCopyWith<$Res>
       __$$InvestResponseStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String selectedInvestItem});
+  $Res call(
+      {String selectedInvestItem,
+      String investInputDate,
+      List<int> investIdList,
+      List<int> investPriceList});
 }
 
 /// @nodoc
@@ -79,12 +107,27 @@ class __$$InvestResponseStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? selectedInvestItem = null,
+    Object? investInputDate = null,
+    Object? investIdList = null,
+    Object? investPriceList = null,
   }) {
     return _then(_$InvestResponseStateImpl(
       selectedInvestItem: null == selectedInvestItem
           ? _value.selectedInvestItem
           : selectedInvestItem // ignore: cast_nullable_to_non_nullable
               as String,
+      investInputDate: null == investInputDate
+          ? _value.investInputDate
+          : investInputDate // ignore: cast_nullable_to_non_nullable
+              as String,
+      investIdList: null == investIdList
+          ? _value._investIdList
+          : investIdList // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      investPriceList: null == investPriceList
+          ? _value._investPriceList
+          : investPriceList // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ));
   }
 }
@@ -92,15 +135,43 @@ class __$$InvestResponseStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$InvestResponseStateImpl implements _InvestResponseState {
-  const _$InvestResponseStateImpl({this.selectedInvestItem = ''});
+  const _$InvestResponseStateImpl(
+      {this.selectedInvestItem = '',
+      this.investInputDate = '',
+      final List<int> investIdList = const [],
+      final List<int> investPriceList = const []})
+      : _investIdList = investIdList,
+        _investPriceList = investPriceList;
 
   @override
   @JsonKey()
   final String selectedInvestItem;
 
+  ///
+  @override
+  @JsonKey()
+  final String investInputDate;
+  final List<int> _investIdList;
+  @override
+  @JsonKey()
+  List<int> get investIdList {
+    if (_investIdList is EqualUnmodifiableListView) return _investIdList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_investIdList);
+  }
+
+  final List<int> _investPriceList;
+  @override
+  @JsonKey()
+  List<int> get investPriceList {
+    if (_investPriceList is EqualUnmodifiableListView) return _investPriceList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_investPriceList);
+  }
+
   @override
   String toString() {
-    return 'InvestResponseState(selectedInvestItem: $selectedInvestItem)';
+    return 'InvestResponseState(selectedInvestItem: $selectedInvestItem, investInputDate: $investInputDate, investIdList: $investIdList, investPriceList: $investPriceList)';
   }
 
   @override
@@ -109,11 +180,22 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
         (other.runtimeType == runtimeType &&
             other is _$InvestResponseStateImpl &&
             (identical(other.selectedInvestItem, selectedInvestItem) ||
-                other.selectedInvestItem == selectedInvestItem));
+                other.selectedInvestItem == selectedInvestItem) &&
+            (identical(other.investInputDate, investInputDate) ||
+                other.investInputDate == investInputDate) &&
+            const DeepCollectionEquality()
+                .equals(other._investIdList, _investIdList) &&
+            const DeepCollectionEquality()
+                .equals(other._investPriceList, _investPriceList));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, selectedInvestItem);
+  int get hashCode => Object.hash(
+      runtimeType,
+      selectedInvestItem,
+      investInputDate,
+      const DeepCollectionEquality().hash(_investIdList),
+      const DeepCollectionEquality().hash(_investPriceList));
 
   @JsonKey(ignore: true)
   @override
@@ -124,11 +206,22 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
 }
 
 abstract class _InvestResponseState implements InvestResponseState {
-  const factory _InvestResponseState({final String selectedInvestItem}) =
-      _$InvestResponseStateImpl;
+  const factory _InvestResponseState(
+      {final String selectedInvestItem,
+      final String investInputDate,
+      final List<int> investIdList,
+      final List<int> investPriceList}) = _$InvestResponseStateImpl;
 
   @override
   String get selectedInvestItem;
+  @override
+
+  ///
+  String get investInputDate;
+  @override
+  List<int> get investIdList;
+  @override
+  List<int> get investPriceList;
   @override
   @JsonKey(ignore: true)
   _$$InvestResponseStateImplCopyWith<_$InvestResponseStateImpl> get copyWith =>

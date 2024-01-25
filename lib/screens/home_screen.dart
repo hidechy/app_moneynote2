@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:money_note/collections/config.dart';
 import 'package:money_note/screens/components/invest_name_input_alert.dart';
+import 'package:money_note/screens/components/invest_price_input_alert.dart';
 
 import '../collections/bank_name.dart';
 import '../collections/bank_price.dart';
@@ -422,6 +423,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
                   ),
                 ),
+                GestureDetector(
+                  onTap: () async => MoneyDialog(
+                    context: context,
+                    widget: InvestPriceInputAlert(isar: widget.isar),
+                  ),
+                  child: Row(
+                    children: [
+                      const MenuHeadIcon(),
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
+                          margin: const EdgeInsets.all(5),
+                          child: const Text('投資商品金額登録'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
               Divider(color: Colors.white.withOpacity(0.5), indent: 20, endIndent: 20),
               GestureDetector(
@@ -470,6 +490,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
+              Divider(color: Colors.white.withOpacity(0.5), indent: 20, endIndent: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);

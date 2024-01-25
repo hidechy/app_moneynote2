@@ -520,7 +520,8 @@ class _SpendTimePlaceInputAlertState extends ConsumerState<SpendTimePlaceInputAl
 
     final spendTimePlaceCollection = widget.isar.spendTimePlaces;
     await widget.isar.writeTxn(
-        () async => widget.spendTimePlaceList?.forEach((element) => spendTimePlaceCollection.delete(element.id)));
+      () async => widget.spendTimePlaceList?.forEach((element) => spendTimePlaceCollection.delete(element.id)),
+    );
 
     await widget.isar.writeTxn(() async {
       for (final spendTimePlace in list) {
