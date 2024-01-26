@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/collections/config.dart';
 import 'package:money_note/collections/invest_name.dart';
 import 'package:money_note/collections/invest_price.dart';
 
@@ -67,6 +68,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   Map<String, Map<String, int>> investPricePadMap = {};
   Map<String, int> investPriceTotalPadMap = {};
 
+  final Map<String, String> _configMap = {};
+
   ///
   void _init() {
     _makeBankNameList();
@@ -84,6 +87,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
     _makeInvestNameList();
     _makeInvestPriceList();
+
+    _makeConfigMap();
   }
 
   ///
@@ -132,8 +137,10 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                   _displaySpendTimePlaceList(),
                   const SizedBox(height: 20),
                 ],
-                _displayInvestNames(),
-                const SizedBox(height: 20),
+                if (_configMap['investInfoDisplayFlag'] != null && _configMap['investInfoDisplayFlag'] == 'on') ...[
+                  _displayInvestNames(),
+                  const SizedBox(height: 20),
+                ],
               ],
             ),
           ),
@@ -771,6 +778,19 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     } else {
       final list2 = <Widget>[];
 
+      var daydiff = 0;
+      var dispInvestLastDate = '';
+      if (investPriceList != null) {
+        for (var i = 0; i < investPriceList!.length; i++) {
+          final listDate = DateTime.parse('${investPriceList![i].date} 00:00:00');
+          daydiff = listDate.difference(widget.date).inDays;
+          if (daydiff > 0) {
+            continue;
+          }
+          dispInvestLastDate = investPriceList![i].date;
+        }
+      }
+
       var sum = 0;
       for (var i = 0; i < investNameList!.length; i++) {
         if (investPricePadMap['invest-${investNameList![i].id}'] != null) {
@@ -786,7 +806,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(),
+            Text(dispInvestLastDate, style: const TextStyle(color: Color(0xFFFBB6CE))),
             Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
           ],
         ),
@@ -839,5 +859,16 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     }
 
     return listPrice;
+  }
+
+  ///
+  Future<void> _makeConfigMap() async {
+    final configsCollection = widget.isar.configs;
+    final getConfigs = await configsCollection.where().findAll();
+    setState(() {
+      getConfigs.forEach((element) {
+        _configMap[element.configKey] = element.configValue;
+      });
+    });
   }
 }
