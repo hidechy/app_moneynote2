@@ -5,24 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:money_note/collections/config.dart';
-import 'package:money_note/collections/invest_name.dart';
-import 'package:money_note/collections/invest_price.dart';
-import 'package:money_note/screens/components/invest_price_input_alert.dart';
-import 'package:money_note/state/invest/invest_notifier.dart';
 
 import '../../../collections/bank_name.dart';
 import '../../../collections/bank_price.dart';
+import '../../../collections/config.dart';
 import '../../../collections/emoney_name.dart';
 import '../../../collections/income.dart';
+import '../../../collections/invest_name.dart';
+import '../../../collections/invest_price.dart';
 import '../../../collections/money.dart';
 import '../../../collections/spend_item.dart';
 import '../../../collections/spend_time_place.dart';
 import '../../../enums/deposit_type.dart';
 import '../../../extensions/extensions.dart';
+import '../../../state/invest/invest_notifier.dart';
 import '../../../utilities/functions.dart';
 import '../../../utilities/utilities.dart';
 import '../bank_price_input_alert.dart';
+import '../invest_price_input_alert.dart';
+import '../invest_price_list_alert.dart';
 import '../money_input_alert.dart';
 import '../parts/bank_emoney_blank_message.dart';
 import '../parts/error_dialog.dart';
@@ -147,10 +148,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                   const SizedBox(height: 20),
                 ],
                 if (_configMap['investInfoDisplayFlag'] != null && _configMap['investInfoDisplayFlag'] == 'on') ...[
-                  if (daydiff >= 0) ...[
-                    _displayInvestNames(),
-                    const SizedBox(height: 20),
-                  ],
+                  if (daydiff >= 0) ...[_displayInvestNames(), const SizedBox(height: 20)],
                 ],
               ],
             ),
@@ -798,10 +796,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                 await ref.read(investInputProvider(0).notifier).setInvestInputDate(date: widget.date.yyyymmdd);
 
                 if (mounted) {
-                  await MoneyDialog(
-                    context: context,
-                    widget: InvestPriceInputAlert(isar: widget.isar),
-                  );
+                  await MoneyDialog(context: context, widget: InvestPriceInputAlert(isar: widget.isar));
                 }
               },
               child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
@@ -858,7 +853,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  flex: 4,
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -875,11 +870,20 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
-                  onTap: () {},
-                  child: Icon(
-                    Icons.show_chart,
-                    color: Colors.greenAccent.withOpacity(0.6),
-                  ),
+                  onTap: () {
+                    MoneyDialog(
+                      context: context,
+                      widget: InvestPriceListAlert(
+                        investName: investNameList![i].investName,
+                        data: (investPricePadMap['invest-${investNameList![i].id}'] != null)
+                            ? investPricePadMap['invest-${investNameList![i].id}']
+                            : null,
+                        mindate:
+                            (_allMoneyList!.isNotEmpty) ? DateTime.parse('${_allMoneyList![0].date} 00:00:00') : null,
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.list, color: Colors.greenAccent.withOpacity(0.6)),
                 ),
               ],
             ),
@@ -910,10 +914,6 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   Future<void> _makeConfigMap() async {
     final configsCollection = widget.isar.configs;
     final getConfigs = await configsCollection.where().findAll();
-    setState(() {
-      getConfigs.forEach((element) {
-        _configMap[element.configKey] = element.configValue;
-      });
-    });
+    setState(() => getConfigs.forEach((element) => _configMap[element.configKey] = element.configValue));
   }
 }
