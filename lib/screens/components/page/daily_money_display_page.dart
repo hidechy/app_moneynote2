@@ -60,12 +60,12 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
   List<SpendItem>? _spendItemList = [];
 
-  List<InvestName>? _investNameList = [];
+  List<InvestName>? investNameList = [];
 
-  List<InvestPrice>? _investPriceList = [];
+  List<InvestPrice>? investPriceList = [];
 
-  Map<String, Map<String, int>> _investPricePadMap = {};
-  Map<String, int> _investPriceTotalPadMap = {};
+  Map<String, Map<String, int>> investPricePadMap = {};
+  Map<String, int> investPriceTotalPadMap = {};
 
   ///
   void _init() {
@@ -732,7 +732,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     final getInvestNames = await investNamesCollection.where().findAll();
 
     if (mounted) {
-      setState(() => _investNameList = getInvestNames);
+      setState(() => investNameList = getInvestNames);
     }
   }
 
@@ -743,13 +743,13 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     final getInvestPrices = await investPricesCollection.where().sortByDate().findAll();
 
     setState(() {
-      _investPriceList = getInvestPrices;
+      investPriceList = getInvestPrices;
 
-      if (_investPriceList != null) {
-        final investPriceMap = makeInvestPriceMap(investPriceList: _investPriceList!);
+      if (investPriceList != null) {
+        final investPriceMap = makeInvestPriceMap(investPriceList: investPriceList!);
 
-        _investPricePadMap = investPriceMap['investPriceDatePadMap'];
-        _investPriceTotalPadMap = investPriceMap['investPriceTotalPadMap'];
+        investPricePadMap = investPriceMap['investPriceDatePadMap'];
+        investPriceTotalPadMap = investPriceMap['investPriceTotalPadMap'];
       }
     });
   }
@@ -767,14 +767,14 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
       )
     ];
 
-    if (_investNameList!.isEmpty) {
+    if (investNameList!.isEmpty) {
     } else {
       final list2 = <Widget>[];
 
       var sum = 0;
-      for (var i = 0; i < _investNameList!.length; i++) {
-        if (_investPricePadMap['invest-${_investNameList![i].id}'] != null) {
-          final investPriceMap = _investPricePadMap['invest-${_investNameList![i].id}'];
+      for (var i = 0; i < investNameList!.length; i++) {
+        if (investPricePadMap['invest-${investNameList![i].id}'] != null) {
+          final investPriceMap = investPricePadMap['invest-${investNameList![i].id}'];
           if (investPriceMap![widget.date.yyyymmdd] != null) {
             sum += investPriceMap[widget.date.yyyymmdd]!;
           }
@@ -792,7 +792,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
         ),
       ));
 
-      for (var i = 0; i < _investNameList!.length; i++) {
+      for (var i = 0; i < investNameList!.length; i++) {
         list2.add(
           Container(
             padding: const EdgeInsets.all(10),
@@ -805,15 +805,15 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_investNameList![i].investName),
-                      Text(_investNameList![i].investType, style: TextStyle(color: Colors.grey)),
+                      Text(investNameList![i].investName),
+                      Text(investNameList![i].investType, style: const TextStyle(color: Colors.grey)),
                     ],
                   ),
                 ),
                 Expanded(
                   child: Container(
                     alignment: Alignment.topRight,
-                    child: Text(_getInvestListPrice(id: _investNameList![i].id).toString().toCurrency()),
+                    child: Text(_getInvestListPrice(id: investNameList![i].id).toString().toCurrency()),
                   ),
                 ),
               ],
@@ -831,8 +831,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   ///
   int _getInvestListPrice({required int id}) {
     var listPrice = 0;
-    if (_investPricePadMap['invest-$id'] != null) {
-      final investPriceMap = _investPricePadMap['invest-$id'];
+    if (investPricePadMap['invest-$id'] != null) {
+      final investPriceMap = investPricePadMap['invest-$id'];
       if (investPriceMap![widget.date.yyyymmdd] != null) {
         listPrice = investPriceMap[widget.date.yyyymmdd]!;
       }
