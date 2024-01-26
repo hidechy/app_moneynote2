@@ -8,6 +8,8 @@ import 'package:isar/isar.dart';
 import 'package:money_note/collections/config.dart';
 import 'package:money_note/collections/invest_name.dart';
 import 'package:money_note/collections/invest_price.dart';
+import 'package:money_note/screens/components/invest_price_input_alert.dart';
+import 'package:money_note/state/invest/invest_notifier.dart';
 
 import '../../../collections/bank_name.dart';
 import '../../../collections/bank_price.dart';
@@ -70,6 +72,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
   final Map<String, String> _configMap = {};
 
+  List<Money>? _allMoneyList = [];
+
   ///
   void _init() {
     _makeBankNameList();
@@ -107,6 +111,11 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
     final spendDiff = (_beforeMoneyTotal + beforeBankTotal!) - (_onedayMoneyTotal + onedayBankTotal!);
 
+    var daydiff = 0;
+    if (_allMoneyList!.isNotEmpty) {
+      daydiff = widget.date.difference(DateTime.parse('${_allMoneyList![0].date} 00:00:00')).inDays;
+    }
+
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       contentPadding: EdgeInsets.zero,
@@ -138,8 +147,10 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                   const SizedBox(height: 20),
                 ],
                 if (_configMap['investInfoDisplayFlag'] != null && _configMap['investInfoDisplayFlag'] == 'on') ...[
-                  _displayInvestNames(),
-                  const SizedBox(height: 20),
+                  if (daydiff >= 0) ...[
+                    _displayInvestNames(),
+                    const SizedBox(height: 20),
+                  ],
                 ],
               ],
             ),
@@ -342,13 +353,21 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   Future<void> _makeMoneyList() async {
     final moneyCollection = widget.isar.moneys;
 
-    final getMoneys = await moneyCollection.filter().dateEqualTo(widget.date.yyyymmdd).findAll();
+    final getMoneys = await moneyCollection.where().sortByDate().findAll();
 
     setState(() {
-      _moneyList = getMoneys;
+      _allMoneyList = getMoneys;
 
-      if (_moneyList!.isNotEmpty) {
-        _onedayMoneyTotal = _utility.makeCurrencySum(money: _moneyList![0]);
+      if (_allMoneyList != null) {
+        _allMoneyList!.forEach((element) {
+          if (element.date == widget.date.yyyymmdd) {
+            _moneyList = [element];
+
+            if (_moneyList!.isNotEmpty) {
+              _onedayMoneyTotal = _utility.makeCurrencySum(money: _moneyList![0]);
+            }
+          }
+        });
       }
     });
   }
@@ -770,7 +789,25 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: [Colors.purple.withOpacity(0.8), Colors.transparent], stops: const [0.7, 1]),
         ),
-        child: const Text('INVEST', overflow: TextOverflow.ellipsis),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('INVEST', overflow: TextOverflow.ellipsis),
+            GestureDetector(
+              onTap: () async {
+                await ref.read(investInputProvider(0).notifier).setInvestInputDate(date: widget.date.yyyymmdd);
+
+                if (mounted) {
+                  await MoneyDialog(
+                    context: context,
+                    widget: InvestPriceInputAlert(isar: widget.isar),
+                  );
+                }
+              },
+              child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
+            ),
+          ],
+        ),
       )
     ];
 
@@ -834,6 +871,14 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                   child: Container(
                     alignment: Alignment.topRight,
                     child: Text(_getInvestListPrice(id: investNameList![i].id).toString().toCurrency()),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                GestureDetector(
+                  onTap: () {},
+                  child: Icon(
+                    Icons.show_chart,
+                    color: Colors.greenAccent.withOpacity(0.6),
                   ),
                 ),
               ],

@@ -27,6 +27,8 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
 
   final List<TextEditingController> _investPriceTecs = [];
 
+  Map<int, int> investDefaultValueMap = {};
+
   ///
   void _init() {
     _makeInvestNameList();
@@ -89,7 +91,15 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
   Future<void> _makeInvestPriceList({required String date}) async {
     final investPricesCollection = widget.isar.investPrices;
     final getInvestPrices = await investPricesCollection.where().dateEqualTo(date).findAll();
-    setState(() => investPriceList = getInvestPrices);
+    setState(() {
+      investPriceList = getInvestPrices;
+
+      if (investPriceList != null) {
+        investPriceList!.forEach((element) {
+          investDefaultValueMap[element.investId] = element.price;
+        });
+      }
+    });
   }
 
   ///
@@ -180,6 +190,10 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
 
     if (investNameList != null) {
       for (var i = 0; i < investNameList!.length; i++) {
+        if (investDefaultValueMap[investNameList![i].id] != null) {
+          _investPriceTecs[i].text = investDefaultValueMap[investNameList![i].id].toString();
+        }
+
         list.add(DecoratedBox(
           decoration: BoxDecoration(
             boxShadow: [
