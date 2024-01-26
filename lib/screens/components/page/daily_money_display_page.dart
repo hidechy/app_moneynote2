@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:money_note/collections/invest_name.dart';
+import 'package:money_note/collections/invest_price.dart';
 
 import '../../../collections/bank_name.dart';
 import '../../../collections/bank_price.dart';
@@ -58,6 +60,13 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
 
   List<SpendItem>? _spendItemList = [];
 
+  List<InvestName>? _investNameList = [];
+
+  List<InvestPrice>? _investPriceList = [];
+
+  Map<String, Map<String, int>> _investPricePadMap = {};
+  Map<String, int> _investPriceTotalPadMap = {};
+
   ///
   void _init() {
     _makeBankNameList();
@@ -72,6 +81,9 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     _makeSpendTimePlaceList();
 
     _makeSpendItemList();
+
+    _makeInvestNameList();
+    _makeInvestPriceList();
   }
 
   ///
@@ -120,6 +132,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
                   _displaySpendTimePlaceList(),
                   const SizedBox(height: 20),
                 ],
+                _displayInvestNames(),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -558,7 +572,7 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
   Future<void> _makeBankPriceList() async {
     final bankPricesCollection = widget.isar.bankPrices;
 
-    final getBankPrices = await bankPricesCollection.where().findAll();
+    final getBankPrices = await bankPricesCollection.where().sortByDate().findAll();
 
     setState(() {
       _bankPriceList = getBankPrices;
@@ -709,5 +723,121 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
     if (mounted) {
       setState(() => _spendItemList = getSpendItems);
     }
+  }
+
+  ///
+  Future<void> _makeInvestNameList() async {
+    final investNamesCollection = widget.isar.investNames;
+
+    final getInvestNames = await investNamesCollection.where().findAll();
+
+    if (mounted) {
+      setState(() => _investNameList = getInvestNames);
+    }
+  }
+
+  ///
+  Future<void> _makeInvestPriceList() async {
+    final investPricesCollection = widget.isar.investPrices;
+
+    final getInvestPrices = await investPricesCollection.where().sortByDate().findAll();
+
+    setState(() {
+      _investPriceList = getInvestPrices;
+
+      if (_investPriceList != null) {
+        final investPriceMap = makeInvestPriceMap(investPriceList: _investPriceList!);
+
+        _investPricePadMap = investPriceMap['investPriceDatePadMap'];
+        _investPriceTotalPadMap = investPriceMap['investPriceTotalPadMap'];
+      }
+    });
+  }
+
+  ///
+  Widget _displayInvestNames() {
+    final list = <Widget>[
+      Container(
+        width: context.screenSize.width,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [Colors.purple.withOpacity(0.8), Colors.transparent], stops: const [0.7, 1]),
+        ),
+        child: const Text('INVEST', overflow: TextOverflow.ellipsis),
+      )
+    ];
+
+    if (_investNameList!.isEmpty) {
+    } else {
+      final list2 = <Widget>[];
+
+      var sum = 0;
+      for (var i = 0; i < _investNameList!.length; i++) {
+        if (_investPricePadMap['invest-${_investNameList![i].id}'] != null) {
+          final investPriceMap = _investPricePadMap['invest-${_investNameList![i].id}'];
+          if (investPriceMap![widget.date.yyyymmdd] != null) {
+            sum += investPriceMap[widget.date.yyyymmdd]!;
+          }
+        }
+      }
+
+      list2.add(Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(),
+            Text(sum.toString().toCurrency(), style: const TextStyle(color: Colors.yellowAccent)),
+          ],
+        ),
+      ));
+
+      for (var i = 0; i < _investNameList!.length; i++) {
+        list2.add(
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.3)))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(_investNameList![i].investName),
+                      Text(_investNameList![i].investType, style: TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.topRight,
+                    child: Text(_getInvestListPrice(id: _investNameList![i].id).toString().toCurrency()),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      list.add(Column(children: list2));
+    }
+
+    return Column(children: list);
+  }
+
+  ///
+  int _getInvestListPrice({required int id}) {
+    var listPrice = 0;
+    if (_investPricePadMap['invest-$id'] != null) {
+      final investPriceMap = _investPricePadMap['invest-$id'];
+      if (investPriceMap![widget.date.yyyymmdd] != null) {
+        listPrice = investPriceMap[widget.date.yyyymmdd]!;
+      }
+    }
+
+    return listPrice;
   }
 }

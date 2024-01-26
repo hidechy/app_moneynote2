@@ -1,3 +1,5 @@
+import 'package:money_note/collections/invest_price.dart';
+
 import '../collections/bank_price.dart';
 import '../collections/spend_item.dart';
 import '../collections/spend_time_place.dart';
@@ -119,6 +121,74 @@ flutter: {2023-12-17: 300000, 2023-12-18: 300000, 2023-12-19: 300000, 2023-12-20
   /////////////////////////////////
 
   return {'bankPriceDatePadMap': map3, 'bankPriceTotalPadMap': map4};
+}
+
+///
+Map<String, dynamic> makeInvestPriceMap({required List<InvestPrice> investPriceList}) {
+  //=======================//
+
+  final map3 = <String, Map<String, int>>{};
+
+  if (investPriceList.isNotEmpty) {
+    //--- (1)
+    final bplMap = <String, List<Map<String, int>>>{};
+
+    investPriceList
+      ..forEach((element) {
+        bplMap['invest-${element.investId}'] = [];
+      })
+      ..forEach((element) {
+        bplMap['invest-${element.investId}']?.add({element.date: element.price});
+      });
+    //--- (1)
+
+    //--- (2)
+    final dt = DateTime.parse('${investPriceList[0].date} 00:00:00');
+
+    final now = DateTime.now();
+
+    final diff = now.difference(dt).inDays;
+
+    bplMap.forEach((deposit, value) {
+      final map5 = <String, int>{};
+
+      var price = 0;
+      for (var i = 0; i <= diff; i++) {
+        final date = dt.add(Duration(days: i)).yyyymmdd;
+
+        value.forEach((element) {
+          if (element[date] != null) {
+            price = element[date] ?? 0;
+          }
+
+          map5[date] = price;
+        });
+      }
+
+      map3[deposit] = map5;
+    });
+
+    //--- (2)
+  }
+
+  //=======================//
+
+  /////////////////////////////////
+
+  final map4 = <String, int>{};
+
+  final map6 = <String, List<int>>{};
+  map3
+    ..forEach((key, value) => value.forEach((key2, value2) => map6[key2] = []))
+    ..forEach((key, value) => value.forEach((key2, value2) => map6[key2]?.add(value2)));
+
+  map6.forEach((key, value) {
+    var sum = 0;
+    value.forEach((element) => sum += element);
+    map4[key] = sum;
+  });
+
+  return {'investPriceDatePadMap': map3, 'investPriceTotalPadMap': map4};
 }
 
 ///
