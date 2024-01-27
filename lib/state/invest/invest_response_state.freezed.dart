@@ -19,7 +19,6 @@ mixin _$InvestResponseState {
   String get selectedInvestItem => throw _privateConstructorUsedError;
 
   ///
-  String get investInputDate => throw _privateConstructorUsedError;
   List<int> get investIdList => throw _privateConstructorUsedError;
   List<int> get investPriceList => throw _privateConstructorUsedError;
 
@@ -36,7 +35,6 @@ abstract class $InvestResponseStateCopyWith<$Res> {
   @useResult
   $Res call(
       {String selectedInvestItem,
-      String investInputDate,
       List<int> investIdList,
       List<int> investPriceList});
 }
@@ -55,7 +53,6 @@ class _$InvestResponseStateCopyWithImpl<$Res, $Val extends InvestResponseState>
   @override
   $Res call({
     Object? selectedInvestItem = null,
-    Object? investInputDate = null,
     Object? investIdList = null,
     Object? investPriceList = null,
   }) {
@@ -63,10 +60,6 @@ class _$InvestResponseStateCopyWithImpl<$Res, $Val extends InvestResponseState>
       selectedInvestItem: null == selectedInvestItem
           ? _value.selectedInvestItem
           : selectedInvestItem // ignore: cast_nullable_to_non_nullable
-              as String,
-      investInputDate: null == investInputDate
-          ? _value.investInputDate
-          : investInputDate // ignore: cast_nullable_to_non_nullable
               as String,
       investIdList: null == investIdList
           ? _value.investIdList
@@ -90,7 +83,6 @@ abstract class _$$InvestResponseStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {String selectedInvestItem,
-      String investInputDate,
       List<int> investIdList,
       List<int> investPriceList});
 }
@@ -107,7 +99,6 @@ class __$$InvestResponseStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? selectedInvestItem = null,
-    Object? investInputDate = null,
     Object? investIdList = null,
     Object? investPriceList = null,
   }) {
@@ -115,10 +106,6 @@ class __$$InvestResponseStateImplCopyWithImpl<$Res>
       selectedInvestItem: null == selectedInvestItem
           ? _value.selectedInvestItem
           : selectedInvestItem // ignore: cast_nullable_to_non_nullable
-              as String,
-      investInputDate: null == investInputDate
-          ? _value.investInputDate
-          : investInputDate // ignore: cast_nullable_to_non_nullable
               as String,
       investIdList: null == investIdList
           ? _value._investIdList
@@ -137,7 +124,6 @@ class __$$InvestResponseStateImplCopyWithImpl<$Res>
 class _$InvestResponseStateImpl implements _InvestResponseState {
   const _$InvestResponseStateImpl(
       {this.selectedInvestItem = '',
-      this.investInputDate = '',
       final List<int> investIdList = const [],
       final List<int> investPriceList = const []})
       : _investIdList = investIdList,
@@ -148,10 +134,9 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
   final String selectedInvestItem;
 
   ///
-  @override
-  @JsonKey()
-  final String investInputDate;
   final List<int> _investIdList;
+
+  ///
   @override
   @JsonKey()
   List<int> get investIdList {
@@ -171,7 +156,7 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
 
   @override
   String toString() {
-    return 'InvestResponseState(selectedInvestItem: $selectedInvestItem, investInputDate: $investInputDate, investIdList: $investIdList, investPriceList: $investPriceList)';
+    return 'InvestResponseState(selectedInvestItem: $selectedInvestItem, investIdList: $investIdList, investPriceList: $investPriceList)';
   }
 
   @override
@@ -181,8 +166,6 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
             other is _$InvestResponseStateImpl &&
             (identical(other.selectedInvestItem, selectedInvestItem) ||
                 other.selectedInvestItem == selectedInvestItem) &&
-            (identical(other.investInputDate, investInputDate) ||
-                other.investInputDate == investInputDate) &&
             const DeepCollectionEquality()
                 .equals(other._investIdList, _investIdList) &&
             const DeepCollectionEquality()
@@ -193,7 +176,6 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
   int get hashCode => Object.hash(
       runtimeType,
       selectedInvestItem,
-      investInputDate,
       const DeepCollectionEquality().hash(_investIdList),
       const DeepCollectionEquality().hash(_investPriceList));
 
@@ -208,7 +190,6 @@ class _$InvestResponseStateImpl implements _InvestResponseState {
 abstract class _InvestResponseState implements InvestResponseState {
   const factory _InvestResponseState(
       {final String selectedInvestItem,
-      final String investInputDate,
       final List<int> investIdList,
       final List<int> investPriceList}) = _$InvestResponseStateImpl;
 
@@ -217,8 +198,6 @@ abstract class _InvestResponseState implements InvestResponseState {
   @override
 
   ///
-  String get investInputDate;
-  @override
   List<int> get investIdList;
   @override
   List<int> get investPriceList;

@@ -18,7 +18,6 @@ import '../../../collections/spend_item.dart';
 import '../../../collections/spend_time_place.dart';
 import '../../../enums/deposit_type.dart';
 import '../../../extensions/extensions.dart';
-import '../../../state/invest/invest_notifier.dart';
 import '../../../utilities/functions.dart';
 import '../../../utilities/utilities.dart';
 import '../bank_price_input_alert.dart';
@@ -792,13 +791,8 @@ class _DailyMoneyDisplayAlertState extends ConsumerState<DailyMoneyDisplayPage> 
           children: [
             const Text('INVEST', overflow: TextOverflow.ellipsis),
             GestureDetector(
-              onTap: () async {
-                await ref.read(investInputProvider(0).notifier).setInvestInputDate(date: widget.date.yyyymmdd);
-
-                if (mounted) {
-                  await MoneyDialog(context: context, widget: InvestPriceInputAlert(isar: widget.isar));
-                }
-              },
+              onTap: () =>
+                  MoneyDialog(context: context, widget: InvestPriceInputAlert(date: widget.date, isar: widget.isar)),
               child: Icon(Icons.input, color: Colors.greenAccent.withOpacity(0.6)),
             ),
           ],

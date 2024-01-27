@@ -426,7 +426,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 GestureDetector(
                   onTap: () async => MoneyDialog(
                     context: context,
-                    widget: InvestPriceInputAlert(isar: widget.isar),
+                    widget: InvestPriceInputAlert(date: DateTime.now(), isar: widget.isar),
                   ),
                   child: Row(
                     children: [

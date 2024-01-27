@@ -12,8 +12,9 @@ import '../../state/invest/invest_notifier.dart';
 import 'parts/error_dialog.dart';
 
 class InvestPriceInputAlert extends ConsumerStatefulWidget {
-  const InvestPriceInputAlert({super.key, required this.isar});
+  const InvestPriceInputAlert({super.key, required this.date, required this.isar});
 
+  final DateTime date;
   final Isar isar;
 
   @override
@@ -40,6 +41,8 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
     Future(_init);
 
     _makeTecs();
+
+    Future(() => _makeInvestPriceList(date: widget.date.yyyymmdd));
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -68,7 +71,7 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
                 ],
               ),
               Divider(color: Colors.white.withOpacity(0.4), thickness: 5),
-              _displayInputDate(),
+              Text(widget.date.yyyymmdd),
               const SizedBox(height: 10),
               _displayClearButton(),
               const SizedBox(height: 10),
@@ -109,68 +112,6 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
         _investPriceTecs.add(TextEditingController(text: ''));
       }
     }
-  }
-
-  ///
-  Widget _displayInputDate() {
-    if (investNameList == null) {
-      return Container();
-    }
-
-    final investInputDate =
-        ref.watch(investInputProvider(investNameList!.length).select((value) => value.investInputDate));
-
-    final dispDate = (investInputDate != '') ? investInputDate : DateTime.now().yyyymmdd;
-
-    Future(() => _makeInvestPriceList(date: dispDate));
-
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: _showDP,
-                child: Icon(Icons.calendar_month, color: Colors.greenAccent.withOpacity(0.6)),
-              ),
-              const SizedBox(width: 10),
-              Text(dispDate),
-            ],
-          ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  ref.read(investInputProvider(investNameList!.length).notifier).setInvestInputDate(
-                        date: DateTime(
-                          dispDate.split('-')[0].toInt(),
-                          dispDate.split('-')[1].toInt(),
-                          dispDate.split('-')[2].toInt() - 1,
-                        ).yyyymmdd,
-                      );
-                },
-                child: Icon(Icons.arrow_back_ios, color: Colors.white.withOpacity(0.8), size: 14),
-              ),
-              const SizedBox(width: 20),
-              GestureDetector(
-                onTap: () {
-                  ref.read(investInputProvider(investNameList!.length).notifier).setInvestInputDate(
-                        date: DateTime(
-                          dispDate.split('-')[0].toInt(),
-                          dispDate.split('-')[1].toInt(),
-                          dispDate.split('-')[2].toInt() + 1,
-                        ).yyyymmdd,
-                      );
-                },
-                child: Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.8), size: 14),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   ///
@@ -246,27 +187,8 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
   }
 
   ///
-  Future<void> _showDP() async {
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 360)),
-    );
-
-    if (selectedDate != null) {
-      await ref
-          .read(investInputProvider(investNameList!.length).notifier)
-          .setInvestInputDate(date: selectedDate.yyyymmdd);
-    }
-  }
-
-  ///
   Future<void> _inputInvest() async {
     final investInputState = ref.watch(investInputProvider(investNameList!.length));
-
-    final inputDate =
-        (investInputState.investInputDate != '') ? investInputState.investInputDate : DateTime.now().yyyymmdd;
 
     final list = <InvestPrice>[];
 
@@ -277,7 +199,7 @@ class _InvestPriceInputAlertState extends ConsumerState<InvestPriceInputAlert> {
         if (investInputState.investIdList[i] != 0 && investInputState.investPriceList[i] != 0) {
           list.add(
             InvestPrice()
-              ..date = inputDate
+              ..date = widget.date.yyyymmdd
               ..investId = investInputState.investIdList[i]
               ..price = investInputState.investPriceList[i],
           );

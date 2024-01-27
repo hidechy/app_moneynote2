@@ -29,9 +29,6 @@ class InvestInputNotifier extends StateNotifier<InvestResponseState> {
   InvestInputNotifier(super.state);
 
   ///
-  Future<void> setInvestInputDate({required String date}) async => state = state.copyWith(investInputDate: date);
-
-  ///
   Future<void> setInputInvestValue({required int pos, required int id, required int price}) async {
     final investIdList = [...state.investIdList];
     final investPriceList = [...state.investPriceList];

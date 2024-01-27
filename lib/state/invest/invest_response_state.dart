@@ -8,7 +8,6 @@ class InvestResponseState with _$InvestResponseState {
     @Default('') String selectedInvestItem,
 
     ///
-    @Default('') String investInputDate,
     @Default([]) List<int> investIdList,
     @Default([]) List<int> investPriceList,
   }) = _InvestResponseState;
