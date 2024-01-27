@@ -90,10 +90,14 @@ class _InvestPriceGraphAlertState extends ConsumerState<InvestPriceGraphAlert> {
     if (widget.data != null) {
       var i = 0;
       widget.data!.forEach((key, value) {
-        flspots.add(FlSpot((i + 1).toDouble(), value.toDouble()));
-        list.add(value);
-        dateMap[(i + 1).toDouble()] = key;
-        i++;
+        if (widget.mindate != null && value != 0) {
+          if (DateTime.parse('$key 00:00:00').difference(widget.mindate!).inDays >= 0) {
+            flspots.add(FlSpot((i + 1).toDouble(), value.toDouble()));
+            list.add(value);
+            dateMap[(i + 1).toDouble()] = key;
+            i++;
+          }
+        }
       });
 
       final minValue = list.reduce(min);
